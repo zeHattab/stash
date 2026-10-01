@@ -74,7 +74,7 @@ struct SecondPasswordView: View {
 
     @ViewBuilder
     private var disableSection: some View {
-        Section("Выключить") {
+        Section {
             passwordField("Мастер-пароль", text: $master)
             Button(role: .destructive, action: disable) {
                 Text("Выключить второй пароль").frame(maxWidth: .infinity)
