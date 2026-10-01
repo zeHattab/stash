@@ -97,7 +97,8 @@ final class SecondVaultTests: XCTestCase {
         // Узнаём индекс настоящего слота и сохраняем его байты.
         await store.lock()
         try await store.unlock(masterPassword: "master")
-        let realIndex = try XCTUnwrap(await store.openedSlotForTesting())
+        let openedIndex = await store.openedSlotForTesting()
+        let realIndex = try XCTUnwrap(openedIndex)
         let before = try VaultContainer.parse(Data(contentsOf: url)).slots[realIndex]
 
         // Все возможные операции из ложного сейфа.
