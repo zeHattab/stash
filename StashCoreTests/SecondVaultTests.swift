@@ -232,7 +232,8 @@ final class SecondVaultTests: XCTestCase {
 
         // Байты настоящего слота до смены второго пароля.
         await store.lock(); try await store.unlock(masterPassword: "master")
-        let realIndex = try XCTUnwrap(await store.openedSlotForTesting())
+        let openedIndex = await store.openedSlotForTesting()
+        let realIndex = try XCTUnwrap(openedIndex)
         let realBefore = try VaultContainerV4.parse(Data(contentsOf: url)).slots[realIndex]
 
         try await store.changeSecondPassword(master: "master", newSecond: "new-decoy")
