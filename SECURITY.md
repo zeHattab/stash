@@ -283,3 +283,29 @@ the decoy away) — enabling the feature opens a fill screen with buttons per en
 you invent the values yourself. The "decoy is almost empty" reminder appears ONLY in
 the real vault and relies on a flag in its own payload (how many entries existed at
 creation), so it needs no decryption of the decoy.
+
+## Format v4 and growth · Input protection
+
+**Format v4.** Each slot is `salt ‖ wrapMaster ‖ wrapRecovery ‖ lenBlock ‖ ciphertext ‖ random`,
+where `lenBlock` is the payload length encrypted under the vault key (not a cleartext
+field). This keeps slots indistinguishable from random while letting the container grow
+by **appending random bytes to both slots** (they stay equal in size, and the decoy
+stays readable with its own key because its meaningful prefix is untouched). Sizes step
+256 KB → 1 → 4 → 16 → 64 MB → +64 MB, capped at 512 MB (a clear "vault too large" error,
+never corruption). Writes are atomic (temp file → replace), so a failed write leaves the
+old file intact.
+
+**Input protection.** Third-party keyboards are disabled app-wide
+(`shouldAllowExtensionPointIdentifier` returns false for `.keyboard`), because secrets are
+typed into ordinary text fields a custom keyboard could otherwise observe. All secret
+fields use one wrapper (`SecretTextField`) with autocorrect, spell-check, smart
+punctuation and predictive learning off and no `textContentType`, so iOS neither offers
+to save the master password to iCloud Keychain nor suggests strong passwords.
+
+**Формат v4 (кратко).** Слот: `соль ‖ wrapMaster ‖ wrapRecovery ‖ lenBlock ‖ шифротекст ‖
+случайные байты`, где `lenBlock` — длина payload, зашифрованная под ключом сейфа (не
+открытое поле). Это сохраняет неотличимость слотов и позволяет растить контейнер
+дописыванием случайных байтов в оба слота (размеры равны, ложный сейф читается своим
+ключом). Ступени 256 КБ → 1 → 4 → 16 → 64 МБ → +64 МБ, предел 512 МБ (понятная ошибка без
+порчи). Запись атомарна — при сбое старый файл цел. Сторонние клавиатуры запрещены во всём
+приложении; все поля секретов — через единую обёртку `SecretTextField`.
