@@ -36,15 +36,19 @@ final class SecondVaultTests: XCTestCase {
         try await store.unlock(masterPassword: "master-pass-1")
         var opened = try await store.items()
         XCTAssertEqual(opened, [real])
-        XCTAssertFalse(await store.currentIsDecoy())
-        XCTAssertTrue(await store.currentSecondPasswordEnabled())
+        var decoy = await store.currentIsDecoy()
+        var second = await store.currentSecondPasswordEnabled()
+        XCTAssertFalse(decoy)
+        XCTAssertTrue(second)
 
         await store.lock()
         try await store.unlock(masterPassword: "decoy-pass-2")
         opened = try await store.items()
         XCTAssertEqual(opened.map(\.title), ["Decoy1", "Decoy2"])
-        XCTAssertTrue(await store.currentIsDecoy())
-        XCTAssertFalse(await store.currentSecondPasswordEnabled())
+        decoy = await store.currentIsDecoy()
+        second = await store.currentSecondPasswordEnabled()
+        XCTAssertTrue(decoy)
+        XCTAssertFalse(second)
     }
 
     func testSecondPasswordMustDiffer() async throws {
@@ -110,7 +114,8 @@ final class SecondVaultTests: XCTestCase {
         // Настоящий сейф по-прежнему открывается мастер-паролем.
         await store.lock()
         try await store.unlock(masterPassword: "master")
-        XCTAssertEqual(try await store.items().map(\.title), ["Real"])
+        let titles = try await store.items().map(\.title)
+        XCTAssertEqual(titles, ["Real"])
     }
 
     func testDisableWipesSecondSlot() async throws {
@@ -127,7 +132,8 @@ final class SecondVaultTests: XCTestCase {
 
         await store.lock()
         try await store.unlock(masterPassword: "master")
-        XCTAssertFalse(await store.currentSecondPasswordEnabled())
+        let stillEnabled = await store.currentSecondPasswordEnabled()
+        XCTAssertFalse(stillEnabled)
     }
 
     func testWrongPasswordWithSecondEnabled() async throws {

@@ -40,7 +40,8 @@ final class MigrationTests: XCTestCase {
 
         let store = VaultStore(configuration: .init(fileURL: url, kdfIterations: 1_000))
         try await store.unlock(masterPassword: "pw")   // миграция на лету
-        XCTAssertEqual(try await store.items(), [item])
+        var got = try await store.items()
+        XCTAssertEqual(got, [item])
 
         // Теперь файл — контейнер v2 с двумя слотами.
         let data = try Data(contentsOf: url)
@@ -51,7 +52,8 @@ final class MigrationTests: XCTestCase {
         // Повторная разблокировка тем же паролем.
         await store.lock()
         try await store.unlock(masterPassword: "pw")
-        XCTAssertEqual(try await store.items(), [item])
+        got = try await store.items()
+        XCTAssertEqual(got, [item])
 
         // Неверный пароль после миграции.
         await store.lock()
