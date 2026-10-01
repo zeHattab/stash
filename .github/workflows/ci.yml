@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Отменять предыдущий незавершённый запуск на той же ветке/PR.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    # macos-15 (Sequoia) — GA-образ, несёт Xcode 26.x, который выбираем ниже явно.
+    # Когда образ macos-26 станет общедоступным, достаточно заменить строку на `runs-on: macos-26`.
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select newest Xcode 26.x
+        run: |
+          set -euo pipefail
+          echo "Xcode-приложения на раннере:"
+          ls /Applications | grep -i Xcode || true
+          XC=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1 || true)
+          if [ -n "$XC" ]; then
+            echo "Выбираю $XC"
+            sudo xcode-select -s "$XC/Contents/Developer"
+          else
+            echo "Xcode 26.x не найден — использую текущий xcode-select по умолчанию"
+          fi
+          echo "----- xcodebuild -version -----"
+          xcodebuild -version
+          echo "----- доступные симуляторы -----"
+          xcrun simctl list devices available
+
+      - name: Resolve an available iPhone simulator
+        run: |
+          set -euo pipefail
+          DEVICE_ID=$(xcrun simctl list devices available --json \
+            | jq -r '[ .devices | to_entries[]
+                        | select(.key | test("iOS"))
+                        | .value[] | select(.name | test("iPhone")) ][0].udid')
+          if [ -z "$DEVICE_ID" ] || [ "$DEVICE_ID" = "null" ]; then
+            echo "::error::Не нашёл доступный симулятор iPhone"
+            exit 1
+          fi
+          DEVICE_NAME=$(xcrun simctl list devices available --json \
+            | jq -r --arg u "$DEVICE_ID" '[ .devices[][] | select(.udid==$u) ][0].name')
+          echo "Выбран симулятор: $DEVICE_NAME ($DEVICE_ID)"
+          echo "DEVICE_ID=$DEVICE_ID" >> "$GITHUB_ENV"
+
+      - name: Build (scheme Stash)
+        run: |
+          set -o pipefail
+          if command -v xcbeautify >/dev/null 2>&1; then PIPE=xcbeautify; else PIPE=cat; fi
+          xcodebuild build \
+            -project Stash.xcodeproj \
+            -scheme Stash \
+            -configuration Debug \
+            -destination "id=$DEVICE_ID" \
+            -resultBundlePath build/Build.xcresult \
+            CODE_SIGNING_ALLOWED=NO \
+            | $PIPE
+
+      - name: Test (scheme StashCore)
+        run: |
+          set -o pipefail
+          if command -v xcbeautify >/dev/null 2>&1; then PIPE=xcbeautify; else PIPE=cat; fi
+          xcodebuild test \
+            -project Stash.xcodeproj \
+            -scheme StashCore \
+            -destination "id=$DEVICE_ID" \
+            -resultBundlePath build/StashCoreTests.xcresult \
+            CODE_SIGNING_ALLOWED=NO \
+            | $PIPE
+
+      - name: Upload .xcresult on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcresult-${{ github.run_number }}
+          path: build/*.xcresult
+          retention-days: 7
+          if-no-files-found: ignore
