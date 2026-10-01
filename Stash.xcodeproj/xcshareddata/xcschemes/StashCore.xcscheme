@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "000000000000000000000053"
+               BlueprintIdentifier = "00000000000000000000006F"
                BuildableName = "StashCore.framework"
                BlueprintName = "StashCore"
                ReferencedContainer = "container:Stash.xcodeproj">
@@ -30,7 +30,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "000000000000000000000053"
+            BlueprintIdentifier = "00000000000000000000006F"
             BuildableName = "StashCore.framework"
             BlueprintName = "StashCore"
             ReferencedContainer = "container:Stash.xcodeproj">
@@ -41,7 +41,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "000000000000000000000069"
+               BlueprintIdentifier = "000000000000000000000085"
                BuildableName = "StashCoreTests.xctest"
                BlueprintName = "StashCoreTests"
                ReferencedContainer = "container:Stash.xcodeproj">
@@ -62,7 +62,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "000000000000000000000053"
+            BlueprintIdentifier = "00000000000000000000006F"
             BuildableName = "StashCore.framework"
             BlueprintName = "StashCore"
             ReferencedContainer = "container:Stash.xcodeproj">
@@ -78,7 +78,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "000000000000000000000053"
+            BlueprintIdentifier = "00000000000000000000006F"
             BuildableName = "StashCore.framework"
             BlueprintName = "StashCore"
             ReferencedContainer = "container:Stash.xcodeproj">

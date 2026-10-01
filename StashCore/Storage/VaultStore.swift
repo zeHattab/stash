@@ -54,8 +54,7 @@ public actor VaultStore {
         let header = VaultHeader(
             formatVersion: VaultFormat.currentVersion,
             kdf: kdf,
-            wrappedVaultKey: wrapped,
-            wrappedVaultKeyBiometric: nil
+            wrappedVaultKey: wrapped
         )
         self.header = header
         self.vaultKey = vk
@@ -85,6 +84,34 @@ public actor VaultStore {
         self.header = header
         self.vaultKey = vk
         self.cachedItems = payload.items
+    }
+
+    /// Разблокировка готовым Vault Key (например, полученным из Keychain по Face ID).
+    /// Неверный VK → `corrupted` (не прошла проверка подлинности данных).
+    public func unlock(vaultKey: SymmetricKey) throws {
+        guard exists() else { throw VaultError.notFound }
+        let file = try readAndDecodeFile()
+        let header = try decodeHeader(file.header)
+        guard header.formatVersion == VaultFormat.currentVersion else {
+            throw VaultError.unsupportedVersion(header.formatVersion)
+        }
+        var plaintext = try Crypto.decrypt(file.ciphertext, using: vaultKey, aad: file.header)
+        defer { plaintext.resetBytes(in: 0..<plaintext.count) }
+        let payload: VaultPayload
+        do { payload = try makeDecoder().decode(VaultPayload.self, from: plaintext) }
+        catch { throw VaultError.corrupted }
+
+        self.header = header
+        self.vaultKey = vaultKey
+        self.cachedItems = payload.items
+    }
+
+    /// Возвращает текущий Vault Key (только когда разблокировано) — чтобы положить
+    /// его в Keychain для Face ID. Вызывающий обязан использовать ключ немедленно
+    /// и не удерживать его дольше необходимого.
+    public func exportVaultKey() throws -> SymmetricKey {
+        guard let vk = vaultKey, isUnlocked else { throw VaultError.locked }
+        return vk
     }
 
     /// Стирает ключ и расшифрованные данные из памяти.

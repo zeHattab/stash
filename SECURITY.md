@@ -40,12 +40,28 @@
 {
   "formatVersion": 1,
   "kdf": { "algorithm": "pbkdf2-hmac-sha256", "iterations": 600000, "salt": <base64> },
-  "wrappedVaultKey": <base64 — VK под KEK (AES-GCM)>,
-  "wrappedVaultKeyBiometric": <base64|null — зарезервировано для Face ID>
+  "wrappedVaultKey": <base64 — VK под KEK (AES-GCM)>
 }
 ```
 Параметры KDF лежат в заголовке специально: позже можно перейти на другой KDF
 (например, Argon2), не теряя старые сейфы.
+
+## Face ID / Touch ID (через Keychain)
+
+Биометрия НЕ хранит отдельную копию VK в файле. Когда пользователь включает Face ID,
+VK кладётся в **Keychain**:
+- класс `kSecClassGenericPassword`, значение — байты VK;
+- `SecAccessControl` с флагом `.biometryCurrentSet` — доступ только по текущему
+  набору биометрии (добавили/сменили лицо или палец — запись аннулируется);
+- доступность `kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly` — требует код-пароль,
+  не покидает устройство;
+- `kSecAttrSynchronizable = false` — не уходит в iCloud;
+- группа доступа общая с расширением AutoFill (Keychain Sharing).
+
+Разблокировка по Face ID = чтение VK из Keychain (с биометрическим запросом) и
+`unlock(vaultKey:)`. Если набор биометрии изменился или запись пропала — она тихо
+удаляется, приложение просит мастер-пароль и после входа снова предлагает включить
+Face ID. Прежнее поле `wrappedVaultKeyBiometric` из формата файла удалено.
 
 ## Различение ошибок
 
@@ -119,12 +135,28 @@ Header (inside `header`):
 {
   "formatVersion": 1,
   "kdf": { "algorithm": "pbkdf2-hmac-sha256", "iterations": 600000, "salt": <base64> },
-  "wrappedVaultKey": <base64 — VK under KEK (AES-GCM)>,
-  "wrappedVaultKeyBiometric": <base64|null — reserved for Face ID>
+  "wrappedVaultKey": <base64 — VK under KEK (AES-GCM)>
 }
 ```
 KDF parameters live in the header on purpose: we can later switch to another KDF
 (e.g. Argon2) without losing existing vaults.
+
+## Face ID / Touch ID (via Keychain)
+
+Biometrics do NOT keep a second copy of the VK in the file. When the user enables
+Face ID, the VK is stored in the **Keychain**:
+- class `kSecClassGenericPassword`, value is the VK bytes;
+- `SecAccessControl` with `.biometryCurrentSet` — usable only with the current
+  biometric set (enroll/replace a face or finger and the item is invalidated);
+- accessibility `kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly` — requires a
+  passcode and never leaves the device;
+- `kSecAttrSynchronizable = false` — never goes to iCloud;
+- access group shared with the AutoFill extension (Keychain Sharing).
+
+Biometric unlock = reading the VK from the Keychain (with a biometric prompt) and
+`unlock(vaultKey:)`. If the biometric set changed or the item is gone, it is silently
+deleted, the app asks for the master password, and offers to re-enable Face ID after
+sign-in. The former `wrappedVaultKeyBiometric` header field has been removed.
 
 ## Distinct errors
 
