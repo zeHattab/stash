@@ -28,7 +28,7 @@ final class AttackerTests: XCTestCase {
         try await store.create(masterPassword: "master-pass")
         let openedIndex = await store.openedSlotForTesting()
         let realIndex = try XCTUnwrap(openedIndex)
-        let container = try VaultContainerV3.parse(Data(contentsOf: url))
+        let container = try VaultContainerV4.parse(Data(contentsOf: url))
         return (container.slots[realIndex], container.slots[1 - realIndex])
     }
 

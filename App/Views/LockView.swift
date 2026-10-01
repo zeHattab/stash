@@ -29,12 +29,10 @@ struct LockView: View {
             }
 
             VStack(spacing: 16) {
-                SecureField("Мастер-пароль", text: $password)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
-                    .textFieldStyle(.roundedBorder)
+                SecretTextField(text: $password, placeholder: "Мастер-пароль", secure: true,
+                                bordered: true, onSubmit: { unlockWithPassword() })
+                    .frame(height: 36)
                     .accessibilityLabel("Мастер-пароль")
-                    .onSubmit { unlockWithPassword() }
 
                 Button(action: unlockWithPassword) {
                     Text("Разблокировать").frame(maxWidth: .infinity)

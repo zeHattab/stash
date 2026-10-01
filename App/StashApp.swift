@@ -1,8 +1,19 @@
 import SwiftUI
+import UIKit
 import StashCore
+
+/// Запрещает сторонние клавиатуры во всём приложении: в редакторе секреты вводятся в
+/// обычные текстовые поля, которые сторонние клавиатуры могли бы видеть.
+final class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                     shouldAllowExtensionPointIdentifier extensionPointIdentifier: UIApplication.ExtensionPointIdentifier) -> Bool {
+        extensionPointIdentifier != .keyboard
+    }
+}
 
 @main
 struct StashApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @State private var model: AppModel
 
     init() {

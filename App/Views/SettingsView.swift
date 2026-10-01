@@ -130,11 +130,11 @@ struct ChangePasswordView: View {
     var body: some View {
         Form {
             Section("Текущий пароль") {
-                field("Текущий пароль", text: $oldPassword, isNew: false)
+                field("Текущий пароль", text: $oldPassword)
             }
             Section("Новый пароль") {
-                field("Новый пароль", text: $newPassword, isNew: true)
-                field("Повторите новый пароль", text: $confirm, isNew: true)
+                field("Новый пароль", text: $newPassword)
+                field("Повторите новый пароль", text: $confirm)
                 Toggle("Показать пароль", isOn: $reveal)
                 if !newPassword.isEmpty {
                     PasswordStrengthView(assessment: assessment)
@@ -162,14 +162,8 @@ struct ChangePasswordView: View {
     }
 
     @ViewBuilder
-    private func field(_ placeholder: LocalizedStringKey, text: Binding<String>, isNew: Bool) -> some View {
-        Group {
-            if reveal { TextField(placeholder, text: text) }
-            else { SecureField(placeholder, text: text) }
-        }
-        // Без textContentType: мастер-пароль не предлагается к сохранению в iCloud Keychain.
-        .textInputAutocapitalization(.never)
-        .autocorrectionDisabled()
+    private func field(_ placeholder: String, text: Binding<String>) -> some View {
+        SecretTextField(text: text, placeholder: placeholder, secure: !reveal)
     }
 
     private func submit() {
@@ -209,8 +203,7 @@ struct RecoverySettingsView: View {
                 }
             }
             Section {
-                SecureField("Мастер-пароль", text: $master)
-                    .textInputAutocapitalization(.never).autocorrectionDisabled()
+                SecretTextField(text: $master, placeholder: "Мастер-пароль", secure: true)
                 Button("Создать новый ключ") { regenerate() }
                     .disabled(master.isEmpty || working)
             } footer: {

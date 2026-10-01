@@ -10,14 +10,17 @@ struct RecoveryKeyView: View {
     var onSaved: () -> Void
     var onSkip: () -> Void
 
+    private enum Step { case show, confirm }
+    @State private var step: Step = .show
     @State private var askIndices: [Int] = [0, 1]
     @State private var answers: [String] = ["", ""]
     @State private var pdfURL: URL?
     @State private var toast: Toast?
+    @State private var confirmError = false
 
     private var groups: [String] { key.split(separator: "-").map(String.init) }
     private var confirmed: Bool {
-        guard groups.count > askIndices.max() ?? 0 else { return false }
+        guard groups.count > (askIndices.max() ?? 0) else { return false }
         return zip(askIndices, answers).allSatisfy { idx, ans in
             ans.uppercased().filter { $0.isLetter || $0.isNumber } == groups[idx]
         }
@@ -25,41 +28,10 @@ struct RecoveryKeyView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section {
-                    Text("Ключ восстановления открывает сейф, если вы забудете мастер-пароль. Сохраните его в надёжном месте вне телефона. Мы не храним его копию.")
-                        .font(.footnote).foregroundStyle(.secondary)
-                }
-                Section("Ваш ключ") {
-                    Text(key)
-                        .font(.title3.monospaced())
-                        .textSelection(.enabled)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Button { copyKey() } label: { Label("Скопировать", systemImage: "doc.on.doc") }
-                    if let pdfURL {
-                        ShareLink(item: pdfURL) { Label("Сохранить как PDF / напечатать", systemImage: "square.and.arrow.up") }
-                    }
-                }
-                Section("Подтвердите, что сохранили") {
-                    ForEach(0..<askIndices.count, id: \.self) { k in
-                        HStack {
-                            Text("Группа \(askIndices[k] + 1)").foregroundStyle(.secondary)
-                            Spacer()
-                            TextField("____", text: $answers[k])
-                                .multilineTextAlignment(.trailing)
-                                .textInputAutocapitalization(.characters)
-                                .autocorrectionDisabled()
-                                .frame(width: 90)
-                        }
-                    }
-                    Button("Я сохранил ключ") { onSaved() }
-                        .disabled(!confirmed)
-                }
-                if allowSkip {
-                    Section {
-                        Button("Пропустить пока") { onSkip() }
-                            .foregroundStyle(.secondary)
-                    }
+            Group {
+                switch step {
+                case .show: showScreen
+                case .confirm: confirmScreen
                 }
             }
             .navigationTitle("Ключ восстановления")
@@ -67,14 +39,73 @@ struct RecoveryKeyView: View {
             .interactiveDismissDisabled(true)
             .toast($toast)
             .onAppear {
-                pdfURL = Self.makePDF(key: key)
+                if pdfURL == nil { pdfURL = Self.makePDF(key: key) }
                 let count = max(groups.count, 2)
                 var picks = Set<Int>()
                 while picks.count < 2 { picks.insert(Int.random(in: 0..<count)) }
                 askIndices = Array(picks).sorted()
-                answers = ["", ""]
             }
         }
+    }
+
+    // Экран 1 — показ ключа.
+    private var showScreen: some View {
+        Form {
+            Section("Ваш ключ") {
+                Text(key)
+                    .font(.title2.monospaced())
+                    .textSelection(.enabled)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Button { copyKey() } label: { Label("Скопировать", systemImage: "doc.on.doc") }
+                if let pdfURL {
+                    ShareLink(item: pdfURL) { Label("Сохранить как PDF / напечатать", systemImage: "square.and.arrow.up") }
+                }
+            }
+            Section {
+                Text("Лучше распечатайте или перепишите ключ на бумагу и храните отдельно от телефона. Если ключ лежит на этом же iPhone, его найдёт любой, кто получит доступ к телефону.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+            Section {
+                Button { answers = ["", ""]; step = .confirm } label: {
+                    Text("Я сохранил ключ →").frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                if allowSkip {
+                    Button("Пропустить пока") { onSkip() }
+                        .foregroundStyle(.secondary).frame(maxWidth: .infinity)
+                }
+            }
+        }
+    }
+
+    // Экран 2 — проверка (ключа на экране нет).
+    private var confirmScreen: some View {
+        Form {
+            Section("Проверка") {
+                Text("Введите указанные группы из ключа, чтобы подтвердить, что вы его сохранили.")
+                    .font(.footnote).foregroundStyle(.secondary)
+                ForEach(0..<askIndices.count, id: \.self) { k in
+                    HStack {
+                        Text("Группа \(askIndices[k] + 1)").foregroundStyle(.secondary)
+                        Spacer()
+                        SecretTextField(text: $answers[k], placeholder: "____", secure: false, uppercase: true)
+                            .frame(width: 90, height: 32)
+                    }
+                }
+                if confirmError {
+                    Text("Группы не совпадают. Проверьте ключ ещё раз.")
+                        .font(.footnote).foregroundStyle(.red)
+                }
+            }
+            Section {
+                Button { if confirmed { onSaved() } else { confirmError = true } } label: {
+                    Text("Подтвердить").frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                Button("← Показать ключ снова") { confirmError = false; step = .show }
+            }
+        }
+        .onChange(of: answers) { _, _ in confirmError = false }
     }
 
     private func copyKey() {
@@ -83,9 +114,15 @@ struct RecoveryKeyView: View {
     }
 
     static func makePDF(key: String) -> URL? {
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("StashRecoveryKey.pdf")
+        // Имя файла и метаданные ОДИНАКОВЫ для настоящего и ложного сейфа (без «ложный/второй»).
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("Stash — ключ восстановления.pdf")
         let page = CGRect(x: 0, y: 0, width: 612, height: 792)
-        let renderer = UIGraphicsPDFRenderer(bounds: page)
+        let format = UIGraphicsPDFRendererFormat()
+        format.documentInfo = [
+            kCGPDFContextTitle as String: "Stash — ключ восстановления",
+            kCGPDFContextCreator as String: "Stash",
+        ]
+        let renderer = UIGraphicsPDFRenderer(bounds: page, format: format)
         do {
             try renderer.writePDF(to: url) { ctx in
                 ctx.beginPage()
@@ -127,21 +164,12 @@ struct ForgotPasswordView: View {
         NavigationStack {
             Form {
                 Section("Ключ восстановления") {
-                    TextField("XXXX-XXXX-…", text: $key)
-                        .textInputAutocapitalization(.characters)
-                        .autocorrectionDisabled()
+                    SecretTextField(text: $key, placeholder: "XXXX-XXXX-…", secure: false, uppercase: true)
+                        .frame(height: 32)
                 }
                 Section("Новый мастер-пароль") {
-                    Group {
-                        if reveal { TextField("Новый пароль", text: $newPassword) }
-                        else { SecureField("Новый пароль", text: $newPassword) }
-                    }
-                    .textInputAutocapitalization(.never).autocorrectionDisabled()
-                    Group {
-                        if reveal { TextField("Повторите новый пароль", text: $confirm) }
-                        else { SecureField("Повторите новый пароль", text: $confirm) }
-                    }
-                    .textInputAutocapitalization(.never).autocorrectionDisabled()
+                    SecretTextField(text: $newPassword, placeholder: "Новый пароль", secure: !reveal)
+                    SecretTextField(text: $confirm, placeholder: "Повторите новый пароль", secure: !reveal)
                     Toggle("Показать пароль", isOn: $reveal)
                     if !newPassword.isEmpty { PasswordStrengthView(assessment: assessment) }
                 }

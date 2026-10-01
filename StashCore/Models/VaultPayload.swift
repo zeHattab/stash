@@ -14,6 +14,12 @@ public struct VaultPayload: Codable, Sendable, Equatable {
     /// В payload НАСТОЯЩЕГО сейфа: ложный сейф почти пуст (мало записей при создании).
     /// Позволяет показать напоминание в настоящем сейфе, не расшифровывая ложный.
     public var decoyNeedsFilling: Bool?
+    /// VK и соль ложного сейфа — ТОЛЬКО в payload настоящего сейфа (внутри шифрования).
+    /// Позволяют настоящему сейфу управлять ложным (сменить второй пароль), не зная
+    /// старого второго пароля. Наружу не видны; в payload ЛОЖНОГО сейфа их нет,
+    /// поэтому ложный сейф не даёт доступа к настоящему.
+    public var decoyVaultKey: Data?
+    public var decoySalt: Data?
 
     public init(
         schemaVersion: Int,
@@ -21,7 +27,9 @@ public struct VaultPayload: Codable, Sendable, Equatable {
         isDecoy: Bool? = nil,
         secondPasswordEnabled: Bool? = nil,
         recoveryKeySaved: Bool? = nil,
-        decoyNeedsFilling: Bool? = nil
+        decoyNeedsFilling: Bool? = nil,
+        decoyVaultKey: Data? = nil,
+        decoySalt: Data? = nil
     ) {
         self.schemaVersion = schemaVersion
         self.items = items
@@ -29,6 +37,8 @@ public struct VaultPayload: Codable, Sendable, Equatable {
         self.secondPasswordEnabled = secondPasswordEnabled
         self.recoveryKeySaved = recoveryKeySaved
         self.decoyNeedsFilling = decoyNeedsFilling
+        self.decoyVaultKey = decoyVaultKey
+        self.decoySalt = decoySalt
     }
 
     public var decoy: Bool { isDecoy ?? false }

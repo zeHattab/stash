@@ -139,7 +139,6 @@ struct HomeView: View {
                     Text("По названию").tag(VaultSortOrder.title)
                     Text("По дате изменения").tag(VaultSortOrder.dateModified)
                 }
-                Button { showSettings = true } label: { Label("Настройки", systemImage: "gearshape") }
             } label: {
                 Image(systemName: "line.3.horizontal.decrease.circle")
             }
@@ -153,6 +152,11 @@ struct HomeView: View {
                 Image(systemName: "plus")
             }
             .accessibilityLabel("Добавить")
+        }
+        // Настройки — ОТДЕЛЬНАЯ, явная и одинаковая кнопка в обоих сейфах (без привязки к типу сессии).
+        ToolbarItem(placement: .topBarTrailing) {
+            Button { showSettings = true } label: { Image(systemName: "gearshape") }
+                .accessibilityLabel("Настройки")
         }
     }
 

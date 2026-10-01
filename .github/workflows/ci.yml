@@ -21,6 +21,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Secrets must use SecretTextField (no raw SecureField in app)
+        run: |
+          if grep -rn "SecureField(" App/ ; then
+            echo "::error::Поля секретов должны использовать SecretTextField, а не SecureField"
+            exit 1
+          fi
+          echo "OK: SecureField в App/ не найден"
+
       - name: Select newest Xcode 26.x
         run: |
           set -euo pipefail

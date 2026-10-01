@@ -36,7 +36,7 @@ final class MigrationTests: XCTestCase {
         try writeV1(at: url, password: "pw", items: [item])
 
         // Файл изначально НЕ v2.
-        XCTAssertFalse(VaultContainerV3.isV3(try Data(contentsOf: url)))
+        XCTAssertFalse(VaultContainerV4.isV4(try Data(contentsOf: url)))
 
         let store = VaultStore(configuration: .init(fileURL: url, kdfIterations: 1_000))
         try await store.unlock(masterPassword: "pw")   // миграция на лету
@@ -45,8 +45,8 @@ final class MigrationTests: XCTestCase {
 
         // Теперь файл — контейнер v2 с двумя слотами.
         let data = try Data(contentsOf: url)
-        XCTAssertTrue(VaultContainerV3.isV3(data))
-        let container = try VaultContainerV3.parse(data)
+        XCTAssertTrue(VaultContainerV4.isV4(data))
+        let container = try VaultContainerV4.parse(data)
         XCTAssertEqual(container.slots[0].count, container.slots[1].count)
 
         // Повторная разблокировка тем же паролем.
@@ -98,6 +98,6 @@ final class MigrationTests: XCTestCase {
         try await store.unlock(masterPassword: "pw")
         let got = try await store.items()
         XCTAssertEqual(got, [item])
-        XCTAssertTrue(VaultContainerV3.isV3(try Data(contentsOf: url)))
+        XCTAssertTrue(VaultContainerV4.isV4(try Data(contentsOf: url)))
     }
 }

@@ -18,4 +18,6 @@ public enum VaultError: Error, Equatable, Sendable {
     case notFound
     /// Второй пароль совпадает с мастер-паролем (не допускается).
     case secondPasswordMustDiffer
+    /// Данные превышают максимальный размер слота (512 МБ).
+    case tooLarge
 }

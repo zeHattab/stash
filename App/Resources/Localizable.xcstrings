@@ -1844,6 +1844,136 @@
         }
       }
     },
+    "Я сохранил ключ →": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I saved the key →"
+          }
+        }
+      }
+    },
+    "Проверка": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verify"
+          }
+        }
+      }
+    },
+    "Введите указанные группы из ключа, чтобы подтвердить, что вы его сохранили.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter the requested groups from the key to confirm you saved it."
+          }
+        }
+      }
+    },
+    "Группы не совпадают. Проверьте ключ ещё раз.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The groups don't match. Check the key again."
+          }
+        }
+      }
+    },
+    "Подтвердить": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm"
+          }
+        }
+      }
+    },
+    "← Показать ключ снова": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "← Show the key again"
+          }
+        }
+      }
+    },
+    "Лучше распечатайте или перепишите ключ на бумагу и храните отдельно от телефона. Если ключ лежит на этом же iPhone, его найдёт любой, кто получит доступ к телефону.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Better print the key or write it on paper and keep it apart from your phone. If the key is on this same iPhone, anyone with access to the phone will find it."
+          }
+        }
+      }
+    },
+    "Сменить второй пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change second password"
+          }
+        }
+      }
+    },
+    "Смена второго пароля": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change second password"
+          }
+        }
+      }
+    },
+    "Как наполнить ложный сейф: заблокируйте Stash и войдите вторым паролем.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To fill the decoy vault: lock Stash and sign in with the second password."
+          }
+        }
+      }
+    },
+    "Содержимое ложного сейфа сохранится. Новый второй пароль должен отличаться от мастер-пароля.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The decoy vault's contents are kept. The new second password must differ from the master password."
+          }
+        }
+      }
+    },
+    "Новый второй пароль должен отличаться от мастер-пароля.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The new second password must differ from the master password."
+          }
+        }
+      }
+    },
+    "Не удалось сменить второй пароль.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't change the second password."
+          }
+        }
+      }
+    },
     "Этот пароль используется ещё в %lld записях": {
       "localizations": {
         "ru": {

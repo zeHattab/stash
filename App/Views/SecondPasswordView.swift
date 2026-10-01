@@ -33,6 +33,13 @@ struct SecondPasswordView: View {
                             .foregroundStyle(.orange)
                     }
                 }
+                if !model.isDecoySession {
+                    Section {
+                        NavigationLink("Сменить второй пароль") { ChangeSecondPasswordView(model: model) }
+                    } footer: {
+                        Text("Как наполнить ложный сейф: заблокируйте Stash и войдите вторым паролем.")
+                    }
+                }
                 disableSection
             } else {
                 enableSection
@@ -88,13 +95,8 @@ struct SecondPasswordView: View {
     }
 
     @ViewBuilder
-    private func passwordField(_ placeholder: LocalizedStringKey, text: Binding<String>) -> some View {
-        Group {
-            if reveal { TextField(placeholder, text: text) }
-            else { SecureField(placeholder, text: text) }
-        }
-        .textInputAutocapitalization(.never)
-        .autocorrectionDisabled()
+    private func passwordField(_ placeholder: String, text: Binding<String>) -> some View {
+        SecretTextField(text: text, placeholder: placeholder, secure: !reveal)
     }
 
     private func enable() {
@@ -135,6 +137,68 @@ struct SecondPasswordView: View {
                 master = ""
             } catch {
                 errorText = "Не удалось выключить второй пароль."
+            }
+        }
+    }
+}
+
+struct ChangeSecondPasswordView: View {
+    let model: AppModel
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var master = ""
+    @State private var newSecond = ""
+    @State private var confirm = ""
+    @State private var reveal = false
+    @State private var working = false
+    @State private var errorText: String?
+
+    private var assessment: PasswordAssessment { PasswordEvaluator.assess(newSecond) }
+    private var canSubmit: Bool {
+        !master.isEmpty && newSecond.count >= PasswordEvaluator.minimumLength && newSecond == confirm && !working
+    }
+
+    var body: some View {
+        Form {
+            Section("Текущий мастер-пароль") {
+                SecretTextField(text: $master, placeholder: "Мастер-пароль", secure: !reveal)
+            }
+            Section("Новый второй пароль") {
+                SecretTextField(text: $newSecond, placeholder: "Новый второй пароль", secure: !reveal)
+                SecretTextField(text: $confirm, placeholder: "Повторите второй пароль", secure: !reveal)
+                Toggle("Показать пароль", isOn: $reveal)
+                if !newSecond.isEmpty { PasswordStrengthView(assessment: assessment) }
+            }
+            if let errorText { Text(errorText).foregroundStyle(.red).font(.footnote) }
+            Section {
+                Button("Сменить второй пароль") { submit() }.disabled(!canSubmit)
+            } footer: {
+                Text("Содержимое ложного сейфа сохранится. Новый второй пароль должен отличаться от мастер-пароля.")
+            }
+        }
+        .navigationTitle("Смена второго пароля")
+        .navigationBarTitleDisplayMode(.inline)
+        .disabled(working)
+        .onChange(of: master) { _, _ in errorText = nil }
+        .onChange(of: newSecond) { _, _ in errorText = nil }
+        .onChange(of: confirm) { _, _ in errorText = nil }
+    }
+
+    private func submit() {
+        working = true; errorText = nil
+        let m = master, n = newSecond
+        Task {
+            defer { working = false }
+            do {
+                try await model.changeSecondPassword(master: m, newSecond: n)
+                dismiss()
+            } catch VaultError.wrongPassword {
+                errorText = "Мастер-пароль неверный."
+                master = ""
+            } catch VaultError.secondPasswordMustDiffer {
+                errorText = "Новый второй пароль должен отличаться от мастер-пароля."
+            } catch {
+                errorText = "Не удалось сменить второй пароль."
             }
         }
     }

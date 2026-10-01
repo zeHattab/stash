@@ -339,6 +339,10 @@ public final class AppModel {
         await store.probeSecondPasswordCollides(second)
     }
 
+    public func changeSecondPassword(master: String, newSecond: String) async throws {
+        try await store.changeSecondPassword(master: master, newSecond: newSecond)
+    }
+
     public func disableSecondPassword(master: String) async throws {
         if isDecoySession {
             try await store.setSecondPasswordFlag(false)
