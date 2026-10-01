@@ -11,6 +11,7 @@
 		000000000000000000000004 = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Stash.entitlements; sourceTree = "<group>";};
 		000000000000000000000005 = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>";};
 		000000000000000000000006 = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>";};
+		FF0000000000000000000001 = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>";};
 		000000000000000000000007 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialProviderViewController.swift; sourceTree = "<group>";};
 		000000000000000000000008 = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>";};
 		000000000000000000000009 = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StashAutoFill.entitlements; sourceTree = "<group>";};
@@ -26,6 +27,7 @@
 		000000000000000000000013 = {isa = PBXBuildFile; fileRef = 000000000000000000000002;};
 		000000000000000000000014 = {isa = PBXBuildFile; fileRef = 000000000000000000000005;};
 		000000000000000000000015 = {isa = PBXBuildFile; fileRef = 000000000000000000000006;};
+		FF0000000000000000000002 = {isa = PBXBuildFile; fileRef = FF0000000000000000000001;};
 		000000000000000000000016 = {isa = PBXBuildFile; fileRef = 000000000000000000000007;};
 		000000000000000000000017 = {isa = PBXBuildFile; fileRef = 00000000000000000000000A;};
 		000000000000000000000018 = {isa = PBXBuildFile; fileRef = 00000000000000000000000B;};
@@ -41,6 +43,7 @@
 			children = (
 				000000000000000000000005,
 				000000000000000000000006,
+				FF0000000000000000000001,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -130,6 +133,7 @@
 			files = (
 				000000000000000000000014,
 				000000000000000000000015,
+				FF0000000000000000000002,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -492,6 +496,7 @@
 		000000000000000000000044 = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = App/Stash.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -514,6 +519,7 @@
 		000000000000000000000045 = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = App/Stash.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
