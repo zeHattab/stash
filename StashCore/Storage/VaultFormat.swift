@@ -4,7 +4,7 @@ import Foundation
 enum VaultFormat {
     static let magic = "stash-vault"
     static let currentVersion = 1
-    static let currentSchemaVersion = 1
+    static let currentSchemaVersion = 2
 }
 
 /// Заголовок хранилища. Сохраняется открыто (без шифрования), но целиком

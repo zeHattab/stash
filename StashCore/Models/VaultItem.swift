@@ -17,6 +17,19 @@ public enum VaultItemKind: Codable, Sendable, Equatable {
     case document(type: DocumentType, fields: [String: String], expiresAt: Date?, attachmentIDs: [UUID])
 }
 
+/// Одна запись в истории паролей логина.
+public struct PasswordHistoryEntry: Codable, Sendable, Equatable, Identifiable {
+    public var id: UUID
+    public var password: String
+    public var changedAt: Date
+
+    public init(id: UUID = UUID(), password: String, changedAt: Date) {
+        self.id = id
+        self.password = password
+        self.changedAt = changedAt
+    }
+}
+
 /// Единица хранения в сейфе.
 public struct VaultItem: Codable, Sendable, Identifiable, Equatable {
     public var id: UUID
@@ -26,6 +39,9 @@ public struct VaultItem: Codable, Sendable, Identifiable, Equatable {
     public var updatedAt: Date
     public var favorite: Bool
     public var notes: String
+    /// История прежних паролей (для логинов). Optional → старые сейфы без этого
+    /// ключа декодируются (synthesized Codable для Optional использует decodeIfPresent).
+    public var passwordHistory: [PasswordHistoryEntry]?
 
     public init(
         id: UUID = UUID(),
@@ -34,7 +50,8 @@ public struct VaultItem: Codable, Sendable, Identifiable, Equatable {
         createdAt: Date = Date(),
         updatedAt: Date = Date(),
         favorite: Bool = false,
-        notes: String = ""
+        notes: String = "",
+        passwordHistory: [PasswordHistoryEntry]? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -43,5 +60,6 @@ public struct VaultItem: Codable, Sendable, Identifiable, Equatable {
         self.updatedAt = updatedAt
         self.favorite = favorite
         self.notes = notes
+        self.passwordHistory = passwordHistory
     }
 }

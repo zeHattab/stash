@@ -22,6 +22,10 @@ public final class AppModel {
     public private(set) var lockedOutUntil: Date?
     /// Показать одноразовое предложение включить Face ID (сразу после создания сейфа).
     public private(set) var pendingBiometricOffer: Bool = false
+    /// Записи разблокированного сейфа (в памяти).
+    public private(set) var items: [VaultItem] = []
+    public private(set) var sortOrder: VaultSortOrder
+    public private(set) var generatorOptions: PasswordGeneratorOptions
 
     public var biometryType: BiometryKind { biometrics.biometryType }
     public var isBiometricAvailable: Bool { biometrics.isAvailable }
@@ -40,6 +44,8 @@ public final class AppModel {
         static let autoLock = "autoLockTimeout"
         static let failedAttempts = "failedAttempts"
         static let lockedOutUntil = "lockedOutUntil" // секунды с 1970; 0 = нет
+        static let sortOrder = "sortOrder"
+        static let generatorOptions = "generatorOptions" // JSON
     }
 
     // Нарастающая пауза после 5 ошибок подряд: 30 c, 1 мин, далее 5 мин.
@@ -65,6 +71,15 @@ public final class AppModel {
         self.failedAttempts = settings.integer(forKey: Keys.failedAttempts)
         let until = settings.double(forKey: Keys.lockedOutUntil)
         self.lockedOutUntil = until > 0 ? Date(timeIntervalSince1970: until) : nil
+        self.sortOrder = VaultSortOrder(rawValue: settings.string(forKey: Keys.sortOrder) ?? "")
+            ?? .title
+        if let json = settings.string(forKey: Keys.generatorOptions),
+           let data = json.data(using: .utf8),
+           let options = try? JSONDecoder().decode(PasswordGeneratorOptions.self, from: data) {
+            self.generatorOptions = options
+        } else {
+            self.generatorOptions = .default
+        }
     }
 
     // MARK: - Жизненный цикл
@@ -79,6 +94,7 @@ public final class AppModel {
     public func createVault(masterPassword: String) async throws {
         try await store.create(masterPassword: masterPassword)
         resetFailures()
+        await reloadItems()
         phase = .unlocked
         pendingBiometricOffer = true
     }
@@ -119,6 +135,7 @@ public final class AppModel {
             throw VaultError.wrongPassword
         }
         resetFailures()
+        await reloadItems()
         phase = .unlocked
     }
 
@@ -146,13 +163,57 @@ public final class AppModel {
             throw error
         }
         resetFailures()
+        await reloadItems()
         phase = .unlocked
     }
 
     public func lock() async {
         await store.lock()
+        items = []
         backgroundedAt = nil
         if phase == .unlocked { phase = .locked }
+    }
+
+    // MARK: - Записи
+
+    public func reloadItems() async {
+        items = (try? await store.items()) ?? []
+    }
+
+    /// Сохраняет запись; при смене пароля логина добавляет старый в историю.
+    public func save(_ item: VaultItem) async throws {
+        let previous = items.first { $0.id == item.id }
+        var toSave = item
+        toSave.updatedAt = now()
+        toSave = VaultHistory.applyingPasswordChange(previous: previous, updated: toSave, now: now())
+        try await store.upsert(toSave)
+        await reloadItems()
+    }
+
+    public func delete(_ id: UUID) async throws {
+        try await store.delete(id: id)
+        await reloadItems()
+    }
+
+    public func toggleFavorite(_ id: UUID) async throws {
+        guard var item = items.first(where: { $0.id == id }) else { return }
+        item.favorite.toggle()
+        item.updatedAt = now()
+        try await store.upsert(item)
+        await reloadItems()
+    }
+
+    public func setSortOrder(_ order: VaultSortOrder) {
+        sortOrder = order
+        settings.set(order.rawValue, forKey: Keys.sortOrder)
+    }
+
+    public func setGeneratorOptions(_ options: PasswordGeneratorOptions) {
+        generatorOptions = options
+        if let data = try? JSONEncoder().encode(options),
+           let json = String(data: data, encoding: .utf8) {
+            settings.set(json, forKey: Keys.generatorOptions)
+        }
     }
 
     // MARK: - Смена мастер-пароля

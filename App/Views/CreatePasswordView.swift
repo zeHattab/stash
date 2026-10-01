@@ -132,16 +132,16 @@ struct PasswordStrengthView: View {
             }
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Надёжность пароля: \(label)")
+        .accessibilityLabel(String(localized: "Надёжность пароля: \(label)"))
     }
 
     private var label: String {
         switch assessment.strength {
-        case .veryWeak: return "Очень слабый"
-        case .weak: return "Слабый"
-        case .fair: return "Средний"
-        case .strong: return "Надёжный"
-        case .veryStrong: return "Очень надёжный"
+        case .veryWeak: return String(localized: "Очень слабый")
+        case .weak: return String(localized: "Слабый")
+        case .fair: return String(localized: "Средний")
+        case .strong: return String(localized: "Надёжный")
+        case .veryStrong: return String(localized: "Очень надёжный")
         }
     }
 

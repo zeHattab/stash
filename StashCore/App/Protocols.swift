@@ -55,6 +55,12 @@ public enum AutoLockTimeout: String, CaseIterable, Sendable, Codable {
     }
 }
 
+/// Порядок сортировки списка записей (выбор запоминается).
+public enum VaultSortOrder: String, CaseIterable, Sendable, Codable {
+    case title
+    case dateModified
+}
+
 /// Ошибки прикладного слоя (поверх VaultError).
 public enum AppModelError: Error, Equatable, Sendable {
     case lockedOut(remaining: TimeInterval)

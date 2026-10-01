@@ -1,72 +1,1242 @@
 {
-  "sourceLanguage" : "ru",
-  "version" : "1.0",
-  "strings" : {
-    "Stash" : { "shouldTranslate" : false },
-    "Добро пожаловать в Stash" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Welcome to Stash" } } } },
-    "Менеджер паролей и документов, который работает полностью на вашем iPhone." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "A password and document manager that runs entirely on your iPhone." } } } },
-    "Только на этом устройстве" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Only on this device" } } } },
-    "Данные хранятся только на этом iPhone и не уходят в интернет. Никакой аналитики и трекинга." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Your data stays only on this iPhone and never goes online. No analytics, no tracking." } } } },
-    "Мастер-пароль нельзя восстановить" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "The master password can't be recovered" } } } },
-    "Если вы забудете мастер-пароль, данные пропадут безвозвратно. Мы не можем его сбросить." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "If you forget your master password, the data is lost for good. We cannot reset it." } } } },
-    "Я понимаю" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "I understand" } } } },
-    "Подтвердите, что вы понимаете: пароль нельзя восстановить" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Confirm that you understand the password can't be recovered" } } } },
-    "Далее" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Next" } } } },
-    "Создать мастер-пароль" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Create master password" } } } },
-    "Мастер-пароль" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Master password" } } } },
-    "Повторите пароль" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Repeat password" } } } },
-    "Показать пароль" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Show password" } } } },
-    "Пароли не совпадают" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Passwords don't match" } } } },
-    "Минимум %lld символов" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "At least %lld characters" } } } },
-    "Создать сейф" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Create vault" } } } },
-    "Мастер-пароль нельзя восстановить. Запомните его — без него данные не открыть." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "The master password can't be recovered. Remember it — without it the data can't be opened." } } } },
-    "Новый сейф" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "New vault" } } } },
-    "Создаём сейф…" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Creating vault…" } } } },
-    "Слабый пароль" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Weak password" } } } },
-    "Всё равно создать" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Create anyway" } } } },
-    "Отмена" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Cancel" } } } },
-    "Этот пароль легко подобрать. Лучше сделать его длиннее и разнообразнее." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "This password is easy to guess. Make it longer and more varied." } } } },
-    "Не удалось создать сейф" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Couldn't create the vault" } } } },
-    "ОК" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "OK" } } } },
-    "Надёжность" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Strength" } } } },
-    "Этот пароль есть в списках утёкших паролей." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "This password appears in breach lists." } } } },
-    "Разблокировать" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Unlock" } } } },
-    "Войти по Face ID" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Unlock with Face ID" } } } },
-    "Войти по Touch ID" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Unlock with Touch ID" } } } },
-    "Войти по биометрии" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Unlock with biometrics" } } } },
-    "Неверный пароль." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Wrong password." } } } },
-    "Сейф пуст" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Your vault is empty" } } } },
-    "Скоро здесь будут пароли и документы." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Passwords and documents will live here soon." } } } },
-    "Заблокировать" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Lock" } } } },
-    "Настройки" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Settings" } } } },
-    "Входить по %@?" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Unlock with %@?" } } } },
-    "Так сейф можно открывать быстро. Мастер-пароль всё равно понадобится после перезапуска и при изменении биометрии." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "This opens the vault quickly. The master password is still needed after a restart and when biometrics change." } } } },
-    "Включить %@" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Enable %@" } } } },
-    "Не сейчас" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Not now" } } } },
-    "Биометрия недоступна" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Biometrics unavailable" } } } },
-    "Чтобы входить по Face ID или Touch ID, настройте их и код-пароль в настройках iPhone. Пока вход только по мастер-паролю." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "To unlock with Face ID or Touch ID, set them and a passcode in iPhone Settings. For now, unlock with the master password." } } } },
-    "Продолжить" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Continue" } } } },
-    "Безопасность" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Security" } } } },
-    "Автоблокировка" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Auto-lock" } } } },
-    "Сразу" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Immediately" } } } },
-    "Через 1 минуту" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "After 1 minute" } } } },
-    "Через 5 минут" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "After 5 minutes" } } } },
-    "Через 15 минут" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "After 15 minutes" } } } },
-    "Сменить мастер-пароль" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Change master password" } } } },
-    "О приложении" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "About" } } } },
-    "Версия" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Version" } } } },
-    "Лицензия" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "License" } } } },
-    "Исходный код на GitHub" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Source code on GitHub" } } } },
-    "Готово" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Done" } } } },
-    "Недоступно: настройте биометрию и код-пароль в настройках iPhone." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Unavailable: set up biometrics and a passcode in iPhone Settings." } } } },
-    "Stash работает только на этом устройстве и не выходит в интернет. Ссылка выше откроется в Safari." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Stash runs only on this device and never goes online. The link above opens in Safari." } } } },
-    "Текущий пароль" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Current password" } } } },
-    "Текущий мастер-пароль" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Current master password" } } } },
-    "Новый пароль" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "New password" } } } },
-    "Новый мастер-пароль" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "New master password" } } } },
-    "Повторите новый пароль" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Repeat new password" } } } },
-    "Сменить пароль" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Change password" } } } },
-    "Смена пароля" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Change password" } } } },
-    "Разблокировать Stash" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Unlock Stash" } } } }
+  "sourceLanguage": "ru",
+  "version": "1.0",
+  "strings": {
+    "Stash": {
+      "shouldTranslate": false
+    },
+    "https://example.com": {
+      "shouldTranslate": false
+    },
+    "Добро пожаловать в Stash": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome to Stash"
+          }
+        }
+      }
+    },
+    "Менеджер паролей и документов, который работает полностью на вашем iPhone.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A password and document manager that runs entirely on your iPhone."
+          }
+        }
+      }
+    },
+    "Только на этом устройстве": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only on this device"
+          }
+        }
+      }
+    },
+    "Данные хранятся только на этом iPhone и не уходят в интернет. Никакой аналитики и трекинга.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your data stays only on this iPhone and never goes online. No analytics, no tracking."
+          }
+        }
+      }
+    },
+    "Мастер-пароль нельзя восстановить": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The master password can't be recovered"
+          }
+        }
+      }
+    },
+    "Если вы забудете мастер-пароль, данные пропадут безвозвратно. Мы не можем его сбросить.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If you forget your master password, the data is lost for good. We cannot reset it."
+          }
+        }
+      }
+    },
+    "Я понимаю": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I understand"
+          }
+        }
+      }
+    },
+    "Подтвердите, что вы понимаете: пароль нельзя восстановить": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm that you understand the password can't be recovered"
+          }
+        }
+      }
+    },
+    "Далее": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next"
+          }
+        }
+      }
+    },
+    "Создать мастер-пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create master password"
+          }
+        }
+      }
+    },
+    "Мастер-пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Master password"
+          }
+        }
+      }
+    },
+    "Повторите пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repeat password"
+          }
+        }
+      }
+    },
+    "Показать пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show password"
+          }
+        }
+      }
+    },
+    "Скрыть пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hide password"
+          }
+        }
+      }
+    },
+    "Пароли не совпадают": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passwords don't match"
+          }
+        }
+      }
+    },
+    "Минимум %lld символов": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "At least %lld characters"
+          }
+        }
+      }
+    },
+    "Создать сейф": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create vault"
+          }
+        }
+      }
+    },
+    "Мастер-пароль нельзя восстановить. Запомните его — без него данные не открыть.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The master password can't be recovered. Remember it — without it the data can't be opened."
+          }
+        }
+      }
+    },
+    "Новый сейф": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New vault"
+          }
+        }
+      }
+    },
+    "Создаём сейф…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Creating vault…"
+          }
+        }
+      }
+    },
+    "Слабый пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weak password"
+          }
+        }
+      }
+    },
+    "Всё равно создать": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create anyway"
+          }
+        }
+      }
+    },
+    "Отмена": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        }
+      }
+    },
+    "Этот пароль легко подобрать. Лучше сделать его длиннее и разнообразнее.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This password is easy to guess. Make it longer and more varied."
+          }
+        }
+      }
+    },
+    "Не удалось создать сейф": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't create the vault"
+          }
+        }
+      }
+    },
+    "ОК": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        }
+      }
+    },
+    "Надёжность": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strength"
+          }
+        }
+      }
+    },
+    "Этот пароль есть в списках утёкших паролей.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This password appears in breach lists."
+          }
+        }
+      }
+    },
+    "Очень слабый": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Very weak"
+          }
+        }
+      }
+    },
+    "Слабый": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weak"
+          }
+        }
+      }
+    },
+    "Средний": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fair"
+          }
+        }
+      }
+    },
+    "Надёжный": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strong"
+          }
+        }
+      }
+    },
+    "Очень надёжный": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Very strong"
+          }
+        }
+      }
+    },
+    "Надёжность пароля: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password strength: %@"
+          }
+        }
+      }
+    },
+    "Разблокировать": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlock"
+          }
+        }
+      }
+    },
+    "Войти по Face ID": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlock with Face ID"
+          }
+        }
+      }
+    },
+    "Войти по Touch ID": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlock with Touch ID"
+          }
+        }
+      }
+    },
+    "Войти по биометрии": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlock with biometrics"
+          }
+        }
+      }
+    },
+    "Неверный пароль.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wrong password."
+          }
+        }
+      }
+    },
+    "Разблокировать Stash": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlock Stash"
+          }
+        }
+      }
+    },
+    "Сейф пуст": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your vault is empty"
+          }
+        }
+      }
+    },
+    "Скоро здесь будут пароли и документы.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passwords and documents will live here soon."
+          }
+        }
+      }
+    },
+    "Заблокировать": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lock"
+          }
+        }
+      }
+    },
+    "Настройки": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
+          }
+        }
+      }
+    },
+    "Поиск": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search"
+          }
+        }
+      }
+    },
+    "Удалить запись?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete item?"
+          }
+        }
+      }
+    },
+    "Удалить": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
+        }
+      }
+    },
+    "Удалить запись": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete item"
+          }
+        }
+      }
+    },
+    "Запись «%@» будет удалена без возможности восстановить.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” will be deleted permanently."
+          }
+        }
+      }
+    },
+    "Ничего не найдено": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing found"
+          }
+        }
+      }
+    },
+    "Избранное": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favorites"
+          }
+        }
+      }
+    },
+    "Логины": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logins"
+          }
+        }
+      }
+    },
+    "Заметки": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes"
+          }
+        }
+      }
+    },
+    "Добавить первый пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add your first password"
+          }
+        }
+      }
+    },
+    "Все": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All"
+          }
+        }
+      }
+    },
+    "Фильтр": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter"
+          }
+        }
+      }
+    },
+    "Сортировка": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sort"
+          }
+        }
+      }
+    },
+    "По названию": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "By title"
+          }
+        }
+      }
+    },
+    "По дате изменения": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "By date modified"
+          }
+        }
+      }
+    },
+    "Логин": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Login"
+          }
+        }
+      }
+    },
+    "Заметка": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Note"
+          }
+        }
+      }
+    },
+    "Документ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Document"
+          }
+        }
+      }
+    },
+    "Добавить": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add"
+          }
+        }
+      }
+    },
+    "В избранное": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favorite"
+          }
+        }
+      }
+    },
+    "Убрать": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unfavorite"
+          }
+        }
+      }
+    },
+    "Фильтр и сортировка": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter and sort"
+          }
+        }
+      }
+    },
+    "Входить по %@?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlock with %@?"
+          }
+        }
+      }
+    },
+    "Так сейф можно открывать быстро. Мастер-пароль всё равно понадобится после перезапуска и при изменении биометрии.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This opens the vault quickly. The master password is still needed after a restart and when biometrics change."
+          }
+        }
+      }
+    },
+    "Включить %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enable %@"
+          }
+        }
+      }
+    },
+    "Не сейчас": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not now"
+          }
+        }
+      }
+    },
+    "Биометрия недоступна": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Biometrics unavailable"
+          }
+        }
+      }
+    },
+    "Чтобы входить по Face ID или Touch ID, настройте их и код-пароль в настройках iPhone. Пока вход только по мастер-паролю.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To unlock with Face ID or Touch ID, set them and a passcode in iPhone Settings. For now, unlock with the master password."
+          }
+        }
+      }
+    },
+    "Продолжить": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue"
+          }
+        }
+      }
+    },
+    "Безопасность": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Security"
+          }
+        }
+      }
+    },
+    "Автоблокировка": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-lock"
+          }
+        }
+      }
+    },
+    "Сразу": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Immediately"
+          }
+        }
+      }
+    },
+    "Через 1 минуту": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After 1 minute"
+          }
+        }
+      }
+    },
+    "Через 5 минут": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After 5 minutes"
+          }
+        }
+      }
+    },
+    "Через 15 минут": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After 15 minutes"
+          }
+        }
+      }
+    },
+    "Сменить мастер-пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change master password"
+          }
+        }
+      }
+    },
+    "О приложении": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About"
+          }
+        }
+      }
+    },
+    "Версия": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version"
+          }
+        }
+      }
+    },
+    "Лицензия": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "License"
+          }
+        }
+      }
+    },
+    "Исходный код на GitHub": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source code on GitHub"
+          }
+        }
+      }
+    },
+    "Готово": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        }
+      }
+    },
+    "Недоступно: настройте биометрию и код-пароль в настройках iPhone.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unavailable: set up biometrics and a passcode in iPhone Settings."
+          }
+        }
+      }
+    },
+    "Stash работает только на этом устройстве и не выходит в интернет. Ссылка выше откроется в Safari.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stash runs only on this device and never goes online. The link above opens in Safari."
+          }
+        }
+      }
+    },
+    "Текущий пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current password"
+          }
+        }
+      }
+    },
+    "Текущий мастер-пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current master password"
+          }
+        }
+      }
+    },
+    "Новый пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New password"
+          }
+        }
+      }
+    },
+    "Новый мастер-пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New master password"
+          }
+        }
+      }
+    },
+    "Повторите новый пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repeat new password"
+          }
+        }
+      }
+    },
+    "Сменить пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change password"
+          }
+        }
+      }
+    },
+    "Смена пароля": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change password"
+          }
+        }
+      }
+    },
+    "Текущий пароль неверный.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The current password is wrong."
+          }
+        }
+      }
+    },
+    "Не удалось сменить пароль.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't change the password."
+          }
+        }
+      }
+    },
+    "Название": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name"
+          }
+        }
+      }
+    },
+    "Логин или e-mail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Username or email"
+          }
+        }
+      }
+    },
+    "Пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password"
+          }
+        }
+      }
+    },
+    "Копировать": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy"
+          }
+        }
+      }
+    },
+    "Сгенерировать": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Generate"
+          }
+        }
+      }
+    },
+    "Этот пароль используется ещё в %lld записях": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This password is used in %lld other items"
+          }
+        }
+      }
+    },
+    "Адреса сайтов": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Website addresses"
+          }
+        }
+      }
+    },
+    "Открыть сайт": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open website"
+          }
+        }
+      }
+    },
+    "Добавить адрес": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add address"
+          }
+        }
+      }
+    },
+    "Прошлые пароли": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Past passwords"
+          }
+        }
+      }
+    },
+    "Показать прошлые пароли": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show past passwords"
+          }
+        }
+      }
+    },
+    "Копировать прошлый пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy past password"
+          }
+        }
+      }
+    },
+    "Новый логин": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New login"
+          }
+        }
+      }
+    },
+    "Скопировано. Очистится через 60 с": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copied. Clears in 60 s"
+          }
+        }
+      }
+    },
+    "Текст": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text"
+          }
+        }
+      }
+    },
+    "Текст заметки": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Note text"
+          }
+        }
+      }
+    },
+    "Новая заметка": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New note"
+          }
+        }
+      }
+    },
+    "Длина: %lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Length: %lld"
+          }
+        }
+      }
+    },
+    "Заглавные (A–Z)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uppercase (A–Z)"
+          }
+        }
+      }
+    },
+    "Строчные (a–z)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lowercase (a–z)"
+          }
+        }
+      }
+    },
+    "Цифры (0–9)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Digits (0–9)"
+          }
+        }
+      }
+    },
+    "Символы (!@#…)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Symbols (!@#…)"
+          }
+        }
+      }
+    },
+    "Исключить похожие (0/O, 1/l/I)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exclude look-alikes (0/O, 1/l/I)"
+          }
+        }
+      }
+    },
+    "Сгенерировать заново": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regenerate"
+          }
+        }
+      }
+    },
+    "Генератор пароля": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password generator"
+          }
+        }
+      }
+    },
+    "Использовать": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use"
+          }
+        }
+      }
+    },
+    "Сгенерированный пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Generated password"
+          }
+        }
+      }
+    }
   }
 }
