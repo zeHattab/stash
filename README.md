@@ -1,5 +1,7 @@
 # Stash
 
+[![CI](https://github.com/zeHattab/stash/actions/workflows/ci.yml/badge.svg)](https://github.com/zeHattab/stash/actions/workflows/ci.yml)
+
 **Русский** · [English below](#english)
 
 Stash — нативный менеджер паролей и личных документов для iPhone. Открытый код.
@@ -23,7 +25,8 @@ Stash — нативный менеджер паролей и личных до�
 
 ## Требования
 
-- Xcode 16 или новее (язык Swift 6).
+- Xcode 26 или новее (язык Swift 6, SDK iOS 26). С апреля 2026 App Store принимает
+  только сборки из Xcode 26 / iOS 26 SDK.
 - iOS 17.0+, только iPhone.
 
 > На этом этапе (заход 1) в репозитории — только каркас: точки входа, пустой общий
@@ -45,6 +48,12 @@ xcodebuild -scheme StashCore \
 Проект собирается командой `xcodebuild` без ручных действий в Xcode. Для запуска
 на устройстве задайте свою команду разработчика (`DEVELOPMENT_TEAM`) и
 App Group `group.com.portie24.stash` в своём аккаунте Apple Developer.
+
+**Локально нужен Xcode 26+.** На более старом Xcode (например, Xcode 14 на macOS
+Ventura) проект не собрать: не хватает компилятора Swift 6 и SDK iOS 17/26. Поэтому
+вся сборка и тесты идут в [GitHub Actions](https://github.com/zeHattab/stash/actions/workflows/ci.yml)
+на macOS-раннерах с Xcode 26 (см. `.github/workflows/ci.yml`). Публикация в
+TestFlight — через `.github/workflows/testflight.yml` (запускается вручную).
 
 ## Структура
 
@@ -91,7 +100,8 @@ These rules hold everywhere in the project, always:
 
 ### Requirements
 
-- Xcode 16 or newer (Swift 6 language mode).
+- Xcode 26 or newer (Swift 6 language mode, iOS 26 SDK). Since April 2026 the App
+  Store only accepts builds made with Xcode 26 / the iOS 26 SDK.
 - iOS 17.0+, iPhone only.
 
 > At this stage (milestone 1) the repository contains only the scaffold: entry
@@ -113,6 +123,12 @@ xcodebuild -scheme StashCore \
 The project builds with plain `xcodebuild`, no manual steps in Xcode. To run on a
 device, set your own `DEVELOPMENT_TEAM` and register the App Group
 `group.com.portie24.stash` in your Apple Developer account.
+
+**You need Xcode 26+ locally.** Older Xcode (e.g. Xcode 14 on macOS Ventura) cannot
+build the project — it lacks the Swift 6 compiler and the iOS 17/26 SDK. All builds
+and tests therefore run in [GitHub Actions](https://github.com/zeHattab/stash/actions/workflows/ci.yml)
+on macOS runners with Xcode 26 (see `.github/workflows/ci.yml`). TestFlight releases
+go through `.github/workflows/testflight.yml` (triggered manually).
 
 ### Layout
 
