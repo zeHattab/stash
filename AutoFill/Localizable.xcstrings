@@ -1,0 +1,18 @@
+{
+  "sourceLanguage" : "ru",
+  "strings" : {
+    "Отмена" : {
+      "comment" : "Кнопка закрытия заглушки расширения AutoFill",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

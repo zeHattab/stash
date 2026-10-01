@@ -1,0 +1,18 @@
+{
+  "sourceLanguage" : "ru",
+  "strings" : {
+    "Stash — скоро здесь будет ваш сейф" : {
+      "comment" : "Заглушка корневого экрана первого захода",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stash — your vault, coming soon"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

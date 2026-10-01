@@ -1,0 +1,753 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+		000000000000000000000001 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StashApp.swift; sourceTree = "<group>";};
+		000000000000000000000002 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>";};
+		000000000000000000000003 = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>";};
+		000000000000000000000004 = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Stash.entitlements; sourceTree = "<group>";};
+		000000000000000000000005 = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>";};
+		000000000000000000000006 = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>";};
+		000000000000000000000007 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialProviderViewController.swift; sourceTree = "<group>";};
+		000000000000000000000008 = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>";};
+		000000000000000000000009 = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StashAutoFill.entitlements; sourceTree = "<group>";};
+		00000000000000000000000A = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>";};
+		00000000000000000000000B = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>";};
+		00000000000000000000000C = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StashCore.swift; sourceTree = "<group>";};
+		00000000000000000000000D = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StashCoreTests.swift; sourceTree = "<group>";};
+		00000000000000000000000E = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stash.app; sourceTree = BUILT_PRODUCTS_DIR;};
+		00000000000000000000000F = {isa = PBXFileReference; explicitFileType = wrapper.app-extension; includeInIndex = 0; path = StashAutoFill.appex; sourceTree = BUILT_PRODUCTS_DIR;};
+		000000000000000000000010 = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StashCore.framework; sourceTree = BUILT_PRODUCTS_DIR;};
+		000000000000000000000011 = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StashCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR;};
+		000000000000000000000012 = {isa = PBXBuildFile; fileRef = 000000000000000000000001;};
+		000000000000000000000013 = {isa = PBXBuildFile; fileRef = 000000000000000000000002;};
+		000000000000000000000014 = {isa = PBXBuildFile; fileRef = 000000000000000000000005;};
+		000000000000000000000015 = {isa = PBXBuildFile; fileRef = 000000000000000000000006;};
+		000000000000000000000016 = {isa = PBXBuildFile; fileRef = 000000000000000000000007;};
+		000000000000000000000017 = {isa = PBXBuildFile; fileRef = 00000000000000000000000A;};
+		000000000000000000000018 = {isa = PBXBuildFile; fileRef = 00000000000000000000000B;};
+		000000000000000000000019 = {isa = PBXBuildFile; fileRef = 00000000000000000000000C;};
+		00000000000000000000001A = {isa = PBXBuildFile; fileRef = 00000000000000000000000D;};
+		00000000000000000000001B = {isa = PBXBuildFile; fileRef = 000000000000000000000010;};
+		00000000000000000000001C = {isa = PBXBuildFile; fileRef = 000000000000000000000010;};
+		00000000000000000000001D = {isa = PBXBuildFile; fileRef = 000000000000000000000010;};
+		00000000000000000000001E = {isa = PBXBuildFile; fileRef = 000000000000000000000010; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); };};
+		00000000000000000000001F = {isa = PBXBuildFile; fileRef = 00000000000000000000000F; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); };};
+		000000000000000000000020 = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000005,
+				000000000000000000000006,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		000000000000000000000021 = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000001,
+				000000000000000000000002,
+				000000000000000000000003,
+				000000000000000000000004,
+				000000000000000000000020,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		000000000000000000000022 = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000007,
+				000000000000000000000008,
+				000000000000000000000009,
+				00000000000000000000000A,
+				00000000000000000000000B,
+			);
+			path = AutoFill;
+			sourceTree = "<group>";
+		};
+		000000000000000000000023 = {
+			isa = PBXGroup;
+			children = (
+				00000000000000000000000C,
+			);
+			path = StashCore;
+			sourceTree = "<group>";
+		};
+		000000000000000000000024 = {
+			isa = PBXGroup;
+			children = (
+				00000000000000000000000D,
+			);
+			path = StashCoreTests;
+			sourceTree = "<group>";
+		};
+		000000000000000000000025 = {
+			isa = PBXGroup;
+			children = (
+				00000000000000000000000E,
+				00000000000000000000000F,
+				000000000000000000000010,
+				000000000000000000000011,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		000000000000000000000026 = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000021,
+				000000000000000000000022,
+				000000000000000000000023,
+				000000000000000000000024,
+				000000000000000000000025,
+			);
+			sourceTree = "<group>";
+		};
+		000000000000000000000027 = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				000000000000000000000012,
+				000000000000000000000013,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		000000000000000000000028 = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00000000000000000000001B,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		000000000000000000000029 = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				000000000000000000000014,
+				000000000000000000000015,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		00000000000000000000002A = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00000000000000000000001E,
+			);
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		00000000000000000000002B = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00000000000000000000001F,
+			);
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		00000000000000000000002C = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				000000000000000000000016,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		00000000000000000000002D = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00000000000000000000001C,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		00000000000000000000002E = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				000000000000000000000017,
+				000000000000000000000018,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		00000000000000000000002F = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		000000000000000000000030 = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				000000000000000000000019,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		000000000000000000000031 = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		000000000000000000000032 = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		000000000000000000000033 = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00000000000000000000001A,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		000000000000000000000034 = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00000000000000000000001D,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		000000000000000000000035 = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		000000000000000000000036 = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 000000000000000000000037;
+			proxyType = 1;
+			remoteGlobalIDString = 000000000000000000000038;
+			remoteInfo = StashAutoFill;
+		};
+		000000000000000000000037 = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					000000000000000000000050 = {
+						CreatedOnToolsVersion = 16.0;
+						ProvisioningStyle = Automatic;
+					};
+					000000000000000000000038 = {
+						CreatedOnToolsVersion = 16.0;
+						ProvisioningStyle = Automatic;
+					};
+					00000000000000000000003B = {
+						CreatedOnToolsVersion = 16.0;
+						ProvisioningStyle = Automatic;
+					};
+					000000000000000000000051 = {
+						CreatedOnToolsVersion = 16.0;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 000000000000000000000043;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = ru;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				ru,
+			);
+			mainGroup = 000000000000000000000026;
+			productRefGroup = 000000000000000000000025;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				000000000000000000000050,
+				000000000000000000000038,
+				00000000000000000000003B,
+				000000000000000000000051,
+			);
+		};
+		000000000000000000000038 = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 000000000000000000000049;
+			buildPhases = (
+				00000000000000000000002C,
+				00000000000000000000002D,
+				00000000000000000000002E,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				00000000000000000000003E,
+			);
+			name = StashAutoFill;
+			productName = StashAutoFill;
+			productReference = 00000000000000000000000F;
+			productType = "com.apple.product-type.app-extension";
+		};
+		000000000000000000000039 = {
+			isa = PBXTargetDependency;
+			target = 000000000000000000000038;
+			targetProxy = 000000000000000000000036;
+		};
+		00000000000000000000003A = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 000000000000000000000037;
+			proxyType = 1;
+			remoteGlobalIDString = 00000000000000000000003B;
+			remoteInfo = StashCore;
+		};
+		00000000000000000000003B = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 00000000000000000000004C;
+			buildPhases = (
+				00000000000000000000002F,
+				000000000000000000000030,
+				000000000000000000000031,
+				000000000000000000000032,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StashCore;
+			productName = StashCore;
+			productReference = 000000000000000000000010;
+			productType = "com.apple.product-type.framework";
+		};
+		00000000000000000000003C = {
+			isa = PBXTargetDependency;
+			target = 00000000000000000000003B;
+			targetProxy = 00000000000000000000003A;
+		};
+		00000000000000000000003D = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 000000000000000000000037;
+			proxyType = 1;
+			remoteGlobalIDString = 00000000000000000000003B;
+			remoteInfo = StashCore;
+		};
+		00000000000000000000003E = {
+			isa = PBXTargetDependency;
+			target = 00000000000000000000003B;
+			targetProxy = 00000000000000000000003D;
+		};
+		00000000000000000000003F = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 000000000000000000000037;
+			proxyType = 1;
+			remoteGlobalIDString = 00000000000000000000003B;
+			remoteInfo = StashCore;
+		};
+		000000000000000000000040 = {
+			isa = PBXTargetDependency;
+			target = 00000000000000000000003B;
+			targetProxy = 00000000000000000000003F;
+		};
+		000000000000000000000041 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+				"DEBUG=1",
+				"$(inherited)",
+			);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		000000000000000000000042 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		000000000000000000000043 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				000000000000000000000041,
+				000000000000000000000042,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		000000000000000000000044 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = App/Stash.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+				"$(inherited)",
+				"@executable_path/Frameworks",
+			);
+				MARKETING_VERSION = 0.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		000000000000000000000045 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = App/Stash.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+				"$(inherited)",
+				"@executable_path/Frameworks",
+			);
+				MARKETING_VERSION = 0.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		000000000000000000000046 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				000000000000000000000044,
+				000000000000000000000045,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		000000000000000000000047 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = AutoFill/StashAutoFill.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = AutoFill/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+				"$(inherited)",
+				"@executable_path/Frameworks",
+				"@executable_path/../../Frameworks",
+			);
+				MARKETING_VERSION = 0.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash.autofill;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		000000000000000000000048 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = AutoFill/StashAutoFill.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = AutoFill/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+				"$(inherited)",
+				"@executable_path/Frameworks",
+				"@executable_path/../../Frameworks",
+			);
+				MARKETING_VERSION = 0.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash.autofill;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		000000000000000000000049 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				000000000000000000000047,
+				000000000000000000000048,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		00000000000000000000004A = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+				"$(inherited)",
+				"@executable_path/Frameworks",
+				"@loader_path/Frameworks",
+			);
+				MARKETING_VERSION = 0.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash.core;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		00000000000000000000004B = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+				"$(inherited)",
+				"@executable_path/Frameworks",
+				"@loader_path/Frameworks",
+			);
+				MARKETING_VERSION = 0.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash.core;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		00000000000000000000004C = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				00000000000000000000004A,
+				00000000000000000000004B,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		00000000000000000000004D = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+				"$(inherited)",
+				"@executable_path/Frameworks",
+				"@loader_path/Frameworks",
+			);
+				MARKETING_VERSION = 0.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash.StashCoreTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		00000000000000000000004E = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+				"$(inherited)",
+				"@executable_path/Frameworks",
+				"@loader_path/Frameworks",
+			);
+				MARKETING_VERSION = 0.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash.StashCoreTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		00000000000000000000004F = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				00000000000000000000004D,
+				00000000000000000000004E,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		000000000000000000000050 = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 000000000000000000000046;
+			buildPhases = (
+				000000000000000000000027,
+				000000000000000000000028,
+				000000000000000000000029,
+				00000000000000000000002A,
+				00000000000000000000002B,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				000000000000000000000039,
+				00000000000000000000003C,
+			);
+			name = Stash;
+			productName = Stash;
+			productReference = 00000000000000000000000E;
+			productType = "com.apple.product-type.application";
+		};
+		000000000000000000000051 = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 00000000000000000000004F;
+			buildPhases = (
+				000000000000000000000033,
+				000000000000000000000034,
+				000000000000000000000035,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				000000000000000000000040,
+			);
+			name = StashCoreTests;
+			productName = StashCoreTests;
+			productReference = 000000000000000000000011;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+	};
+	rootObject = 000000000000000000000037;
+}
