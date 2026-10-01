@@ -24,10 +24,7 @@ jobs:
           set -euo pipefail
           missing=""
           for v in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8_BASE64 APPLE_TEAM_ID; do
-            val="${!v:-}"
-            # печатаем только ДЛИНУ (не значение) — для диагностики пустого секрета
-            echo "$v: length=${#val}"
-            if [ -z "$val" ]; then missing="$missing $v"; fi
+            if [ -z "${!v:-}" ]; then missing="$missing $v"; fi
           done
           if [ -n "$missing" ]; then
             echo "::error::Не заданы секреты репозитория:$missing"
