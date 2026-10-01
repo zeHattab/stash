@@ -1,5 +1,6 @@
 import Foundation
 import Security
+import LocalAuthentication
 
 /// Хранит Vault Key в Keychain под защитой биометрии.
 /// kSecClassGenericPassword + SecAccessControl(.biometryCurrentSet),
@@ -54,6 +55,8 @@ public struct KeychainVaultKeyStore: VaultKeyKeychain {
         let accessGroup = self.accessGroup
         return try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.global(qos: .userInitiated).async {
+                let context = LAContext()
+                context.localizedReason = reason
                 var query: [String: Any] = [
                     kSecClass as String: kSecClassGenericPassword,
                     kSecAttrService as String: service,
@@ -61,7 +64,7 @@ public struct KeychainVaultKeyStore: VaultKeyKeychain {
                     kSecAttrSynchronizable as String: false,
                     kSecReturnData as String: true,
                     kSecMatchLimit as String: kSecMatchLimitOne,
-                    kSecUseOperationPrompt as String: reason,
+                    kSecUseAuthenticationContext as String: context,
                 ]
                 if let accessGroup { query[kSecAttrAccessGroup as String] = accessGroup }
                 var result: CFTypeRef?
@@ -92,12 +95,14 @@ public struct KeychainVaultKeyStore: VaultKeyKeychain {
     }
 
     public func hasKey() -> Bool {
+        let context = LAContext()
+        context.interactionNotAllowed = true
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: account,
             kSecMatchLimit as String: kSecMatchLimitOne,
-            kSecUseAuthenticationUI as String: kSecUseAuthenticationUIFail,
+            kSecUseAuthenticationContext as String: context,
         ]
         if let accessGroup { query[kSecAttrAccessGroup as String] = accessGroup }
         let status = SecItemCopyMatching(query as CFDictionary, nil)

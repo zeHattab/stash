@@ -26,6 +26,11 @@ public final class AppModel {
     public private(set) var items: [VaultItem] = []
     public private(set) var sortOrder: VaultSortOrder
     public private(set) var generatorOptions: PasswordGeneratorOptions
+    public private(set) var lockReason: LockReason = .coldStart
+    /// Текущая сессия — ложный сейф. Признак берётся из зашифрованного payload.
+    public private(set) var isDecoySession = false
+    /// Включён ли «Второй пароль» в текущем сейфе (для текущего payload).
+    public private(set) var secondPasswordEnabled = false
 
     public var biometryType: BiometryKind { biometrics.biometryType }
     public var isBiometricAvailable: Bool { biometrics.isAvailable }
@@ -86,7 +91,17 @@ public final class AppModel {
 
     /// Определяет стартовую фазу: есть файл сейфа → экран блокировки, иначе онбординг.
     public func start() async {
-        phase = await store.exists() ? .locked : .onboarding
+        if await store.exists() {
+            phase = .locked
+            lockReason = .coldStart
+        } else {
+            phase = .onboarding
+        }
+    }
+
+    private func refreshSessionFlags() async {
+        isDecoySession = await store.currentIsDecoy()
+        secondPasswordEnabled = await store.currentSecondPasswordEnabled()
     }
 
     // MARK: - Онбординг
@@ -95,6 +110,7 @@ public final class AppModel {
         try await store.create(masterPassword: masterPassword)
         resetFailures()
         await reloadItems()
+        await refreshSessionFlags()
         phase = .unlocked
         pendingBiometricOffer = true
     }
@@ -136,6 +152,7 @@ public final class AppModel {
         }
         resetFailures()
         await reloadItems()
+        await refreshSessionFlags()
         phase = .unlocked
     }
 
@@ -164,13 +181,17 @@ public final class AppModel {
         }
         resetFailures()
         await reloadItems()
+        await refreshSessionFlags()
         phase = .unlocked
     }
 
-    public func lock() async {
+    public func lock(reason: LockReason = .manual) async {
         await store.lock()
         items = []
+        isDecoySession = false
+        secondPasswordEnabled = false
         backgroundedAt = nil
+        lockReason = reason
         if phase == .unlocked { phase = .locked }
     }
 
@@ -230,6 +251,57 @@ public final class AppModel {
         }
     }
 
+    // MARK: - Второй пароль
+
+    public func enableSecondPassword(_ second: String) async throws {
+        if isDecoySession {
+            // Из ложного сейфа: сценарий проходит, но другой слот не трогаем.
+            try await store.setSecondPasswordFlag(true)
+            secondPasswordEnabled = true
+        } else {
+            try await store.enableSecondVault(secondPassword: second,
+                                              sampleItems: Self.decoySamples(now: now()))
+            // При включённой функции Face ID не хранит VK — удаляем запись.
+            disableBiometrics()
+            secondPasswordEnabled = true
+        }
+    }
+
+    public func disableSecondPassword(master: String) async throws {
+        if isDecoySession {
+            try await store.setSecondPasswordFlag(false)
+            secondPasswordEnabled = false
+        } else {
+            try await store.disableSecondVault(masterPassword: master)
+            secondPasswordEnabled = false
+        }
+    }
+
+    /// Открыть только что созданный ложный сейф (пароль передаётся из формы).
+    public func openDecoy(second: String) async throws {
+        try await store.unlock(masterPassword: second)
+        resetFailures()
+        await reloadItems()
+        await refreshSessionFlags()
+        phase = .unlocked
+    }
+
+    static func decoySamples(now: Date) -> [VaultItem] {
+        [
+            VaultItem(kind: .login(username: "ivan.petrov@example.com", password: "Qwerty!2024",
+                                   urls: ["https://mail.example.com"], totpSecret: nil),
+                      title: "Почта", createdAt: now, updatedAt: now),
+            VaultItem(kind: .login(username: "ivan_p", password: "Shop-7788",
+                                   urls: ["https://shop.example.com"], totpSecret: nil),
+                      title: "Магазин", createdAt: now, updatedAt: now),
+            VaultItem(kind: .secureNote, title: "Wi-Fi дома", createdAt: now, updatedAt: now,
+                      notes: "Сеть: Home-2G\nПароль: dom12345"),
+            VaultItem(kind: .login(username: "ivanp", password: "Forum_9900",
+                                   urls: ["https://forum.example.com"], totpSecret: nil),
+                      title: "Форум", createdAt: now, updatedAt: now),
+        ]
+    }
+
     // MARK: - Автоблокировка
 
     public func setAutoLockTimeout(_ timeout: AutoLockTimeout) {
@@ -241,7 +313,7 @@ public final class AppModel {
     public func didEnterBackground(at date: Date) async {
         guard phase == .unlocked else { return }
         if autoLockTimeout == .immediately {
-            await lock()
+            await lock(reason: .background)
         } else {
             backgroundedAt = date
         }
@@ -254,9 +326,15 @@ public final class AppModel {
             return
         }
         if date.timeIntervalSince(since) >= autoLockTimeout.seconds {
-            await lock()
+            await lock(reason: .background)
         }
         backgroundedAt = nil
+    }
+
+    /// Блокировка при блокировке самого iPhone (protectedDataWillBecomeUnavailable).
+    public func deviceDidLock() async {
+        guard phase == .unlocked else { return }
+        await lock(reason: .deviceLocked)
     }
 
     // MARK: - Внутреннее

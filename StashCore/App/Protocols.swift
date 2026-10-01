@@ -55,6 +55,14 @@ public enum AutoLockTimeout: String, CaseIterable, Sendable, Codable {
     }
 }
 
+/// Почему сейф заблокирован — от этого зависит, запрашивать ли Face ID автоматически.
+public enum LockReason: Sendable, Equatable {
+    case manual        // пользователь нажал «Заблокировать» — Face ID НЕ запрашивать автоматически
+    case background    // ушли в фон дольше таймера
+    case deviceLocked  // заблокировали сам iPhone
+    case coldStart     // первый запуск
+}
+
 /// Порядок сортировки списка записей (выбор запоминается).
 public enum VaultSortOrder: String, CaseIterable, Sendable, Codable {
     case title

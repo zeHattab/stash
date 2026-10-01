@@ -1,0 +1,140 @@
+import XCTest
+import CryptoKit
+@testable import StashCore
+
+final class SecondVaultTests: XCTestCase {
+
+    private func makeStore() -> (VaultStore, URL) {
+        let dir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("stash-2nd-\(UUID().uuidString)", isDirectory: true)
+        let url = dir.appendingPathComponent("vault.stash")
+        return (VaultStore(configuration: .init(fileURL: url, kdfIterations: 1_000)), url)
+    }
+
+    private func login(_ title: String, pw: String) -> VaultItem {
+        VaultItem(kind: .login(username: "u", password: pw, urls: [], totpSecret: nil), title: title)
+    }
+
+    private func samples() -> [VaultItem] {
+        [login("Decoy1", pw: "d1"), login("Decoy2", pw: "d2")]
+    }
+
+    private func expect(_ expected: VaultError, _ body: () async throws -> Void) async {
+        do { try await body(); XCTFail("ожидалась \(expected)") }
+        catch let e as VaultError { XCTAssertEqual(e, expected) }
+        catch { XCTFail("неожиданная ошибка \(error)") }
+    }
+
+    func testBothPasswordsOpenOwnVaults() async throws {
+        let (store, _) = makeStore()
+        try await store.create(masterPassword: "master-pass-1")
+        let real = login("RealBank", pw: "real-secret")
+        try await store.upsert(real)
+        try await store.enableSecondVault(secondPassword: "decoy-pass-2", sampleItems: samples())
+
+        await store.lock()
+        try await store.unlock(masterPassword: "master-pass-1")
+        var opened = try await store.items()
+        XCTAssertEqual(opened, [real])
+        XCTAssertFalse(await store.currentIsDecoy())
+        XCTAssertTrue(await store.currentSecondPasswordEnabled())
+
+        await store.lock()
+        try await store.unlock(masterPassword: "decoy-pass-2")
+        opened = try await store.items()
+        XCTAssertEqual(opened.map(\.title), ["Decoy1", "Decoy2"])
+        XCTAssertTrue(await store.currentIsDecoy())
+        XCTAssertFalse(await store.currentSecondPasswordEnabled())
+    }
+
+    func testSecondPasswordMustDiffer() async throws {
+        let (store, _) = makeStore()
+        try await store.create(masterPassword: "same-pass")
+        await expect(.secondPasswordMustDiffer) {
+            try await store.enableSecondVault(secondPassword: "same-pass", sampleItems: self.samples())
+        }
+    }
+
+    func testSlotsSameSizeRegardlessOfData() async throws {
+        let (store, url) = makeStore()
+        try await store.create(masterPassword: "m")
+        for i in 0..<30 { try await store.upsert(login("Item\(i)", pw: "p\(i)")) }
+        let c = try VaultContainer.parse(Data(contentsOf: url))
+        XCTAssertEqual(c.slots[0].count, c.slots[1].count)
+        XCTAssertEqual(c.slots[0].count, c.slotSize)
+    }
+
+    func testUnusedSlotLooksRandom() async throws {
+        let (store, url) = makeStore()
+        try await store.create(masterPassword: "m")
+        let c = try VaultContainer.parse(Data(contentsOf: url))
+        for slot in c.slots {
+            // И занятый (шифротекст), и пустой (случайный) слот — высокое разнообразие байтов.
+            XCTAssertGreaterThan(Set(slot).count, 200)
+        }
+    }
+
+    func testRealVaultRandomPosition() async throws {
+        var seen: Set<Int> = []
+        for _ in 0..<30 {
+            let (store, _) = makeStore()
+            try await store.create(masterPassword: "m")
+            if let idx = await store.openedSlotForTesting() { seen.insert(idx) }
+        }
+        XCTAssertEqual(seen, [0, 1], "настоящий сейф должен попадать в оба слота")
+    }
+
+    func testDecoyOperationsNeverChangeRealSlot() async throws {
+        let (store, url) = makeStore()
+        try await store.create(masterPassword: "master")
+        try await store.upsert(login("Real", pw: "secret"))
+        try await store.enableSecondVault(secondPassword: "decoy", sampleItems: samples())
+
+        // Узнаём индекс настоящего слота и сохраняем его байты.
+        await store.lock()
+        try await store.unlock(masterPassword: "master")
+        let realIndex = try XCTUnwrap(await store.openedSlotForTesting())
+        let before = try VaultContainer.parse(Data(contentsOf: url)).slots[realIndex]
+
+        // Все возможные операции из ложного сейфа.
+        await store.lock()
+        try await store.unlock(masterPassword: "decoy")
+        try await store.setSecondPasswordFlag(true)
+        try await store.setSecondPasswordFlag(false)
+        try await store.changeMasterPassword(old: "decoy", new: "decoy2")
+        for item in try await store.items() { try await store.delete(id: item.id) }
+
+        let after = try VaultContainer.parse(Data(contentsOf: url)).slots[realIndex]
+        XCTAssertEqual(before, after, "операции из ложного сейфа не должны менять настоящий слот")
+
+        // Настоящий сейф по-прежнему открывается мастер-паролем.
+        await store.lock()
+        try await store.unlock(masterPassword: "master")
+        XCTAssertEqual(try await store.items().map(\.title), ["Real"])
+    }
+
+    func testDisableWipesSecondSlot() async throws {
+        let (store, _) = makeStore()
+        try await store.create(masterPassword: "master")
+        try await store.enableSecondVault(secondPassword: "decoy", sampleItems: samples())
+
+        await store.lock()
+        try await store.unlock(masterPassword: "master")
+        try await store.disableSecondVault(masterPassword: "master")
+
+        await store.lock()
+        await expect(.wrongPassword) { try await store.unlock(masterPassword: "decoy") }
+
+        await store.lock()
+        try await store.unlock(masterPassword: "master")
+        XCTAssertFalse(await store.currentSecondPasswordEnabled())
+    }
+
+    func testWrongPasswordWithSecondEnabled() async throws {
+        let (store, _) = makeStore()
+        try await store.create(masterPassword: "master")
+        try await store.enableSecondVault(secondPassword: "decoy", sampleItems: samples())
+        await store.lock()
+        await expect(.wrongPassword) { try await store.unlock(masterPassword: "nope") }
+    }
+}

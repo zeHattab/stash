@@ -54,8 +54,9 @@ struct LockView: View {
             Spacer()
         }
         .task {
-            // Сразу предлагаем биометрию при появлении экрана блокировки.
-            if model.isBiometricEnabled && !didAutoPrompt {
+            // Автозапрос Face ID — только при возврате из фона / блокировке устройства /
+            // холодном старте. После РУЧНОЙ блокировки не запрашиваем.
+            if model.isBiometricEnabled, model.lockReason != .manual, !didAutoPrompt {
                 didAutoPrompt = true
                 unlockWithBiometrics()
             }
@@ -64,9 +65,9 @@ struct LockView: View {
 
     private var biometricLabel: String {
         switch model.biometryType {
-        case .faceID: return "Войти по Face ID"
-        case .touchID: return "Войти по Touch ID"
-        case .none: return "Войти по биометрии"
+        case .faceID: return "Открыть с Face ID"
+        case .touchID: return "Открыть с Touch ID"
+        case .none: return "Открыть с биометрией"
         }
     }
 

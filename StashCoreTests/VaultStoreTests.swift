@@ -26,12 +26,16 @@ final class VaultStoreTests: XCTestCase {
         )
     }
 
-    private func readFile(_ url: URL) throws -> VaultFileOnDisk {
-        try JSONDecoder().decode(VaultFileOnDisk.self, from: Data(contentsOf: url))
-    }
-
-    private func writeFile(_ file: VaultFileOnDisk, to url: URL) throws {
-        try JSONEncoder().encode(file).write(to: url)
+    /// Портит байты в диапазоне [lo, hi) ОБОИХ слотов контейнера v2 и пишет обратно.
+    private func tamperBothSlots(_ url: URL, range: Range<Int>) throws {
+        let container = try VaultContainer.parse(Data(contentsOf: url))
+        var s0 = [UInt8](container.slots[0])
+        var s1 = [UInt8](container.slots[1])
+        for i in range { s0[i] ^= 0xFF; s1[i] ^= 0xFF }
+        let data = VaultContainer.serialize(iterations: container.iterations,
+                                            slotSize: container.slotSize,
+                                            slot0: Data(s0), slot1: Data(s1))
+        try data.write(to: url)
     }
 
     private func expectVaultError(
@@ -86,11 +90,8 @@ final class VaultStoreTests: XCTestCase {
         try await store.upsert(sampleLogin())
         await store.lock()
 
-        var file = try readFile(url)
-        var ct = file.ciphertext
-        ct[ct.startIndex] ^= 0xFF
-        file.ciphertext = ct
-        try writeFile(file, to: url)
+        // Байты в области шифротекста (после заголовка слота) — настоящий слот испортится.
+        try tamperBothSlots(url, range: 90..<140)
 
         await expectVaultError(.corrupted) { try await store.unlock(masterPassword: "pw") }
     }
@@ -101,13 +102,8 @@ final class VaultStoreTests: XCTestCase {
         try await store.upsert(sampleLogin())
         await store.lock()
 
-        var file = try readFile(url)
-        var header = try JSONDecoder().decode(VaultHeader.self, from: file.header)
-        var wrapped = header.wrappedVaultKey
-        wrapped[wrapped.startIndex] ^= 0xFF
-        header.wrappedVaultKey = wrapped
-        file.header = try JSONEncoder().encode(header)
-        try writeFile(file, to: url)
+        // Байты соли+обёрнутого VK (заголовок слота) — ни один слот не должен открыться.
+        try tamperBothSlots(url, range: 4..<80)
 
         do {
             try await store.unlock(masterPassword: "pw")
@@ -166,13 +162,12 @@ final class VaultStoreTests: XCTestCase {
         try await store.create(masterPassword: "pw")
         await store.lock()
 
-        var file = try readFile(url)
-        var header = try JSONDecoder().decode(VaultHeader.self, from: file.header)
-        header.formatVersion = 999
-        file.header = try JSONEncoder().encode(header)
-        try writeFile(file, to: url)
+        // Патчим байт версии во внешнем заголовке контейнера (offset 5).
+        var bytes = [UInt8](try Data(contentsOf: url))
+        bytes[5] = 99
+        try Data(bytes).write(to: url)
 
-        await expectVaultError(.unsupportedVersion(999)) {
+        await expectVaultError(.unsupportedVersion(99)) {
             try await store.unlock(masterPassword: "pw")
         }
     }

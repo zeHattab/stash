@@ -16,4 +16,6 @@ public enum VaultError: Error, Equatable, Sendable {
     case alreadyExists
     /// Файл хранилища отсутствует.
     case notFound
+    /// Второй пароль совпадает с мастер-паролем (не допускается).
+    case secondPasswordMustDiffer
 }

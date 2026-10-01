@@ -1,4 +1,6 @@
 import SwiftUI
+import UIKit
+import Combine
 import StashCore
 
 struct RootView: View {
@@ -28,6 +30,11 @@ struct RootView: View {
             default:
                 break
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(
+            for: UIApplication.protectedDataWillBecomeUnavailableNotification)) { _ in
+            // iPhone заблокировали — закрываем сейф сразу, независимо от таймера.
+            Task { await model.deviceDidLock() }
         }
     }
 }

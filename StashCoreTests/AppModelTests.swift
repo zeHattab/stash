@@ -148,4 +148,50 @@ final class AppModelTests: XCTestCase {
         try await model.unlockWithPassword(newPassword)
         XCTAssertEqual(model.phase, .unlocked)
     }
+
+    func testManualLockSetsManualReason() async throws {
+        let (model, _, _, _) = makeModel()
+        try await model.createVault(masterPassword: masterPassword)
+        await model.lock(reason: .manual)
+        XCTAssertEqual(model.phase, .locked)
+        XCTAssertEqual(model.lockReason, .manual)
+    }
+
+    func testBackgroundTimeoutSetsBackgroundReason() async throws {
+        let (model, _, _, clock) = makeModel()
+        try await model.createVault(masterPassword: masterPassword)
+        model.setAutoLockTimeout(.oneMinute)
+        await model.didEnterBackground(at: clock.now)
+        await model.willEnterForeground(at: clock.now.addingTimeInterval(61))
+        XCTAssertEqual(model.phase, .locked)
+        XCTAssertEqual(model.lockReason, .background)
+    }
+
+    func testDeviceLockSetsDeviceLockedReason() async throws {
+        let (model, _, _, _) = makeModel()
+        try await model.createVault(masterPassword: masterPassword)
+        await model.deviceDidLock()
+        XCTAssertEqual(model.phase, .locked)
+        XCTAssertEqual(model.lockReason, .deviceLocked)
+    }
+
+    func testColdStartReason() async throws {
+        let (model, _, _, _) = makeModel()
+        try await model.createVault(masterPassword: masterPassword)
+        await model.lock()
+        await model.start() // файл существует → холодный старт
+        XCTAssertEqual(model.phase, .locked)
+        XCTAssertEqual(model.lockReason, .coldStart)
+    }
+
+    func testEnableSecondPasswordDisablesBiometrics() async throws {
+        let (model, keychain, _, _) = makeModel(available: true)
+        try await model.createVault(masterPassword: masterPassword)
+        try await model.enableBiometrics()
+        XCTAssertNotNil(keychain.stored)
+        try await model.enableSecondPassword("a different decoy pass 7")
+        XCTAssertTrue(model.secondPasswordEnabled)
+        XCTAssertFalse(model.isBiometricEnabled)
+        XCTAssertNil(keychain.stored) // VK удалён из Keychain
+    }
 }

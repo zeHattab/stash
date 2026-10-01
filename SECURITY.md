@@ -93,6 +93,36 @@ Face ID. Прежнее поле `wrappedVaultKeyBiometric` из формата 
 - Сила защиты зависит от стойкости мастер-пароля: PBKDF2 замедляет перебор, но
   слабый пароль остаётся слабым.
 
+## Второй пароль (ложный сейф)
+
+Функция «Второй пароль» даёт правдоподобное отрицание: мастер-пароль открывает
+настоящий сейф, а отдельный второй пароль — ложный сейф с безобидными записями.
+
+**Как устроено.** Файл хранилища — контейнер из РОВНО ДВУХ слотов одинакового
+размера, у всех пользователей, включена функция или нет. Слот = соль + обёрнутый
+VK + шифротекст, добитые криптослучайными байтами до размера слота (кратно 64 КБ,
+оба слота одной ступени). Неиспользуемый слот заполнен случайными байтами и
+неотличим от занятого; магия/версия есть только во внешнем заголовке контейнера,
+общем для обоих слотов. Настоящий сейф при создании/миграции кладётся в случайный
+слот. Любой введённый пароль проверяется против обоих слотов (KDF по обеим солям
+выполняется всегда), открывается тот, что расшифровался; время ответа не зависит
+от того, какой слот подошёл. Признак «ложный» лежит только внутри зашифрованного
+payload ложного сейфа.
+
+**От чего защищает.** От давления «разблокируй и покажи»: вы вводите второй пароль,
+показывается ложный сейф, настоящий не раскрывается. От анализа файлов: по байтам
+на диске нельзя доказать, что второй (настоящий) сейф существует — второй слот
+выглядит как случайные данные.
+
+**От чего НЕ защищает.** От знающего атакующего, который в курсе функции и требует
+«второй пароль». От слежки за вводом (камера, плечо, кейлоггер). От взломанного
+устройства (вредонос, доступ к памяти разблокированного приложения). При включённой
+функции Face ID сам по себе сейф не открывает — всегда нужен пароль.
+
+**Почему ложный сейф нужно наполнить.** Пустой или явно фальшивый ложный сейф не
+убедителен. Поэтому при включении туда сразу кладутся несколько правдоподобных
+примеров — дополните их реалистичными записями.
+
 ---
 
 <a name="english"></a>
@@ -186,3 +216,34 @@ A wrong password and a corrupted file are reported differently.
 - `FileProtectionType.complete` applies on device; in the Simulator (CI) it is not enforced.
 - Strength depends on the master password: PBKDF2 slows brute force, but a weak
   password stays weak.
+
+## Second password (decoy vault)
+
+The "second password" feature provides plausible deniability: the master password
+opens the real vault, while a separate second password opens a decoy vault with
+harmless entries.
+
+**How it works.** The vault file is a container of EXACTLY TWO equal-size slots, for
+every user, whether the feature is on or off. A slot = salt + wrapped VK +
+ciphertext, padded with cryptographically random bytes to the slot size (a multiple
+of 64 KB; both slots always the same step). The unused slot is filled with random
+bytes and is indistinguishable from an occupied one; magic/version live only in the
+container's outer header, shared by both slots. The real vault is placed in a random
+slot at creation/migration. Any entered password is checked against both slots (the
+KDF runs fully over both salts), and whichever decrypts is opened; response time does
+not depend on which slot matched. The "decoy" marker lives only inside the decoy's
+encrypted payload.
+
+**What it protects against.** Coercion to "unlock and show": you enter the second
+password, the decoy opens, the real vault is not revealed. File analysis: the bytes
+on disk cannot prove a second (real) vault exists — the other slot looks like random
+data.
+
+**What it does NOT protect against.** A knowledgeable attacker aware of the feature
+who demands the "second password". Input surveillance (camera, shoulder, keylogger).
+A compromised device (malware, memory of the unlocked app). With the feature on, Face
+ID alone never opens the vault — a password is always required.
+
+**Why the decoy must be filled.** An empty or obviously fake decoy is unconvincing,
+so enabling the feature seeds a few believable sample entries — flesh them out with
+realistic records.

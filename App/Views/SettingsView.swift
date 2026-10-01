@@ -22,11 +22,8 @@ struct SettingsView: View {
             get: { model.isBiometricEnabled },
             set: { newValue in
                 Task {
-                    if newValue {
-                        try? await model.enableBiometrics()
-                    } else {
-                        model.disableBiometrics()
-                    }
+                    if newValue { try? await model.enableBiometrics() }
+                    else { model.disableBiometrics() }
                 }
             }
         )
@@ -48,6 +45,18 @@ struct SettingsView: View {
                         Text("Через 5 минут").tag(AutoLockTimeout.fiveMinutes)
                         Text("Через 15 минут").tag(AutoLockTimeout.fifteenMinutes)
                     }
+                    Text("При блокировке iPhone сейф закрывается сразу.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                    NavigationLink {
+                        SecondPasswordView(model: model)
+                    } label: {
+                        HStack {
+                            Text("Второй пароль")
+                            Spacer()
+                            Text(model.secondPasswordEnabled ? "Вкл" : "Выкл")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
                     NavigationLink("Сменить мастер-пароль") {
                         ChangePasswordView(model: model)
                     }
@@ -66,9 +75,7 @@ struct SettingsView: View {
             .navigationTitle("Настройки")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Готово") { dismiss() }
-                }
+                ToolbarItem(placement: .topBarTrailing) { Button("Готово") { dismiss() } }
             }
         }
     }
@@ -88,6 +95,7 @@ struct ChangePasswordView: View {
     @State private var oldPassword = ""
     @State private var newPassword = ""
     @State private var confirm = ""
+    @State private var reveal = false
     @State private var working = false
     @State private var errorText: String?
 
@@ -102,21 +110,18 @@ struct ChangePasswordView: View {
     var body: some View {
         Form {
             Section("Текущий пароль") {
-                SecureField("Текущий мастер-пароль", text: $oldPassword)
-                    .textContentType(.password)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
+                field("Текущий пароль", text: $oldPassword, isNew: false)
             }
             Section("Новый пароль") {
-                SecureField("Новый мастер-пароль", text: $newPassword)
-                    .textContentType(.newPassword)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
-                SecureField("Повторите новый пароль", text: $confirm)
-                    .textContentType(.newPassword)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
-                PasswordStrengthView(assessment: assessment)
+                field("Новый пароль", text: $newPassword, isNew: true)
+                field("Повторите новый пароль", text: $confirm, isNew: true)
+                Toggle("Показать пароль", isOn: $reveal)
+                if !newPassword.isEmpty {
+                    PasswordStrengthView(assessment: assessment)
+                }
+                if !confirm.isEmpty && newPassword != confirm {
+                    Text("Пароли не совпадают").font(.footnote).foregroundStyle(.red)
+                }
             }
             if let errorText {
                 Text(errorText).foregroundStyle(.red).font(.footnote)
@@ -131,6 +136,20 @@ struct ChangePasswordView: View {
         .navigationTitle("Смена пароля")
         .navigationBarTitleDisplayMode(.inline)
         .disabled(working)
+        .onChange(of: oldPassword) { _, _ in errorText = nil }
+        .onChange(of: newPassword) { _, _ in errorText = nil }
+        .onChange(of: confirm) { _, _ in errorText = nil }
+    }
+
+    @ViewBuilder
+    private func field(_ placeholder: LocalizedStringKey, text: Binding<String>, isNew: Bool) -> some View {
+        Group {
+            if reveal { TextField(placeholder, text: text) }
+            else { SecureField(placeholder, text: text) }
+        }
+        .textContentType(isNew ? .newPassword : .password)
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled()
     }
 
     private func submit() {
@@ -143,6 +162,7 @@ struct ChangePasswordView: View {
                 dismiss()
             } catch VaultError.wrongPassword {
                 errorText = "Текущий пароль неверный."
+                oldPassword = ""
             } catch {
                 errorText = "Не удалось сменить пароль."
             }

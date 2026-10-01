@@ -1237,6 +1237,226 @@
           }
         }
       }
+    },
+    "Открыть с Face ID": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open with Face ID"
+          }
+        }
+      }
+    },
+    "Открыть с Touch ID": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open with Touch ID"
+          }
+        }
+      }
+    },
+    "Открыть с биометрией": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open with biometrics"
+          }
+        }
+      }
+    },
+    "При блокировке iPhone сейф закрывается сразу.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The vault closes immediately when iPhone locks."
+          }
+        }
+      }
+    },
+    "Второй пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Second password"
+          }
+        }
+      }
+    },
+    "Вкл": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On"
+          }
+        }
+      }
+    },
+    "Выкл": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off"
+          }
+        }
+      }
+    },
+    "Второй пароль открывает отдельный «ложный» сейф. Если вас заставляют разблокировать приложение, покажите его — настоящий сейф при этом не раскрывается.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The second password opens a separate “decoy” vault. If someone forces you to unlock the app, show it — the real vault stays hidden."
+          }
+        }
+      }
+    },
+    "По файлам нельзя доказать, что второй сейф существует. Чтобы это работало, наполните ложный сейф правдоподобными записями.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The files can't prove a second vault exists. For this to work, fill the decoy vault with believable entries."
+          }
+        }
+      }
+    },
+    "Новый второй пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New second password"
+          }
+        }
+      }
+    },
+    "Повторите второй пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repeat second password"
+          }
+        }
+      }
+    },
+    "Включить второй пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enable second password"
+          }
+        }
+      }
+    },
+    "Второй пароль должен отличаться от мастер-пароля.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The second password must differ from the master password."
+          }
+        }
+      }
+    },
+    "Выключить": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn off"
+          }
+        }
+      }
+    },
+    "Выключить второй пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn off second password"
+          }
+        }
+      }
+    },
+    "Второй слот будет перезаписан случайными данными. Ложный сейф пропадёт.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The second slot will be overwritten with random data. The decoy vault will be gone."
+          }
+        }
+      }
+    },
+    "Перейти в ложный сейф": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Go to the decoy vault"
+          }
+        }
+      }
+    },
+    "Позже": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Later"
+          }
+        }
+      }
+    },
+    "Ложный сейф создан и в нём уже есть примеры записей. Перейти и заполнить его?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The decoy vault is created and already has sample entries. Go there and fill it?"
+          }
+        }
+      }
+    },
+    "Не удалось включить второй пароль.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't enable the second password."
+          }
+        }
+      }
+    },
+    "Мастер-пароль неверный.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The master password is wrong."
+          }
+        }
+      }
+    },
+    "Не удалось выключить второй пароль.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't turn off the second password."
+          }
+        }
+      }
     }
   }
 }

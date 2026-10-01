@@ -5,6 +5,7 @@ import UniformTypeIdentifiers
 /// Копирование в буфер: только локально (не в «Универсальный буфер» на другие
 /// устройства) и с автоочисткой через 60 секунд.
 enum Clipboard {
+    @MainActor
     static func copy(_ string: String, expiresIn seconds: TimeInterval = 60) {
         UIPasteboard.general.setItems(
             [[UTType.utf8PlainText.identifier: string]],
