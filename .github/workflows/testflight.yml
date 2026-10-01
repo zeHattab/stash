@@ -59,22 +59,19 @@ jobs:
       - name: Archive (scheme Stash, Release)
         run: |
           set -euo pipefail
-          # Для App Store архива нужна distribution-подпись: identity "Apple Distribution"
-          # + автоматическое управление по ASC API key создаёт App Store-профиль без
-          # регистрации устройств (dev-профиль требует устройств — отсюда прежняя ошибка).
+          # Архивируем БЕЗ подписи: автоподпись на archive требует development-профиль,
+          # а он требует зарегистрированных устройств. Distribution-подпись делается
+          # ниже, на -exportArchive, где по ASC API key создаётся App Store-профиль
+          # (устройства для него не нужны).
           xcodebuild archive \
             -project Stash.xcodeproj \
             -scheme Stash \
             -configuration Release \
             -destination 'generic/platform=iOS' \
             -archivePath "$RUNNER_TEMP/Stash.xcarchive" \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath "$ASC_KEY_PATH" \
-            -authenticationKeyID "$ASC_KEY_ID" \
-            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
             DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
-            CODE_SIGN_STYLE=Automatic \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
             CURRENT_PROJECT_VERSION=${{ github.run_number }}
 
       - name: Export & upload to TestFlight
