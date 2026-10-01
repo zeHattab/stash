@@ -26,7 +26,8 @@ final class AttackerTests: XCTestCase {
     private func occupiedAndEmptySlot() async throws -> (occupied: Data, empty: Data) {
         let (store, url) = makeStore()
         try await store.create(masterPassword: "master-pass")
-        let realIndex = try XCTUnwrap(await store.openedSlotForTesting())
+        let openedIndex = await store.openedSlotForTesting()
+        let realIndex = try XCTUnwrap(openedIndex)
         let container = try VaultContainerV3.parse(Data(contentsOf: url))
         return (container.slots[realIndex], container.slots[1 - realIndex])
     }

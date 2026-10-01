@@ -206,8 +206,8 @@ public actor VaultStore {
     /// Включает ложный сейф в свободном слоте и возвращает его ключ восстановления.
     @discardableResult
     public func enableSecondVault(secondPassword: String, sampleItems: [VaultItem]) throws -> String {
-        guard let vk = vaultKey, let salt = currentSalt, let wrapMaster = currentWrapMaster,
-              let wrapRecovery = currentWrapRecovery, let slotIndex = openedSlot, isUnlocked else {
+        guard vaultKey != nil, let salt = currentSalt, let wrapMaster = currentWrapMaster,
+              let wrapRecovery = currentWrapRecovery, isUnlocked else {
             throw VaultError.locked
         }
         guard !isDecoyFlag else { return "" }
@@ -232,7 +232,6 @@ public actor VaultStore {
         secondEnabledFlag = true
         otherSlotBytes = decoySlot
         try persistCurrent() // перезаписывает текущий слот (флаг) + кладёт decoySlot в другой
-        _ = slotIndex
         return decoyRecovery
     }
 

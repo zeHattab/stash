@@ -40,7 +40,8 @@ final class RecoveryKeyTests: XCTestCase {
         await store.lock()
         await expect(.wrongPassword) { try await store.unlock(masterPassword: "old-master") }
         try await store.unlock(masterPassword: "new-master")
-        XCTAssertEqual(try await store.items().map(\.title), ["Bank"])
+        let titles = try await store.items().map(\.title)
+        XCTAssertEqual(titles, ["Bank"])
     }
 
     func testRecoveryKeyNormalizationOnInput() async throws {
@@ -49,7 +50,8 @@ final class RecoveryKeyTests: XCTestCase {
         await store.lock()
         let messy = key.lowercased().replacingOccurrences(of: "-", with: " ")
         try await store.recoverWithKey(messy, newMasterPassword: "brand-new-pass")
-        XCTAssertTrue(await store.isUnlocked)
+        let unlocked = await store.isUnlocked
+        XCTAssertTrue(unlocked)
     }
 
     func testRegenerateInvalidatesOldKey() async throws {
@@ -62,7 +64,8 @@ final class RecoveryKeyTests: XCTestCase {
         await expect(.wrongPassword) { try await store.recoverWithKey(key1, newMasterPassword: "x-pass-1") }
         await store.lock()
         try await store.recoverWithKey(key2, newMasterPassword: "x-pass-2")
-        XCTAssertTrue(await store.isUnlocked)
+        let unlocked = await store.isUnlocked
+        XCTAssertTrue(unlocked)
     }
 
     func testDecoyRecoveryKeyIsIsolated() async throws {
@@ -76,12 +79,16 @@ final class RecoveryKeyTests: XCTestCase {
         // Ключ настоящего открывает настоящий (там RealOnly), ключ ложного — ложный.
         await store.lock()
         try await store.recoverWithKey(realKey, newMasterPassword: "nm1")
-        XCTAssertEqual(try await store.items().map(\.title), ["RealOnly"])
-        XCTAssertFalse(await store.currentIsDecoy())
+        let realTitles = try await store.items().map(\.title)
+        XCTAssertEqual(realTitles, ["RealOnly"])
+        let realDecoy = await store.currentIsDecoy()
+        XCTAssertFalse(realDecoy)
 
         await store.lock()
         try await store.recoverWithKey(decoyKey, newMasterPassword: "nm2")
-        XCTAssertEqual(try await store.items().map(\.title), ["DecoyOnly"])
-        XCTAssertTrue(await store.currentIsDecoy())
+        let decoyTitles = try await store.items().map(\.title)
+        XCTAssertEqual(decoyTitles, ["DecoyOnly"])
+        let decoyIsDecoy = await store.currentIsDecoy()
+        XCTAssertTrue(decoyIsDecoy)
     }
 }
