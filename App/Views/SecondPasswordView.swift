@@ -13,6 +13,7 @@ struct SecondPasswordView: View {
     @State private var errorText: String?
     @State private var showSwitchOffer = false
     @State private var lastSecond = ""
+    @State private var decoyRecoveryKey: String?
 
     private var assessment: PasswordAssessment { PasswordEvaluator.assess(second) }
     private var canEnable: Bool {
@@ -48,6 +49,13 @@ struct SecondPasswordView: View {
             Button("Позже", role: .cancel) { dismiss() }
         } message: {
             Text("Ложный сейф создан и в нём уже есть примеры записей. Перейти и заполнить его?")
+        }
+        .sheet(isPresented: Binding(get: { decoyRecoveryKey != nil }, set: { if !$0 { decoyRecoveryKey = nil } })) {
+            RecoveryKeyView(
+                key: decoyRecoveryKey ?? "",
+                onSaved: { decoyRecoveryKey = nil; showSwitchOffer = true },
+                onSkip: { decoyRecoveryKey = nil; showSwitchOffer = true }
+            )
         }
     }
 
@@ -91,7 +99,6 @@ struct SecondPasswordView: View {
             if reveal { TextField(placeholder, text: text) }
             else { SecureField(placeholder, text: text) }
         }
-        .textContentType(.password)
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled()
     }
@@ -103,12 +110,12 @@ struct SecondPasswordView: View {
         Task {
             defer { working = false }
             do {
-                try await model.enableSecondPassword(entered)
+                let key = try await model.enableSecondPassword(entered)
                 lastSecond = entered
                 if model.isDecoySession {
                     dismiss()
                 } else {
-                    showSwitchOffer = true
+                    decoyRecoveryKey = key // показать ключ восстановления ложного сейфа
                 }
             } catch VaultError.secondPasswordMustDiffer {
                 errorText = "Второй пароль должен отличаться от мастер-пароля."

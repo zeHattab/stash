@@ -85,7 +85,8 @@ struct CreatePasswordView: View {
                 SecureField(placeholder, text: text)
             }
         }
-        .textContentType(.newPassword)
+        // Без textContentType: не предлагаем сохранить мастер-пароль в iCloud Keychain
+        // и не показываем подсказку сильного пароля от системы.
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled()
         .accessibilityLabel(placeholder)
@@ -124,10 +125,11 @@ struct PasswordStrengthView: View {
                 Spacer()
                 Text(label).font(.footnote).bold().foregroundStyle(color)
             }
-            ProgressView(value: Double(assessment.strength.rawValue), total: 4)
+            // Даже «Очень слабый» показываем минимальной полоской (~10%), не пустой.
+            ProgressView(value: max(0.1, Double(assessment.strength.rawValue) / 4.0))
                 .tint(color)
             if assessment.isCommon {
-                Text("Этот пароль есть в списках утёкших паролей.")
+                Text("Это один из самых распространённых паролей — его подбирают первым.")
                     .font(.caption).foregroundStyle(.red)
             }
         }

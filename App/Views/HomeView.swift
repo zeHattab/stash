@@ -37,7 +37,17 @@ struct HomeView: View {
             .sheet(isPresented: $showSettings) { SettingsView(model: model) }
             .sheet(item: $editing) { item in editor(for: item) }
             .sheet(isPresented: Binding(
-                get: { model.pendingBiometricOffer },
+                get: { model.pendingRecoveryKey != nil },
+                set: { if !$0 { model.dismissRecoveryKey() } }
+            )) {
+                RecoveryKeyView(
+                    key: model.pendingRecoveryKey ?? "",
+                    onSaved: { Task { await model.markRecoveryKeySaved() } },
+                    onSkip: { model.dismissRecoveryKey() }
+                )
+            }
+            .sheet(isPresented: Binding(
+                get: { model.pendingBiometricOffer && model.pendingRecoveryKey == nil },
                 set: { if !$0 { model.dismissBiometricOffer() } }
             )) {
                 BiometricOfferView(model: model)

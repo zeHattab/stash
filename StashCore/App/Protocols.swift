@@ -55,6 +55,19 @@ public enum AutoLockTimeout: String, CaseIterable, Sendable, Codable {
     }
 }
 
+/// Как часто просить ввести мастер-пароль вместо Face ID (проверка памяти).
+public enum ReminderInterval: String, CaseIterable, Sendable, Codable {
+    case days7, days14, days30, never
+    public var days: Int? {
+        switch self {
+        case .days7: return 7
+        case .days14: return 14
+        case .days30: return 30
+        case .never: return nil
+        }
+    }
+}
+
 /// Почему сейф заблокирован — от этого зависит, запрашивать ли Face ID автоматически.
 public enum LockReason: Sendable, Equatable {
     case manual        // пользователь нажал «Заблокировать» — Face ID НЕ запрашивать автоматически

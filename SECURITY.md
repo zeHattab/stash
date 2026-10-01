@@ -98,16 +98,32 @@ Face ID. Прежнее поле `wrappedVaultKeyBiometric` из формата 
 Функция «Второй пароль» даёт правдоподобное отрицание: мастер-пароль открывает
 настоящий сейф, а отдельный второй пароль — ложный сейф с безобидными записями.
 
-**Как устроено.** Файл хранилища — контейнер из РОВНО ДВУХ слотов одинакового
-размера, у всех пользователей, включена функция или нет. Слот = соль + обёрнутый
-VK + шифротекст, добитые криптослучайными байтами до размера слота (кратно 64 КБ,
-оба слота одной ступени). Неиспользуемый слот заполнен случайными байтами и
-неотличим от занятого; магия/версия есть только во внешнем заголовке контейнера,
-общем для обоих слотов. Настоящий сейф при создании/миграции кладётся в случайный
-слот. Любой введённый пароль проверяется против обоих слотов (KDF по обеим солям
-выполняется всегда), открывается тот, что расшифровался; время ответа не зависит
-от того, какой слот подошёл. Признак «ложный» лежит только внутри зашифрованного
-payload ложного сейфа.
+**Формат v3 (почему в слоте нет открытых полей).** Файл — контейнер из РОВНО ДВУХ
+слотов одинакового размера, у всех пользователей, включена функция или нет. Внешний
+заголовок (общий для обоих слотов) содержит только магию/версию/параметры KDF/размер
+слота. Внутри слота — НИ ОДНОГО открытого поля:
+`соль(16) ‖ wrapMaster(60) ‖ wrapRecovery(60) ‖ шифротекст(до конца слота)`.
+Длина полезной нагрузки хранится ВНУТРИ шифртекста (len-префикс перед JSON, затем
+случайный паддинг), поэтому шифртекст ровно заполняет слот и открытого поля длины
+нет. В v2 было открытое 4-байтовое поле длины `L`: в занятом слоте — правдоподобное
+число, в пустом (случайном) — почти всегда больше размера слота, что выдавало
+занятость. В v3 этого поля нет; обе обёртки VK — выводы AES-GCM (nonce/ct/tag),
+неотличимые от случайных байтов, как и неиспользуемый слот (сплошь случайные байты).
+Настоящий сейф при создании/миграции кладётся в случайный слот. Любой введённый
+пароль проверяется против обоих слотов и обеих обёрток (KDF по обеим солям
+выполняется всегда); время ответа не зависит от того, какой слот подошёл. Признак
+«ложный» лежит только внутри зашифрованного payload ложного сейфа.
+
+**Ключ восстановления.** В каждом слоте VK обёрнут ДВАЖДЫ — мастер-паролем
+(`wrapMaster`) и ключом восстановления (`wrapRecovery`). Обе обёртки — одинаковые
+60-байтовые выводы AES-GCM и неотличимы от случайных данных, поэтому наличие ключа
+восстановления НЕ выдаёт занятость слота. У каждого сейфа (в т.ч. ложного) свой ключ
+восстановления; ключ одного сейфа никогда не открывает другой.
+
+**Вложения (на будущее, требование).** Сканы/файлы документов НЕЛЬЗЯ хранить
+отдельными файлами вне слотов: их наличие и размер выдавали бы занятость слота и
+ломали бы правдоподобное отрицание. Вложения должны лежать внутри шифруемой
+полезной нагрузки слота.
 
 **От чего защищает.** От давления «разблокируй и покажи»: вы вводите второй пароль,
 показывается ложный сейф, настоящий не раскрывается. От анализа файлов: по байтам
@@ -223,16 +239,30 @@ The "second password" feature provides plausible deniability: the master passwor
 opens the real vault, while a separate second password opens a decoy vault with
 harmless entries.
 
-**How it works.** The vault file is a container of EXACTLY TWO equal-size slots, for
-every user, whether the feature is on or off. A slot = salt + wrapped VK +
-ciphertext, padded with cryptographically random bytes to the slot size (a multiple
-of 64 KB; both slots always the same step). The unused slot is filled with random
-bytes and is indistinguishable from an occupied one; magic/version live only in the
-container's outer header, shared by both slots. The real vault is placed in a random
-slot at creation/migration. Any entered password is checked against both slots (the
-KDF runs fully over both salts), and whichever decrypts is opened; response time does
-not depend on which slot matched. The "decoy" marker lives only inside the decoy's
-encrypted payload.
+**Format v3 (why a slot has no cleartext fields).** The file is a container of
+EXACTLY TWO equal-size slots, for every user, feature on or off. The outer header
+(shared by both slots) holds only magic/version/KDF params/slot size. A slot has NO
+cleartext field: `salt(16) ‖ wrapMaster(60) ‖ wrapRecovery(60) ‖ ciphertext(to end
+of slot)`. The payload length is stored INSIDE the ciphertext (a length prefix before
+the JSON, then random padding), so the ciphertext fills the slot exactly and there is
+no cleartext length field. v2 had a cleartext 4-byte length `L`: in an occupied slot
+a plausible number, in an empty (random) slot almost always larger than the slot —
+which revealed occupancy. v3 removes it; both VK wrappings are AES-GCM outputs
+(nonce/ct/tag), indistinguishable from random, like the unused slot (all random). The
+real vault is placed in a random slot at creation/migration. Any entered password is
+checked against both slots and both wrappings (the KDF runs over both salts); response
+time does not depend on which slot matched. The "decoy" marker lives only inside the
+decoy's encrypted payload.
+
+**Recovery key.** In every slot the VK is wrapped TWICE — by the master password
+(`wrapMaster`) and by a recovery key (`wrapRecovery`). Both are identical 60-byte
+AES-GCM outputs, indistinguishable from random, so the presence of a recovery key
+does not reveal slot occupancy. Each vault (including the decoy) has its own recovery
+key; one vault's key never opens the other.
+
+**Attachments (future requirement).** Document scans/files must NOT be stored as
+separate files outside the slots: their presence and size would reveal slot occupancy
+and break deniability. Attachments must live inside a slot's encrypted payload.
 
 **What it protects against.** Coercion to "unlock and show": you enter the second
 password, the decoy opens, the real vault is not revealed. File analysis: the bytes

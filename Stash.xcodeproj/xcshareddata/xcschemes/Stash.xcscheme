@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0000000000000000000000A8"
+               BlueprintIdentifier = "0000000000000000000000B2"
                BuildableName = "Stash.app"
                BlueprintName = "Stash"
                ReferencedContainer = "container:Stash.xcodeproj">
@@ -32,7 +32,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0000000000000000000000A9"
+               BlueprintIdentifier = "0000000000000000000000B3"
                BuildableName = "StashCoreTests.xctest"
                BlueprintName = "StashCoreTests"
                ReferencedContainer = "container:Stash.xcodeproj">
@@ -54,7 +54,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0000000000000000000000A8"
+            BlueprintIdentifier = "0000000000000000000000B2"
             BuildableName = "Stash.app"
             BlueprintName = "Stash"
             ReferencedContainer = "container:Stash.xcodeproj">
@@ -71,7 +71,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0000000000000000000000A8"
+            BlueprintIdentifier = "0000000000000000000000B2"
             BuildableName = "Stash.app"
             BlueprintName = "Stash"
             ReferencedContainer = "container:Stash.xcodeproj">

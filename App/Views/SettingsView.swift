@@ -57,6 +57,26 @@ struct SettingsView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
+                    Picker("Напоминание о пароле", selection: Binding(
+                        get: { model.masterReminderInterval },
+                        set: { model.setMasterReminderInterval($0) }
+                    )) {
+                        Text("Каждые 7 дней").tag(ReminderInterval.days7)
+                        Text("Каждые 14 дней").tag(ReminderInterval.days14)
+                        Text("Каждые 30 дней").tag(ReminderInterval.days30)
+                        Text("Никогда").tag(ReminderInterval.never)
+                    }
+                    NavigationLink {
+                        RecoverySettingsView(model: model)
+                    } label: {
+                        HStack {
+                            Text("Ключ восстановления")
+                            Spacer()
+                            if !model.recoveryKeySaved {
+                                Text("Не сохранён").foregroundStyle(.orange)
+                            }
+                        }
+                    }
                     NavigationLink("Сменить мастер-пароль") {
                         ChangePasswordView(model: model)
                     }
@@ -147,7 +167,7 @@ struct ChangePasswordView: View {
             if reveal { TextField(placeholder, text: text) }
             else { SecureField(placeholder, text: text) }
         }
-        .textContentType(isNew ? .newPassword : .password)
+        // Без textContentType: мастер-пароль не предлагается к сохранению в iCloud Keychain.
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled()
     }
@@ -165,6 +185,64 @@ struct ChangePasswordView: View {
                 oldPassword = ""
             } catch {
                 errorText = "Не удалось сменить пароль."
+            }
+        }
+    }
+}
+
+struct RecoverySettingsView: View {
+    let model: AppModel
+    @State private var master = ""
+    @State private var working = false
+    @State private var errorText: String?
+    @State private var newKey: String?
+
+    var body: some View {
+        Form {
+            Section {
+                if model.recoveryKeySaved {
+                    Label("Ключ восстановления сохранён", systemImage: "checkmark.seal")
+                        .foregroundStyle(.green)
+                } else {
+                    Label("Ключ восстановления не сохранён", systemImage: "exclamationmark.triangle")
+                        .foregroundStyle(.orange)
+                }
+            }
+            Section {
+                SecureField("Мастер-пароль", text: $master)
+                    .textInputAutocapitalization(.never).autocorrectionDisabled()
+                Button("Создать новый ключ") { regenerate() }
+                    .disabled(master.isEmpty || working)
+            } footer: {
+                Text("Старый ключ восстановления перестанет работать.")
+            }
+            if let errorText {
+                Text(errorText).foregroundStyle(.red).font(.footnote)
+            }
+        }
+        .navigationTitle("Ключ восстановления")
+        .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: Binding(get: { newKey != nil }, set: { if !$0 { newKey = nil } })) {
+            RecoveryKeyView(
+                key: newKey ?? "",
+                onSaved: { Task { await model.markRecoveryKeySaved() }; newKey = nil },
+                onSkip: { newKey = nil }
+            )
+        }
+    }
+
+    private func regenerate() {
+        working = true; errorText = nil
+        let entered = master
+        Task {
+            defer { working = false }
+            do {
+                newKey = try await model.regenerateRecoveryKey(master: entered)
+                master = ""
+            } catch VaultError.wrongPassword {
+                errorText = "Мастер-пароль неверный."
+            } catch {
+                errorText = "Не удалось создать ключ."
             }
         }
     }

@@ -189,9 +189,46 @@ final class AppModelTests: XCTestCase {
         try await model.createVault(masterPassword: masterPassword)
         try await model.enableBiometrics()
         XCTAssertNotNil(keychain.stored)
-        try await model.enableSecondPassword("a different decoy pass 7")
+        _ = try await model.enableSecondPassword("a different decoy pass 7")
         XCTAssertTrue(model.secondPasswordEnabled)
         XCTAssertFalse(model.isBiometricEnabled)
         XCTAssertNil(keychain.stored) // VK удалён из Keychain
+    }
+
+    func testMasterReminderDueAfterInterval() async throws {
+        let (model, _, _, clock) = makeModel()
+        try await model.createVault(masterPassword: masterPassword) // фиксирует проверку сейчас
+        model.setMasterReminderInterval(.days7)
+        XCTAssertFalse(model.isMasterCheckDue())
+        clock.now = clock.now.addingTimeInterval(8 * 86_400)
+        XCTAssertTrue(model.isMasterCheckDue())
+    }
+
+    func testMasterReminderNever() async throws {
+        let (model, _, _, clock) = makeModel()
+        try await model.createVault(masterPassword: masterPassword)
+        model.setMasterReminderInterval(.never)
+        clock.now = clock.now.addingTimeInterval(100 * 86_400)
+        XCTAssertFalse(model.isMasterCheckDue())
+    }
+
+    func testRecoveryFlowThroughAppModel() async throws {
+        let (model, _, _, _) = makeModel()
+        try await model.createVault(masterPassword: masterPassword)
+        let key = try XCTUnwrap(model.pendingRecoveryKey)
+        await model.lock()
+        try await model.recover(recoveryKey: key, newMasterPassword: "fresh master pass 1")
+        XCTAssertEqual(model.phase, .unlocked)
+        await model.lock()
+        try await model.unlockWithPassword("fresh master pass 1")
+        XCTAssertEqual(model.phase, .unlocked)
+    }
+
+    func testFreshInstallWipesLeftoverKeychain() async {
+        let (model, keychain, _, _) = makeModel()
+        keychain.stored = Data([1, 2, 3]) // остаток от прежней установки
+        await model.start()               // файла сейфа нет, флаг installed отсутствует
+        XCTAssertNil(keychain.stored)
+        XCTAssertEqual(model.phase, .onboarding)
     }
 }

@@ -31,6 +31,10 @@ public final class AppModel {
     public private(set) var isDecoySession = false
     /// Включён ли «Второй пароль» в текущем сейфе (для текущего payload).
     public private(set) var secondPasswordEnabled = false
+    /// Ключ восстановления, который нужно показать один раз (после создания/регенерации).
+    public private(set) var pendingRecoveryKey: String?
+    public private(set) var recoveryKeySaved = false
+    public private(set) var masterReminderInterval: ReminderInterval
 
     public var biometryType: BiometryKind { biometrics.biometryType }
     public var isBiometricAvailable: Bool { biometrics.isAvailable }
@@ -51,6 +55,9 @@ public final class AppModel {
         static let lockedOutUntil = "lockedOutUntil" // секунды с 1970; 0 = нет
         static let sortOrder = "sortOrder"
         static let generatorOptions = "generatorOptions" // JSON
+        static let reminderInterval = "masterReminderInterval"
+        static let lastMasterCheck = "lastMasterCheck" // секунды с 1970
+        static let installed = "installed"
     }
 
     // Нарастающая пауза после 5 ошибок подряд: 30 c, 1 мин, далее 5 мин.
@@ -85,12 +92,21 @@ public final class AppModel {
         } else {
             self.generatorOptions = .default
         }
+        self.masterReminderInterval = ReminderInterval(rawValue: settings.string(forKey: Keys.reminderInterval) ?? "")
+            ?? .days14
     }
 
     // MARK: - Жизненный цикл
 
     /// Определяет стартовую фазу: есть файл сейфа → экран блокировки, иначе онбординг.
     public func start() async {
+        // Первый запуск после установки: iOS не чистит Keychain при удалении приложения.
+        if !settings.bool(forKey: Keys.installed) {
+            if !(await store.exists()) {
+                disableBiometrics() // удалить возможные остатки ключа Face ID от прежней установки
+            }
+            settings.set(true, forKey: Keys.installed)
+        }
         if await store.exists() {
             phase = .locked
             lockReason = .coldStart
@@ -102,21 +118,64 @@ public final class AppModel {
     private func refreshSessionFlags() async {
         isDecoySession = await store.currentIsDecoy()
         secondPasswordEnabled = await store.currentSecondPasswordEnabled()
+        recoveryKeySaved = await store.currentRecoveryKeySaved()
+    }
+
+    private func recordMasterCheck() {
+        settings.set(now().timeIntervalSince1970, forKey: Keys.lastMasterCheck)
+    }
+
+    public func isMasterCheckDue() -> Bool {
+        guard let days = masterReminderInterval.days else { return false }
+        let last = settings.double(forKey: Keys.lastMasterCheck)
+        guard last > 0 else { return false }
+        return now().timeIntervalSince1970 - last >= Double(days) * 86_400
+    }
+
+    public func setMasterReminderInterval(_ interval: ReminderInterval) {
+        masterReminderInterval = interval
+        settings.set(interval.rawValue, forKey: Keys.reminderInterval)
     }
 
     // MARK: - Онбординг
 
     public func createVault(masterPassword: String) async throws {
-        try await store.create(masterPassword: masterPassword)
+        let recoveryKey = try await store.create(masterPassword: masterPassword)
         resetFailures()
+        recordMasterCheck()
         await reloadItems()
         await refreshSessionFlags()
+        pendingRecoveryKey = recoveryKey
         phase = .unlocked
         pendingBiometricOffer = true
     }
 
     public func dismissBiometricOffer() {
         pendingBiometricOffer = false
+    }
+
+    public func dismissRecoveryKey() { pendingRecoveryKey = nil }
+
+    public func markRecoveryKeySaved() async {
+        try? await store.setRecoveryKeySaved(true)
+        recoveryKeySaved = true
+        pendingRecoveryKey = nil
+    }
+
+    public func recover(recoveryKey: String, newMasterPassword: String) async throws {
+        try await store.recoverWithKey(recoveryKey, newMasterPassword: newMasterPassword)
+        resetFailures()
+        recordMasterCheck()
+        await reloadItems()
+        await refreshSessionFlags()
+        phase = .unlocked
+    }
+
+    @discardableResult
+    public func regenerateRecoveryKey(master: String) async throws -> String {
+        let key = try await store.regenerateRecoveryKey(masterPassword: master)
+        recoveryKeySaved = false
+        return key
     }
 
     // MARK: - Биометрия
@@ -151,6 +210,7 @@ public final class AppModel {
             throw VaultError.wrongPassword
         }
         resetFailures()
+        recordMasterCheck()
         await reloadItems()
         await refreshSessionFlags()
         phase = .unlocked
@@ -253,17 +313,20 @@ public final class AppModel {
 
     // MARK: - Второй пароль
 
-    public func enableSecondPassword(_ second: String) async throws {
+    @discardableResult
+    public func enableSecondPassword(_ second: String) async throws -> String {
         if isDecoySession {
             // Из ложного сейфа: сценарий проходит, но другой слот не трогаем.
             try await store.setSecondPasswordFlag(true)
             secondPasswordEnabled = true
+            return ""
         } else {
-            try await store.enableSecondVault(secondPassword: second,
-                                              sampleItems: Self.decoySamples(now: now()))
+            let key = try await store.enableSecondVault(secondPassword: second,
+                                                        sampleItems: Self.decoySamples(now: now()))
             // При включённой функции Face ID не хранит VK — удаляем запись.
             disableBiometrics()
             secondPasswordEnabled = true
+            return key
         }
     }
 

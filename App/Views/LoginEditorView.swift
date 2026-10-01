@@ -37,6 +37,7 @@ struct LoginEditorView: View {
         _urls = State(initialValue: list.isEmpty ? [""] : list)
         _notes = State(initialValue: original.notes)
         _favorite = State(initialValue: original.favorite)
+        _reveal = State(initialValue: p.isEmpty) // у новой записи поле сразу редактируемо
     }
 
     private var isExisting: Bool { model.items.contains { $0.id == original.id } }
@@ -60,21 +61,26 @@ struct LoginEditorView: View {
             }
 
             Section("Логин") {
+                // Без textContentType(.username): не даём iOS принять экран за форму входа.
                 TextField("Логин или e-mail", text: $username)
-                    .textContentType(.username)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
             }
 
             Section("Пароль") {
                 HStack {
-                    Group {
-                        if reveal { TextField("Пароль", text: $password) }
-                        else { SecureField("Пароль", text: $password) }
+                    // Не SecureField и без textContentType — iOS не предлагает «Сохранить пароль?».
+                    // Скрытый непустой пароль показываем фиксированными точками (не выдаёт длину).
+                    if reveal {
+                        TextField("Пароль", text: $password)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                    } else if password.isEmpty {
+                        Text("Пароль").foregroundStyle(.secondary)
+                    } else {
+                        Text("••••••••").foregroundStyle(.primary)
                     }
-                    .textContentType(.password)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
+                    Spacer()
                     Button {
                         reveal.toggle()
                     } label: {
@@ -149,8 +155,8 @@ struct LoginEditorView: View {
         Section("Адреса сайтов") {
             ForEach(urls.indices, id: \.self) { index in
                 HStack {
-                    TextField("https://example.com", text: $urls[index])
-                        .textContentType(.URL)
+                    TextField("", text: $urls[index], prompt: Text("Адрес сайта"))
+                        .foregroundStyle(urls[index].isEmpty ? Color.primary : Color.accentColor)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                         .keyboardType(.URL)

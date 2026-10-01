@@ -63,7 +63,7 @@ final class SecondVaultTests: XCTestCase {
         let (store, url) = makeStore()
         try await store.create(masterPassword: "m")
         for i in 0..<30 { try await store.upsert(login("Item\(i)", pw: "p\(i)")) }
-        let c = try VaultContainer.parse(Data(contentsOf: url))
+        let c = try VaultContainerV3.parse(Data(contentsOf: url))
         XCTAssertEqual(c.slots[0].count, c.slots[1].count)
         XCTAssertEqual(c.slots[0].count, c.slotSize)
     }
@@ -71,7 +71,7 @@ final class SecondVaultTests: XCTestCase {
     func testUnusedSlotLooksRandom() async throws {
         let (store, url) = makeStore()
         try await store.create(masterPassword: "m")
-        let c = try VaultContainer.parse(Data(contentsOf: url))
+        let c = try VaultContainerV3.parse(Data(contentsOf: url))
         for slot in c.slots {
             // И занятый (шифротекст), и пустой (случайный) слот — высокое разнообразие байтов.
             XCTAssertGreaterThan(Set(slot).count, 200)
@@ -99,7 +99,7 @@ final class SecondVaultTests: XCTestCase {
         try await store.unlock(masterPassword: "master")
         let openedIndex = await store.openedSlotForTesting()
         let realIndex = try XCTUnwrap(openedIndex)
-        let before = try VaultContainer.parse(Data(contentsOf: url)).slots[realIndex]
+        let before = try VaultContainerV3.parse(Data(contentsOf: url)).slots[realIndex]
 
         // Все возможные операции из ложного сейфа.
         await store.lock()
@@ -109,7 +109,7 @@ final class SecondVaultTests: XCTestCase {
         try await store.changeMasterPassword(old: "decoy", new: "decoy2")
         for item in try await store.items() { try await store.delete(id: item.id) }
 
-        let after = try VaultContainer.parse(Data(contentsOf: url)).slots[realIndex]
+        let after = try VaultContainerV3.parse(Data(contentsOf: url)).slots[realIndex]
         XCTAssertEqual(before, after, "операции из ложного сейфа не должны менять настоящий слот")
 
         // Настоящий сейф по-прежнему открывается мастер-паролем.

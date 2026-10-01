@@ -10,19 +10,23 @@ public struct VaultPayload: Codable, Sendable, Equatable {
     public var items: [VaultItem]
     public var isDecoy: Bool?
     public var secondPasswordEnabled: Bool?
+    public var recoveryKeySaved: Bool?
 
     public init(
         schemaVersion: Int,
         items: [VaultItem],
         isDecoy: Bool? = nil,
-        secondPasswordEnabled: Bool? = nil
+        secondPasswordEnabled: Bool? = nil,
+        recoveryKeySaved: Bool? = nil
     ) {
         self.schemaVersion = schemaVersion
         self.items = items
         self.isDecoy = isDecoy
         self.secondPasswordEnabled = secondPasswordEnabled
+        self.recoveryKeySaved = recoveryKeySaved
     }
 
     public var decoy: Bool { isDecoy ?? false }
     public var secondEnabled: Bool { secondPasswordEnabled ?? false }
+    public var recoverySaved: Bool { recoveryKeySaved ?? false }
 }

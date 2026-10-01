@@ -26,15 +26,15 @@ final class VaultStoreTests: XCTestCase {
         )
     }
 
-    /// Портит байты в диапазоне [lo, hi) ОБОИХ слотов контейнера v2 и пишет обратно.
+    /// Портит байты в диапазоне [lo, hi) ОБОИХ слотов контейнера v3 и пишет обратно.
     private func tamperBothSlots(_ url: URL, range: Range<Int>) throws {
-        let container = try VaultContainer.parse(Data(contentsOf: url))
+        let container = try VaultContainerV3.parse(Data(contentsOf: url))
         var s0 = [UInt8](container.slots[0])
         var s1 = [UInt8](container.slots[1])
         for i in range { s0[i] ^= 0xFF; s1[i] ^= 0xFF }
-        let data = VaultContainer.serialize(iterations: container.iterations,
-                                            slotSize: container.slotSize,
-                                            slot0: Data(s0), slot1: Data(s1))
+        let data = VaultContainerV3.serialize(iterations: container.iterations,
+                                              slotSize: container.slotSize,
+                                              slot0: Data(s0), slot1: Data(s1))
         try data.write(to: url)
     }
 
@@ -90,8 +90,8 @@ final class VaultStoreTests: XCTestCase {
         try await store.upsert(sampleLogin())
         await store.lock()
 
-        // Байты в области шифротекста (после заголовка слота) — настоящий слот испортится.
-        try tamperBothSlots(url, range: 90..<140)
+        // Байты в области шифротекста (после заголовка слота, headLen=136) — настоящий слот испортится.
+        try tamperBothSlots(url, range: 140..<200)
 
         await expectVaultError(.corrupted) { try await store.unlock(masterPassword: "pw") }
     }
@@ -102,8 +102,8 @@ final class VaultStoreTests: XCTestCase {
         try await store.upsert(sampleLogin())
         await store.lock()
 
-        // Байты соли+обёрнутого VK (заголовок слота) — ни один слот не должен открыться.
-        try tamperBothSlots(url, range: 4..<80)
+        // Байты соли+обёрнутых VK (заголовок слота, 0..136) — ни один слот не должен открыться.
+        try tamperBothSlots(url, range: 20..<120)
 
         do {
             try await store.unlock(masterPassword: "pw")

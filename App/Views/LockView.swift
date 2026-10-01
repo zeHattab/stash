@@ -8,6 +8,9 @@ struct LockView: View {
     @State private var errorText: String?
     @State private var working = false
     @State private var didAutoPrompt = false
+    @State private var showForgot = false
+
+    private var checkDue: Bool { model.isMasterCheckDue() }
 
     var body: some View {
         VStack(spacing: 28) {
@@ -19,9 +22,14 @@ struct LockView: View {
             Text("Stash")
                 .font(.largeTitle).bold()
 
+            if checkDue {
+                Text("Проверим, что вы помните пароль — введите мастер-пароль.")
+                    .font(.footnote).foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center).padding(.horizontal, 32)
+            }
+
             VStack(spacing: 16) {
                 SecureField("Мастер-пароль", text: $password)
-                    .textContentType(.password)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
                     .textFieldStyle(.roundedBorder)
@@ -35,12 +43,15 @@ struct LockView: View {
                 .controlSize(.large)
                 .disabled(password.isEmpty || working)
 
-                if model.isBiometricEnabled {
+                if model.isBiometricEnabled && !checkDue {
                     Button(action: unlockWithBiometrics) {
                         Label(biometricLabel, systemImage: biometricIcon)
                     }
                     .disabled(working)
                 }
+
+                Button("Забыли пароль?") { showForgot = true }
+                    .font(.footnote)
             }
             .padding(.horizontal, 32)
 
@@ -53,10 +64,11 @@ struct LockView: View {
             }
             Spacer()
         }
+        .sheet(isPresented: $showForgot) { ForgotPasswordView(model: model) }
         .task {
             // Автозапрос Face ID — только при возврате из фона / блокировке устройства /
-            // холодном старте. После РУЧНОЙ блокировки не запрашиваем.
-            if model.isBiometricEnabled, model.lockReason != .manual, !didAutoPrompt {
+            // холодном старте. После РУЧНОЙ блокировки и когда пора проверить пароль — нет.
+            if model.isBiometricEnabled, model.lockReason != .manual, !checkDue, !didAutoPrompt {
                 didAutoPrompt = true
                 unlockWithBiometrics()
             }

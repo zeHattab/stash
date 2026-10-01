@@ -8,6 +8,12 @@
     "https://example.com": {
       "shouldTranslate": false
     },
+    "XXXX-XXXX-…": {
+      "shouldTranslate": false
+    },
+    "____": {
+      "shouldTranslate": false
+    },
     "Добро пожаловать в Stash": {
       "localizations": {
         "en": {
@@ -154,16 +160,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Passwords don't match"
-          }
-        }
-      }
-    },
-    "Минимум %lld символов": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "At least %lld characters"
           }
         }
       }
@@ -1018,16 +1014,6 @@
         }
       }
     },
-    "Этот пароль используется ещё в %lld записях": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This password is used in %lld other items"
-          }
-        }
-      }
-    },
     "Адреса сайтов": {
       "localizations": {
         "en": {
@@ -1454,6 +1440,390 @@
           "stringUnit": {
             "state": "translated",
             "value": "Couldn't turn off the second password."
+          }
+        }
+      }
+    },
+    "Адрес сайта": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Website"
+          }
+        }
+      }
+    },
+    "Это один из самых распространённых паролей — его подбирают первым.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is one of the most common passwords — it's tried first."
+          }
+        }
+      }
+    },
+    "Ключ восстановления": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovery key"
+          }
+        }
+      }
+    },
+    "Ключ восстановления открывает сейф, если вы забудете мастер-пароль. Сохраните его в надёжном месте вне телефона. Мы не храним его копию.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The recovery key opens your vault if you forget the master password. Keep it somewhere safe off your phone. We keep no copy."
+          }
+        }
+      }
+    },
+    "Ваш ключ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your key"
+          }
+        }
+      }
+    },
+    "Скопировать": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy"
+          }
+        }
+      }
+    },
+    "Сохранить как PDF / напечатать": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save as PDF / print"
+          }
+        }
+      }
+    },
+    "Подтвердите, что сохранили": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm you saved it"
+          }
+        }
+      }
+    },
+    "Группа %lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Group %lld"
+          }
+        }
+      }
+    },
+    "Я сохранил ключ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I saved the key"
+          }
+        }
+      }
+    },
+    "Пропустить пока": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip for now"
+          }
+        }
+      }
+    },
+    "Забыли пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forgot password"
+          }
+        }
+      }
+    },
+    "Забыли пароль?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forgot password?"
+          }
+        }
+      }
+    },
+    "Открыть сейф": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open vault"
+          }
+        }
+      }
+    },
+    "Этот ключ восстановления не подошёл.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That recovery key didn't work."
+          }
+        }
+      }
+    },
+    "Не удалось восстановить доступ.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't restore access."
+          }
+        }
+      }
+    },
+    "Напоминание о пароле": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password reminder"
+          }
+        }
+      }
+    },
+    "Каждые 7 дней": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every 7 days"
+          }
+        }
+      }
+    },
+    "Каждые 14 дней": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every 14 days"
+          }
+        }
+      }
+    },
+    "Каждые 30 дней": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every 30 days"
+          }
+        }
+      }
+    },
+    "Никогда": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Never"
+          }
+        }
+      }
+    },
+    "Не сохранён": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not saved"
+          }
+        }
+      }
+    },
+    "Ключ восстановления сохранён": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovery key saved"
+          }
+        }
+      }
+    },
+    "Ключ восстановления не сохранён": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovery key not saved"
+          }
+        }
+      }
+    },
+    "Создать новый ключ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create new key"
+          }
+        }
+      }
+    },
+    "Старый ключ восстановления перестанет работать.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your old recovery key will stop working."
+          }
+        }
+      }
+    },
+    "Не удалось создать ключ.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't create the key."
+          }
+        }
+      }
+    },
+    "Проверим, что вы помните пароль — введите мастер-пароль.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Let's check you remember your password — enter the master password."
+          }
+        }
+      }
+    },
+    "Этот пароль используется ещё в %lld записях": {
+      "localizations": {
+        "ru": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Этот пароль используется ещё в %lld записи"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Этот пароль используется ещё в %lld записях"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Этот пароль используется ещё в %lld записях"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Этот пароль используется ещё в %lld записях"
+                }
+              }
+            }
+          }
+        },
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "This password is used in %lld other item"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "This password is used in %lld other items"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Минимум %lld символов": {
+      "localizations": {
+        "ru": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Минимум %lld символ"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Минимум %lld символа"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Минимум %lld символов"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Минимум %lld символов"
+                }
+              }
+            }
+          }
+        },
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "At least %lld character"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "At least %lld characters"
+                }
+              }
+            }
           }
         }
       }
