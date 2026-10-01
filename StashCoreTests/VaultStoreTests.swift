@@ -227,6 +227,7 @@ final class VaultStoreTests: XCTestCase {
         try await store.upsert(item)
         await store.lock()
         try await store.unlock(masterPassword: "pw")
-        XCTAssertEqual(try await store.items(), [item])
+        let restored = try await store.items()
+        XCTAssertEqual(restored, [item])
     }
 }
