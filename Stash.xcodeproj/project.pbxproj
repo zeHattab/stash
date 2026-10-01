@@ -85,56 +85,58 @@
 		00000000000000000000004E = {isa = PBXBuildFile; fileRef = 00000000000000000000004D;};
 		00000000000000000000004F = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/RecoveryKeyView.swift; sourceTree = "<group>";};
 		000000000000000000000050 = {isa = PBXBuildFile; fileRef = 00000000000000000000004F;};
-		000000000000000000000051 = {isa = PBXBuildFile; fileRef = 000000000000000000000003;};
-		000000000000000000000052 = {isa = PBXBuildFile; fileRef = 000000000000000000000004;};
-		000000000000000000000053 = {isa = PBXBuildFile; fileRef = 000000000000000000000005;};
-		000000000000000000000054 = {isa = PBXBuildFile; fileRef = 000000000000000000000006;};
-		000000000000000000000055 = {isa = PBXBuildFile; fileRef = 000000000000000000000009;};
-		000000000000000000000056 = {isa = PBXBuildFile; fileRef = 00000000000000000000000A;};
-		000000000000000000000057 = {isa = PBXBuildFile; fileRef = 00000000000000000000000B;};
-		000000000000000000000058 = {isa = PBXBuildFile; fileRef = 00000000000000000000000C;};
-		000000000000000000000059 = {isa = PBXBuildFile; fileRef = 00000000000000000000000D;};
-		00000000000000000000005A = {isa = PBXBuildFile; fileRef = 00000000000000000000000E;};
-		00000000000000000000005B = {isa = PBXBuildFile; fileRef = 00000000000000000000000F;};
-		00000000000000000000005C = {isa = PBXBuildFile; fileRef = 000000000000000000000010;};
-		00000000000000000000005D = {isa = PBXBuildFile; fileRef = 000000000000000000000011;};
-		00000000000000000000005E = {isa = PBXBuildFile; fileRef = 000000000000000000000012;};
-		00000000000000000000005F = {isa = PBXBuildFile; fileRef = 000000000000000000000013;};
-		000000000000000000000060 = {isa = PBXBuildFile; fileRef = 000000000000000000000014;};
-		000000000000000000000061 = {isa = PBXBuildFile; fileRef = 000000000000000000000015;};
-		000000000000000000000062 = {isa = PBXBuildFile; fileRef = 000000000000000000000016;};
-		000000000000000000000063 = {isa = PBXBuildFile; fileRef = 000000000000000000000017;};
-		000000000000000000000064 = {isa = PBXBuildFile; fileRef = 000000000000000000000018;};
-		000000000000000000000065 = {isa = PBXBuildFile; fileRef = 000000000000000000000019;};
-		000000000000000000000066 = {isa = PBXBuildFile; fileRef = 00000000000000000000001A;};
-		000000000000000000000067 = {isa = PBXBuildFile; fileRef = 00000000000000000000001B;};
-		000000000000000000000068 = {isa = PBXBuildFile; fileRef = 00000000000000000000001C;};
-		000000000000000000000069 = {isa = PBXBuildFile; fileRef = 00000000000000000000001D;};
-		00000000000000000000006A = {isa = PBXBuildFile; fileRef = 00000000000000000000001E;};
-		00000000000000000000006B = {isa = PBXBuildFile; fileRef = 00000000000000000000001F;};
-		00000000000000000000006C = {isa = PBXBuildFile; fileRef = 000000000000000000000020;};
-		00000000000000000000006D = {isa = PBXBuildFile; fileRef = 000000000000000000000021;};
-		00000000000000000000006E = {isa = PBXBuildFile; fileRef = 000000000000000000000022;};
-		00000000000000000000006F = {isa = PBXBuildFile; fileRef = 000000000000000000000023;};
-		000000000000000000000070 = {isa = PBXBuildFile; fileRef = 000000000000000000000024;};
-		000000000000000000000071 = {isa = PBXBuildFile; fileRef = 000000000000000000000025;};
-		000000000000000000000072 = {isa = PBXBuildFile; fileRef = 000000000000000000000026;};
-		000000000000000000000073 = {isa = PBXBuildFile; fileRef = 000000000000000000000027;};
-		000000000000000000000074 = {isa = PBXBuildFile; fileRef = 000000000000000000000028;};
-		000000000000000000000075 = {isa = PBXBuildFile; fileRef = 000000000000000000000029;};
-		000000000000000000000076 = {isa = PBXBuildFile; fileRef = 00000000000000000000002A;};
-		000000000000000000000077 = {isa = PBXBuildFile; fileRef = 00000000000000000000002B;};
-		000000000000000000000078 = {isa = PBXBuildFile; fileRef = 00000000000000000000002C;};
-		000000000000000000000079 = {isa = PBXBuildFile; fileRef = 00000000000000000000002D;};
-		00000000000000000000007A = {isa = PBXBuildFile; fileRef = 00000000000000000000002E;};
-		00000000000000000000007B = {isa = PBXBuildFile; fileRef = 00000000000000000000002F;};
-		00000000000000000000007C = {isa = PBXBuildFile; fileRef = 000000000000000000000030;};
-		00000000000000000000007D = {isa = PBXBuildFile; fileRef = 000000000000000000000033;};
-		00000000000000000000007E = {isa = PBXBuildFile; fileRef = 000000000000000000000033;};
+		000000000000000000000051 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/DecoyFillView.swift; sourceTree = "<group>";};
+		000000000000000000000052 = {isa = PBXBuildFile; fileRef = 000000000000000000000051;};
+		000000000000000000000053 = {isa = PBXBuildFile; fileRef = 000000000000000000000003;};
+		000000000000000000000054 = {isa = PBXBuildFile; fileRef = 000000000000000000000004;};
+		000000000000000000000055 = {isa = PBXBuildFile; fileRef = 000000000000000000000005;};
+		000000000000000000000056 = {isa = PBXBuildFile; fileRef = 000000000000000000000006;};
+		000000000000000000000057 = {isa = PBXBuildFile; fileRef = 000000000000000000000009;};
+		000000000000000000000058 = {isa = PBXBuildFile; fileRef = 00000000000000000000000A;};
+		000000000000000000000059 = {isa = PBXBuildFile; fileRef = 00000000000000000000000B;};
+		00000000000000000000005A = {isa = PBXBuildFile; fileRef = 00000000000000000000000C;};
+		00000000000000000000005B = {isa = PBXBuildFile; fileRef = 00000000000000000000000D;};
+		00000000000000000000005C = {isa = PBXBuildFile; fileRef = 00000000000000000000000E;};
+		00000000000000000000005D = {isa = PBXBuildFile; fileRef = 00000000000000000000000F;};
+		00000000000000000000005E = {isa = PBXBuildFile; fileRef = 000000000000000000000010;};
+		00000000000000000000005F = {isa = PBXBuildFile; fileRef = 000000000000000000000011;};
+		000000000000000000000060 = {isa = PBXBuildFile; fileRef = 000000000000000000000012;};
+		000000000000000000000061 = {isa = PBXBuildFile; fileRef = 000000000000000000000013;};
+		000000000000000000000062 = {isa = PBXBuildFile; fileRef = 000000000000000000000014;};
+		000000000000000000000063 = {isa = PBXBuildFile; fileRef = 000000000000000000000015;};
+		000000000000000000000064 = {isa = PBXBuildFile; fileRef = 000000000000000000000016;};
+		000000000000000000000065 = {isa = PBXBuildFile; fileRef = 000000000000000000000017;};
+		000000000000000000000066 = {isa = PBXBuildFile; fileRef = 000000000000000000000018;};
+		000000000000000000000067 = {isa = PBXBuildFile; fileRef = 000000000000000000000019;};
+		000000000000000000000068 = {isa = PBXBuildFile; fileRef = 00000000000000000000001A;};
+		000000000000000000000069 = {isa = PBXBuildFile; fileRef = 00000000000000000000001B;};
+		00000000000000000000006A = {isa = PBXBuildFile; fileRef = 00000000000000000000001C;};
+		00000000000000000000006B = {isa = PBXBuildFile; fileRef = 00000000000000000000001D;};
+		00000000000000000000006C = {isa = PBXBuildFile; fileRef = 00000000000000000000001E;};
+		00000000000000000000006D = {isa = PBXBuildFile; fileRef = 00000000000000000000001F;};
+		00000000000000000000006E = {isa = PBXBuildFile; fileRef = 000000000000000000000020;};
+		00000000000000000000006F = {isa = PBXBuildFile; fileRef = 000000000000000000000021;};
+		000000000000000000000070 = {isa = PBXBuildFile; fileRef = 000000000000000000000022;};
+		000000000000000000000071 = {isa = PBXBuildFile; fileRef = 000000000000000000000023;};
+		000000000000000000000072 = {isa = PBXBuildFile; fileRef = 000000000000000000000024;};
+		000000000000000000000073 = {isa = PBXBuildFile; fileRef = 000000000000000000000025;};
+		000000000000000000000074 = {isa = PBXBuildFile; fileRef = 000000000000000000000026;};
+		000000000000000000000075 = {isa = PBXBuildFile; fileRef = 000000000000000000000027;};
+		000000000000000000000076 = {isa = PBXBuildFile; fileRef = 000000000000000000000028;};
+		000000000000000000000077 = {isa = PBXBuildFile; fileRef = 000000000000000000000029;};
+		000000000000000000000078 = {isa = PBXBuildFile; fileRef = 00000000000000000000002A;};
+		000000000000000000000079 = {isa = PBXBuildFile; fileRef = 00000000000000000000002B;};
+		00000000000000000000007A = {isa = PBXBuildFile; fileRef = 00000000000000000000002C;};
+		00000000000000000000007B = {isa = PBXBuildFile; fileRef = 00000000000000000000002D;};
+		00000000000000000000007C = {isa = PBXBuildFile; fileRef = 00000000000000000000002E;};
+		00000000000000000000007D = {isa = PBXBuildFile; fileRef = 00000000000000000000002F;};
+		00000000000000000000007E = {isa = PBXBuildFile; fileRef = 000000000000000000000030;};
 		00000000000000000000007F = {isa = PBXBuildFile; fileRef = 000000000000000000000033;};
-		000000000000000000000080 = {isa = PBXBuildFile; fileRef = 000000000000000000000033; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); };};
-		000000000000000000000081 = {isa = PBXBuildFile; fileRef = 000000000000000000000032; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); };};
-		000000000000000000000082 = {
+		000000000000000000000080 = {isa = PBXBuildFile; fileRef = 000000000000000000000033;};
+		000000000000000000000081 = {isa = PBXBuildFile; fileRef = 000000000000000000000033;};
+		000000000000000000000082 = {isa = PBXBuildFile; fileRef = 000000000000000000000033; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); };};
+		000000000000000000000083 = {isa = PBXBuildFile; fileRef = 000000000000000000000032; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); };};
+		000000000000000000000084 = {
 			isa = PBXGroup;
 			children = (
 				000000000000000000000003,
@@ -144,7 +146,7 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		000000000000000000000083 = {
+		000000000000000000000085 = {
 			isa = PBXGroup;
 			children = (
 				000000000000000000000035,
@@ -161,14 +163,15 @@
 				00000000000000000000004B,
 				00000000000000000000004D,
 				00000000000000000000004F,
+				000000000000000000000051,
 				000000000000000000000001,
 				000000000000000000000002,
-				000000000000000000000082,
+				000000000000000000000084,
 			);
 			path = App;
 			sourceTree = "<group>";
 		};
-		000000000000000000000084 = {
+		000000000000000000000086 = {
 			isa = PBXGroup;
 			children = (
 				000000000000000000000006,
@@ -180,7 +183,7 @@
 			path = AutoFill;
 			sourceTree = "<group>";
 		};
-		000000000000000000000085 = {
+		000000000000000000000087 = {
 			isa = PBXGroup;
 			children = (
 				00000000000000000000000B,
@@ -209,7 +212,7 @@
 			path = StashCore;
 			sourceTree = "<group>";
 		};
-		000000000000000000000086 = {
+		000000000000000000000088 = {
 			isa = PBXGroup;
 			children = (
 				000000000000000000000021,
@@ -232,7 +235,7 @@
 			path = StashCoreTests;
 			sourceTree = "<group>";
 		};
-		000000000000000000000087 = {
+		000000000000000000000089 = {
 			isa = PBXGroup;
 			children = (
 				000000000000000000000031,
@@ -243,18 +246,18 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		000000000000000000000088 = {
+		00000000000000000000008A = {
 			isa = PBXGroup;
 			children = (
-				000000000000000000000083,
-				000000000000000000000084,
 				000000000000000000000085,
 				000000000000000000000086,
 				000000000000000000000087,
+				000000000000000000000088,
+				000000000000000000000089,
 			);
 			sourceTree = "<group>";
 		};
-		000000000000000000000089 = {
+		00000000000000000000008B = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -272,87 +275,86 @@
 				00000000000000000000004C,
 				00000000000000000000004E,
 				000000000000000000000050,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		00000000000000000000008A = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				00000000000000000000007D,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		00000000000000000000008B = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				000000000000000000000051,
 				000000000000000000000052,
-				000000000000000000000053,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		00000000000000000000008C = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00000000000000000000007F,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		00000000000000000000008D = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				000000000000000000000053,
+				000000000000000000000054,
+				000000000000000000000055,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		00000000000000000000008E = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				000000000000000000000080,
+				000000000000000000000082,
 			);
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		00000000000000000000008D = {
+		00000000000000000000008F = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				000000000000000000000081,
+				000000000000000000000083,
 			);
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		00000000000000000000008E = {
+		000000000000000000000090 = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				000000000000000000000054,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		00000000000000000000008F = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				00000000000000000000007E,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		000000000000000000000090 = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				000000000000000000000055,
 				000000000000000000000056,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		000000000000000000000091 = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				000000000000000000000080,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		000000000000000000000092 = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				000000000000000000000057,
+				000000000000000000000058,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		000000000000000000000093 = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		000000000000000000000092 = {
+		000000000000000000000094 = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				000000000000000000000057,
-				000000000000000000000058,
 				000000000000000000000059,
 				00000000000000000000005A,
 				00000000000000000000005B,
@@ -373,29 +375,29 @@
 				00000000000000000000006A,
 				00000000000000000000006B,
 				00000000000000000000006C,
+				00000000000000000000006D,
+				00000000000000000000006E,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		000000000000000000000093 = {
+		000000000000000000000095 = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		000000000000000000000094 = {
+		000000000000000000000096 = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		000000000000000000000095 = {
+		000000000000000000000097 = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00000000000000000000006D,
-				00000000000000000000006E,
 				00000000000000000000006F,
 				000000000000000000000070,
 				000000000000000000000071,
@@ -410,57 +412,59 @@
 				00000000000000000000007A,
 				00000000000000000000007B,
 				00000000000000000000007C,
+				00000000000000000000007D,
+				00000000000000000000007E,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		000000000000000000000096 = {
+		000000000000000000000098 = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00000000000000000000007F,
+				000000000000000000000081,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		000000000000000000000097 = {
+		000000000000000000000099 = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		000000000000000000000098 = {
+		00000000000000000000009A = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 000000000000000000000099;
+			containerPortal = 00000000000000000000009B;
 			proxyType = 1;
-			remoteGlobalIDString = 00000000000000000000009A;
+			remoteGlobalIDString = 00000000000000000000009C;
 			remoteInfo = StashAutoFill;
 		};
-		000000000000000000000099 = {
+		00000000000000000000009B = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
-					0000000000000000000000B2 = {
+					0000000000000000000000B4 = {
 						CreatedOnToolsVersion = 16.0;
 						ProvisioningStyle = Automatic;
 					};
-					00000000000000000000009A = {
+					00000000000000000000009C = {
 						CreatedOnToolsVersion = 16.0;
 						ProvisioningStyle = Automatic;
 					};
-					00000000000000000000009D = {
+					00000000000000000000009F = {
 						CreatedOnToolsVersion = 16.0;
 						ProvisioningStyle = Automatic;
 					};
-					0000000000000000000000B3 = {
+					0000000000000000000000B5 = {
 						CreatedOnToolsVersion = 16.0;
 						ProvisioningStyle = Automatic;
 					};
 				};
 			};
-			buildConfigurationList = 0000000000000000000000A5;
+			buildConfigurationList = 0000000000000000000000A7;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = ru;
 			hasScannedForEncodings = 0;
@@ -469,55 +473,55 @@
 				Base,
 				ru,
 			);
-			mainGroup = 000000000000000000000088;
-			productRefGroup = 000000000000000000000087;
+			mainGroup = 00000000000000000000008A;
+			productRefGroup = 000000000000000000000089;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0000000000000000000000B2,
-				00000000000000000000009A,
-				00000000000000000000009D,
-				0000000000000000000000B3,
+				0000000000000000000000B4,
+				00000000000000000000009C,
+				00000000000000000000009F,
+				0000000000000000000000B5,
 			);
 		};
-		00000000000000000000009A = {
+		00000000000000000000009C = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0000000000000000000000AB;
+			buildConfigurationList = 0000000000000000000000AD;
 			buildPhases = (
-				00000000000000000000008E,
-				00000000000000000000008F,
 				000000000000000000000090,
+				000000000000000000000091,
+				000000000000000000000092,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				0000000000000000000000A0,
+				0000000000000000000000A2,
 			);
 			name = StashAutoFill;
 			productName = StashAutoFill;
 			productReference = 000000000000000000000032;
 			productType = "com.apple.product-type.app-extension";
 		};
-		00000000000000000000009B = {
+		00000000000000000000009D = {
 			isa = PBXTargetDependency;
-			target = 00000000000000000000009A;
-			targetProxy = 000000000000000000000098;
+			target = 00000000000000000000009C;
+			targetProxy = 00000000000000000000009A;
 		};
-		00000000000000000000009C = {
+		00000000000000000000009E = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 000000000000000000000099;
+			containerPortal = 00000000000000000000009B;
 			proxyType = 1;
-			remoteGlobalIDString = 00000000000000000000009D;
+			remoteGlobalIDString = 00000000000000000000009F;
 			remoteInfo = StashCore;
 		};
-		00000000000000000000009D = {
+		00000000000000000000009F = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0000000000000000000000AE;
+			buildConfigurationList = 0000000000000000000000B0;
 			buildPhases = (
-				000000000000000000000091,
-				000000000000000000000092,
 				000000000000000000000093,
 				000000000000000000000094,
+				000000000000000000000095,
+				000000000000000000000096,
 			);
 			buildRules = (
 			);
@@ -528,36 +532,36 @@
 			productReference = 000000000000000000000033;
 			productType = "com.apple.product-type.framework";
 		};
-		00000000000000000000009E = {
-			isa = PBXTargetDependency;
-			target = 00000000000000000000009D;
-			targetProxy = 00000000000000000000009C;
-		};
-		00000000000000000000009F = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 000000000000000000000099;
-			proxyType = 1;
-			remoteGlobalIDString = 00000000000000000000009D;
-			remoteInfo = StashCore;
-		};
 		0000000000000000000000A0 = {
 			isa = PBXTargetDependency;
-			target = 00000000000000000000009D;
-			targetProxy = 00000000000000000000009F;
+			target = 00000000000000000000009F;
+			targetProxy = 00000000000000000000009E;
 		};
 		0000000000000000000000A1 = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 000000000000000000000099;
+			containerPortal = 00000000000000000000009B;
 			proxyType = 1;
-			remoteGlobalIDString = 00000000000000000000009D;
+			remoteGlobalIDString = 00000000000000000000009F;
 			remoteInfo = StashCore;
 		};
 		0000000000000000000000A2 = {
 			isa = PBXTargetDependency;
-			target = 00000000000000000000009D;
+			target = 00000000000000000000009F;
 			targetProxy = 0000000000000000000000A1;
 		};
 		0000000000000000000000A3 = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 00000000000000000000009B;
+			proxyType = 1;
+			remoteGlobalIDString = 00000000000000000000009F;
+			remoteInfo = StashCore;
+		};
+		0000000000000000000000A4 = {
+			isa = PBXTargetDependency;
+			target = 00000000000000000000009F;
+			targetProxy = 0000000000000000000000A3;
+		};
+		0000000000000000000000A5 = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -599,7 +603,7 @@
 			};
 			name = Debug;
 		};
-		0000000000000000000000A4 = {
+		0000000000000000000000A6 = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -635,16 +639,16 @@
 			};
 			name = Release;
 		};
-		0000000000000000000000A5 = {
+		0000000000000000000000A7 = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0000000000000000000000A3,
-				0000000000000000000000A4,
+				0000000000000000000000A5,
+				0000000000000000000000A6,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0000000000000000000000A6 = {
+		0000000000000000000000A8 = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -666,63 +670,40 @@
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
-		};
-		0000000000000000000000A7 = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = App/Stash.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = App/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-				"$(inherited)",
-				"@executable_path/Frameworks",
-			);
-				MARKETING_VERSION = 0.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Release;
-		};
-		0000000000000000000000A8 = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0000000000000000000000A6,
-				0000000000000000000000A7,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
 		};
 		0000000000000000000000A9 = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = AutoFill/StashAutoFill.entitlements;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = App/Stash.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = AutoFill/Info.plist;
+				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 				"$(inherited)",
 				"@executable_path/Frameworks",
-				"@executable_path/../../Frameworks",
 			);
 				MARKETING_VERSION = 0.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash.autofill;
+				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
-			name = Debug;
+			name = Release;
 		};
 		0000000000000000000000AA = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0000000000000000000000A8,
+				0000000000000000000000A9,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0000000000000000000000AB = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = AutoFill/StashAutoFill.entitlements;
@@ -743,45 +724,41 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
-			name = Release;
-		};
-		0000000000000000000000AB = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0000000000000000000000A9,
-				0000000000000000000000AA,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			name = Debug;
 		};
 		0000000000000000000000AC = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = AutoFill/StashAutoFill.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GENERATE_INFOPLIST_FILE = YES;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = AutoFill/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 				"$(inherited)",
 				"@executable_path/Frameworks",
-				"@loader_path/Frameworks",
+				"@executable_path/../../Frameworks",
 			);
 				MARKETING_VERSION = 0.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash.core;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash.autofill;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 1;
-				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = Debug;
+			name = Release;
 		};
 		0000000000000000000000AD = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0000000000000000000000AB,
+				0000000000000000000000AC,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0000000000000000000000AE = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -806,22 +783,49 @@
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = Release;
-		};
-		0000000000000000000000AE = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0000000000000000000000AC,
-				0000000000000000000000AD,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			name = Debug;
 		};
 		0000000000000000000000AF = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+				"$(inherited)",
+				"@executable_path/Frameworks",
+				"@loader_path/Frameworks",
+			);
+				MARKETING_VERSION = 0.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash.core;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		0000000000000000000000B0 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0000000000000000000000AE,
+				0000000000000000000000AF,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0000000000000000000000B1 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -837,7 +841,7 @@
 			};
 			name = Debug;
 		};
-		0000000000000000000000B0 = {
+		0000000000000000000000B2 = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -857,48 +861,48 @@
 			};
 			name = Release;
 		};
-		0000000000000000000000B1 = {
+		0000000000000000000000B3 = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0000000000000000000000AF,
-				0000000000000000000000B0,
+				0000000000000000000000B1,
+				0000000000000000000000B2,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0000000000000000000000B2 = {
+		0000000000000000000000B4 = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0000000000000000000000A8;
+			buildConfigurationList = 0000000000000000000000AA;
 			buildPhases = (
-				000000000000000000000089,
-				00000000000000000000008A,
 				00000000000000000000008B,
 				00000000000000000000008C,
 				00000000000000000000008D,
+				00000000000000000000008E,
+				00000000000000000000008F,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				00000000000000000000009B,
-				00000000000000000000009E,
+				00000000000000000000009D,
+				0000000000000000000000A0,
 			);
 			name = Stash;
 			productName = Stash;
 			productReference = 000000000000000000000031;
 			productType = "com.apple.product-type.application";
 		};
-		0000000000000000000000B3 = {
+		0000000000000000000000B5 = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0000000000000000000000B1;
+			buildConfigurationList = 0000000000000000000000B3;
 			buildPhases = (
-				000000000000000000000095,
-				000000000000000000000096,
 				000000000000000000000097,
+				000000000000000000000098,
+				000000000000000000000099,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				0000000000000000000000A2,
+				0000000000000000000000A4,
 			);
 			name = StashCoreTests;
 			productName = StashCoreTests;
@@ -906,5 +910,5 @@
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 	};
-	rootObject = 000000000000000000000099;
+	rootObject = 00000000000000000000009B;
 }

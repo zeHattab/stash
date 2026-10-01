@@ -136,8 +136,11 @@ Face ID. Прежнее поле `wrappedVaultKeyBiometric` из формата 
 функции Face ID сам по себе сейф не открывает — всегда нужен пароль.
 
 **Почему ложный сейф нужно наполнить.** Пустой или явно фальшивый ложный сейф не
-убедителен. Поэтому при включении туда сразу кладутся несколько правдоподобных
-примеров — дополните их реалистичными записями.
+убедителен. Готовых одинаковых для всех примеров НЕТ (в открытом коде они мгновенно
+выдавали бы ложный сейф) — при включении открывается экран наполнения с кнопками по
+типам записей; значения вы придумываете сами. Напоминание «ложный сейф почти пуст»
+показывается ТОЛЬКО в настоящем сейфе и опирается на флаг в его payload (сколько
+записей было при создании), поэтому не требует расшифровки ложного сейфа.
 
 ---
 
@@ -274,6 +277,9 @@ who demands the "second password". Input surveillance (camera, shoulder, keylogg
 A compromised device (malware, memory of the unlocked app). With the feature on, Face
 ID alone never opens the vault — a password is always required.
 
-**Why the decoy must be filled.** An empty or obviously fake decoy is unconvincing,
-so enabling the feature seeds a few believable sample entries — flesh them out with
-realistic records.
+**Why the decoy must be filled.** An empty or obviously fake decoy is unconvincing.
+There are NO shared built-in sample entries (in open source they would instantly give
+the decoy away) — enabling the feature opens a fill screen with buttons per entry type;
+you invent the values yourself. The "decoy is almost empty" reminder appears ONLY in
+the real vault and relies on a flag in its own payload (how many entries existed at
+creation), so it needs no decryption of the decoy.

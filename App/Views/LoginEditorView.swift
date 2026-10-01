@@ -4,6 +4,9 @@ import StashCore
 struct LoginEditorView: View {
     let model: AppModel
     let original: VaultItem
+    /// Если задано — запись не сохраняется в сейф, а возвращается через колбэк
+    /// (используется на экране наполнения ложного сейфа).
+    var onCollect: ((VaultItem) -> Void)? = nil
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
@@ -22,9 +25,10 @@ struct LoginEditorView: View {
 
     private let totpSecret: String?
 
-    init(model: AppModel, original: VaultItem) {
+    init(model: AppModel, original: VaultItem, onCollect: ((VaultItem) -> Void)? = nil) {
         self.model = model
         self.original = original
+        self.onCollect = onCollect
         var u = "", p = "", t: String? = nil
         var list: [String] = []
         if case let .login(username, password, urls, totp) = original.kind {
@@ -216,6 +220,11 @@ struct LoginEditorView: View {
         item.notes = notes
         item.favorite = favorite
         item.kind = .login(username: username, password: password, urls: cleaned, totpSecret: totpSecret)
-        Task { try? await model.save(item); dismiss() }
+        if let onCollect {
+            onCollect(item)
+            dismiss()
+        } else {
+            Task { try? await model.save(item); dismiss() }
+        }
     }
 }

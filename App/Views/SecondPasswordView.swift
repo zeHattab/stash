@@ -11,9 +11,7 @@ struct SecondPasswordView: View {
     @State private var reveal = false
     @State private var working = false
     @State private var errorText: String?
-    @State private var showSwitchOffer = false
-    @State private var lastSecond = ""
-    @State private var decoyRecoveryKey: String?
+    @State private var showFill = false
 
     private var assessment: PasswordAssessment { PasswordEvaluator.assess(second) }
     private var canEnable: Bool {
@@ -29,6 +27,12 @@ struct SecondPasswordView: View {
             }
 
             if model.secondPasswordEnabled {
+                if model.decoyNeedsFilling && !model.isDecoySession {
+                    Section {
+                        Label("Ложный сейф почти пуст — наполните его", systemImage: "exclamationmark.triangle")
+                            .foregroundStyle(.orange)
+                    }
+                }
                 disableSection
             } else {
                 enableSection
@@ -44,18 +48,8 @@ struct SecondPasswordView: View {
         .onChange(of: second) { _, _ in errorText = nil }
         .onChange(of: confirm) { _, _ in errorText = nil }
         .onChange(of: master) { _, _ in errorText = nil }
-        .alert("Готово", isPresented: $showSwitchOffer) {
-            Button("Перейти в ложный сейф") { switchToDecoy() }
-            Button("Позже", role: .cancel) { dismiss() }
-        } message: {
-            Text("Ложный сейф создан и в нём уже есть примеры записей. Перейти и заполнить его?")
-        }
-        .sheet(isPresented: Binding(get: { decoyRecoveryKey != nil }, set: { if !$0 { decoyRecoveryKey = nil } })) {
-            RecoveryKeyView(
-                key: decoyRecoveryKey ?? "",
-                onSaved: { decoyRecoveryKey = nil; showSwitchOffer = true },
-                onSkip: { decoyRecoveryKey = nil; showSwitchOffer = true }
-            )
+        .navigationDestination(isPresented: $showFill) {
+            DecoyFillView(model: model, secondPassword: second)
         }
     }
 
@@ -104,23 +98,25 @@ struct SecondPasswordView: View {
     }
 
     private func enable() {
+        if model.isDecoySession {
+            // В ложном сейфе: сценарий проходит, но чужой слот не трогаем, экрана наполнения нет.
+            working = true
+            Task {
+                defer { working = false }
+                try? await model.enableSecondPassword(second)
+                dismiss()
+            }
+            return
+        }
+        let entered = second
         working = true
         errorText = nil
-        let entered = second
         Task {
             defer { working = false }
-            do {
-                let key = try await model.enableSecondPassword(entered)
-                lastSecond = entered
-                if model.isDecoySession {
-                    dismiss()
-                } else {
-                    decoyRecoveryKey = key // показать ключ восстановления ложного сейфа
-                }
-            } catch VaultError.secondPasswordMustDiffer {
+            if await model.secondPasswordCollides(entered) {
                 errorText = "Второй пароль должен отличаться от мастер-пароля."
-            } catch {
-                errorText = "Не удалось включить второй пароль."
+            } else {
+                showFill = true
             }
         }
     }
@@ -140,13 +136,6 @@ struct SecondPasswordView: View {
             } catch {
                 errorText = "Не удалось выключить второй пароль."
             }
-        }
-    }
-
-    private func switchToDecoy() {
-        Task {
-            try? await model.openDecoy(second: lastSecond)
-            dismiss()
         }
     }
 }

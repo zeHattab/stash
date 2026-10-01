@@ -4,6 +4,7 @@ import StashCore
 struct NoteEditorView: View {
     let model: AppModel
     let original: VaultItem
+    var onCollect: ((VaultItem) -> Void)? = nil
 
     @Environment(\.dismiss) private var dismiss
 
@@ -12,9 +13,10 @@ struct NoteEditorView: View {
     @State private var favorite: Bool
     @State private var confirmDelete = false
 
-    init(model: AppModel, original: VaultItem) {
+    init(model: AppModel, original: VaultItem, onCollect: ((VaultItem) -> Void)? = nil) {
         self.model = model
         self.original = original
+        self.onCollect = onCollect
         _title = State(initialValue: original.title)
         _text = State(initialValue: original.notes)
         _favorite = State(initialValue: original.favorite)
@@ -62,6 +64,11 @@ struct NoteEditorView: View {
         item.notes = text
         item.favorite = favorite
         item.kind = .secureNote
-        Task { try? await model.save(item); dismiss() }
+        if let onCollect {
+            onCollect(item)
+            dismiss()
+        } else {
+            Task { try? await model.save(item); dismiss() }
+        }
     }
 }

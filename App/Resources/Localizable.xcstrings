@@ -1724,6 +1724,126 @@
         }
       }
     },
+    "Наполните ложный сейф": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fill the decoy vault"
+          }
+        }
+      }
+    },
+    "Наполните ложный сейф правдоподобными записями. Пустой или явно фальшивый сейф выдаёт себя. Значения придумайте сами — рекомендуем 3–5 записей.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fill the decoy vault with believable entries. An empty or obviously fake vault gives itself away. Make up the values yourself — we recommend 3–5 entries."
+          }
+        }
+      }
+    },
+    "Добавлено %lld из рекомендуемых 3–5": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Added %lld of the recommended 3–5"
+          }
+        }
+      }
+    },
+    "Пока ничего не добавлено": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing added yet"
+          }
+        }
+      }
+    },
+    "Добавить запись": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add an entry"
+          }
+        }
+      }
+    },
+    "Почта": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email"
+          }
+        }
+      }
+    },
+    "Соцсеть": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Social network"
+          }
+        }
+      }
+    },
+    "Интернет-магазин": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Online store"
+          }
+        }
+      }
+    },
+    "Wi-Fi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wi-Fi"
+          }
+        }
+      }
+    },
+    "Сделаю позже": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I'll do it later"
+          }
+        }
+      }
+    },
+    "Второй пароль включён. Перейти в ложный сейф сейчас?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The second password is on. Go to the decoy vault now?"
+          }
+        }
+      }
+    },
+    "Ложный сейф почти пуст — наполните его": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The decoy vault is almost empty — fill it"
+          }
+        }
+      }
+    },
     "Этот пароль используется ещё в %lld записях": {
       "localizations": {
         "ru": {

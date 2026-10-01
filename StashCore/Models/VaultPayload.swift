@@ -11,22 +11,28 @@ public struct VaultPayload: Codable, Sendable, Equatable {
     public var isDecoy: Bool?
     public var secondPasswordEnabled: Bool?
     public var recoveryKeySaved: Bool?
+    /// В payload НАСТОЯЩЕГО сейфа: ложный сейф почти пуст (мало записей при создании).
+    /// Позволяет показать напоминание в настоящем сейфе, не расшифровывая ложный.
+    public var decoyNeedsFilling: Bool?
 
     public init(
         schemaVersion: Int,
         items: [VaultItem],
         isDecoy: Bool? = nil,
         secondPasswordEnabled: Bool? = nil,
-        recoveryKeySaved: Bool? = nil
+        recoveryKeySaved: Bool? = nil,
+        decoyNeedsFilling: Bool? = nil
     ) {
         self.schemaVersion = schemaVersion
         self.items = items
         self.isDecoy = isDecoy
         self.secondPasswordEnabled = secondPasswordEnabled
         self.recoveryKeySaved = recoveryKeySaved
+        self.decoyNeedsFilling = decoyNeedsFilling
     }
 
     public var decoy: Bool { isDecoy ?? false }
     public var secondEnabled: Bool { secondPasswordEnabled ?? false }
     public var recoverySaved: Bool { recoveryKeySaved ?? false }
+    public var decoySparse: Bool { decoyNeedsFilling ?? false }
 }

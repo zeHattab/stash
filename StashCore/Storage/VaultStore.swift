@@ -30,6 +30,7 @@ public actor VaultStore {
     private var isDecoyFlag = false
     private var secondEnabledFlag = false
     private var recoverySavedFlag = false
+    private var decoyNeedsFillingFlag = false
 
     public init(configuration: Configuration) {
         self.config = configuration
@@ -42,6 +43,7 @@ public actor VaultStore {
     public func currentIsDecoy() -> Bool { isDecoyFlag }
     public func currentSecondPasswordEnabled() -> Bool { secondEnabledFlag }
     public func currentRecoveryKeySaved() -> Bool { recoverySavedFlag }
+    public func currentDecoyNeedsFilling() -> Bool { decoyNeedsFillingFlag }
     func openedSlotForTesting() -> Int? { openedSlot }
 
     public func exists() -> Bool {
@@ -165,7 +167,8 @@ public actor VaultStore {
     public func lock() {
         vaultKey = nil; cachedItems = nil; openedSlot = nil
         currentSalt = nil; currentWrapMaster = nil; currentWrapRecovery = nil
-        otherSlotBytes = nil; isDecoyFlag = false; secondEnabledFlag = false; recoverySavedFlag = false
+        otherSlotBytes = nil; isDecoyFlag = false; secondEnabledFlag = false
+        recoverySavedFlag = false; decoyNeedsFillingFlag = false
     }
 
     // MARK: - Записи
@@ -230,8 +233,9 @@ public actor VaultStore {
                                                        payloadCiphertext: ct2, slotSize: slotSize)
 
         secondEnabledFlag = true
+        decoyNeedsFillingFlag = sampleItems.count < 3 // рекомендуем 3–5 записей
         otherSlotBytes = decoySlot
-        try persistCurrent() // перезаписывает текущий слот (флаг) + кладёт decoySlot в другой
+        try persistCurrent() // перезаписывает текущий слот (флаги) + кладёт decoySlot в другой
         return decoyRecovery
     }
 
@@ -244,6 +248,13 @@ public actor VaultStore {
         otherSlotBytes = try Random.bytes(slotSize)
         secondEnabledFlag = false
         try persistCurrent()
+    }
+
+    /// Проверка «второй пароль открывает текущий слot» (т.е. совпадает с мастером/ключом).
+    public func probeSecondPasswordCollides(_ second: String) -> Bool {
+        guard let salt = currentSalt, let wm = currentWrapMaster, let wr = currentWrapRecovery, isUnlocked,
+              let kek = try? KDF.derive(password: Data(second.utf8), parameters: params(salt)) else { return false }
+        return (try? Crypto.unwrap(wm, with: kek)) != nil || (try? Crypto.unwrap(wr, with: kek)) != nil
     }
 
     public func setSecondPasswordFlag(_ enabled: Bool) throws {
@@ -290,6 +301,7 @@ public actor VaultStore {
         isDecoyFlag = payload.decoy
         secondEnabledFlag = payload.secondEnabled
         recoverySavedFlag = payload.recoverySaved
+        decoyNeedsFillingFlag = payload.decoySparse
     }
 
     private func installFreshV3(vk: SymmetricKey, salt: Data, wrapMaster: Data, wrapRecovery: Data, payload: VaultPayload) throws {
@@ -310,6 +322,7 @@ public actor VaultStore {
         isDecoyFlag = payload.decoy
         secondEnabledFlag = payload.secondEnabled
         recoverySavedFlag = payload.recoverySaved
+        decoyNeedsFillingFlag = payload.decoySparse
     }
 
     private func persistCurrent() throws {
@@ -319,7 +332,8 @@ public actor VaultStore {
         let payload = VaultPayload(schemaVersion: VaultFormat.currentSchemaVersion, items: items,
                                    isDecoy: isDecoyFlag ? true : nil,
                                    secondPasswordEnabled: secondEnabledFlag ? true : nil,
-                                   recoveryKeySaved: recoverySavedFlag ? true : nil)
+                                   recoveryKeySaved: recoverySavedFlag ? true : nil,
+                                   decoyNeedsFilling: decoyNeedsFillingFlag ? true : nil)
         let ct = try encryptPayload(payload, vk: vk, salt: salt)
         let slot = try VaultContainerV3.buildSlot(salt: salt, wrapMaster: wrapMaster, wrapRecovery: wrapRecovery,
                                                   payloadCiphertext: ct, slotSize: slotSize)

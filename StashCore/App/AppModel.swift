@@ -31,6 +31,8 @@ public final class AppModel {
     public private(set) var isDecoySession = false
     /// Включён ли «Второй пароль» в текущем сейфе (для текущего payload).
     public private(set) var secondPasswordEnabled = false
+    /// Ложный сейф почти пуст (известно настоящему сейфу из своего payload).
+    public private(set) var decoyNeedsFilling = false
     /// Ключ восстановления, который нужно показать один раз (после создания/регенерации).
     public private(set) var pendingRecoveryKey: String?
     public private(set) var recoveryKeySaved = false
@@ -119,6 +121,7 @@ public final class AppModel {
         isDecoySession = await store.currentIsDecoy()
         secondPasswordEnabled = await store.currentSecondPasswordEnabled()
         recoveryKeySaved = await store.currentRecoveryKeySaved()
+        decoyNeedsFilling = await store.currentDecoyNeedsFilling()
     }
 
     private func recordMasterCheck() {
@@ -313,21 +316,27 @@ public final class AppModel {
 
     // MARK: - Второй пароль
 
+    /// Включает второй пароль. decoyItems — записи, которые пользователь собрал на экране
+    /// наполнения (без захардкоженных примеров; может быть пусто).
     @discardableResult
-    public func enableSecondPassword(_ second: String) async throws -> String {
+    public func enableSecondPassword(_ second: String, decoyItems: [VaultItem] = []) async throws -> String {
         if isDecoySession {
             // Из ложного сейфа: сценарий проходит, но другой слот не трогаем.
             try await store.setSecondPasswordFlag(true)
             secondPasswordEnabled = true
             return ""
         } else {
-            let key = try await store.enableSecondVault(secondPassword: second,
-                                                        sampleItems: Self.decoySamples(now: now()))
+            let key = try await store.enableSecondVault(secondPassword: second, sampleItems: decoyItems)
             // При включённой функции Face ID не хранит VK — удаляем запись.
             disableBiometrics()
             secondPasswordEnabled = true
+            decoyNeedsFilling = await store.currentDecoyNeedsFilling()
             return key
         }
+    }
+
+    public func secondPasswordCollides(_ second: String) async -> Bool {
+        await store.probeSecondPasswordCollides(second)
     }
 
     public func disableSecondPassword(master: String) async throws {
@@ -347,22 +356,6 @@ public final class AppModel {
         await reloadItems()
         await refreshSessionFlags()
         phase = .unlocked
-    }
-
-    static func decoySamples(now: Date) -> [VaultItem] {
-        [
-            VaultItem(kind: .login(username: "ivan.petrov@example.com", password: "Qwerty!2024",
-                                   urls: ["https://mail.example.com"], totpSecret: nil),
-                      title: "Почта", createdAt: now, updatedAt: now),
-            VaultItem(kind: .login(username: "ivan_p", password: "Shop-7788",
-                                   urls: ["https://shop.example.com"], totpSecret: nil),
-                      title: "Магазин", createdAt: now, updatedAt: now),
-            VaultItem(kind: .secureNote, title: "Wi-Fi дома", createdAt: now, updatedAt: now,
-                      notes: "Сеть: Home-2G\nПароль: dom12345"),
-            VaultItem(kind: .login(username: "ivanp", password: "Forum_9900",
-                                   urls: ["https://forum.example.com"], totpSecret: nil),
-                      title: "Форум", createdAt: now, updatedAt: now),
-        ]
     }
 
     // MARK: - Автоблокировка

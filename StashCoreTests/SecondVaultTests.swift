@@ -144,4 +144,32 @@ final class SecondVaultTests: XCTestCase {
         await store.lock()
         await expect(.wrongPassword) { try await store.unlock(masterPassword: "nope") }
     }
+
+    func testDecoyCreatedEmptyWhenNoItems() async throws {
+        let (store, _) = makeStore()
+        try await store.create(masterPassword: "master")
+        try await store.enableSecondVault(secondPassword: "decoy", sampleItems: []) // без примеров
+        await store.lock()
+        try await store.unlock(masterPassword: "decoy")
+        let items = try await store.items()
+        XCTAssertTrue(items.isEmpty)
+        let isDecoy = await store.currentIsDecoy()
+        XCTAssertTrue(isDecoy)
+    }
+
+    func testDecoyNeedsFillingFlagReflectsCount() async throws {
+        let (store, _) = makeStore()
+        try await store.create(masterPassword: "master")
+        try await store.enableSecondVault(secondPassword: "decoy", sampleItems: []) // 0 < 3
+        let sparse = await store.currentDecoyNeedsFilling()
+        XCTAssertTrue(sparse)
+
+        let (store2, _) = makeStore()
+        try await store2.create(masterPassword: "master")
+        try await store2.enableSecondVault(
+            secondPassword: "decoy",
+            sampleItems: [login("a", pw: "1"), login("b", pw: "2"), login("c", pw: "3")])
+        let notSparse = await store2.currentDecoyNeedsFilling()
+        XCTAssertFalse(notSparse)
+    }
 }
