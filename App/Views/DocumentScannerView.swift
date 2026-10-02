@@ -22,14 +22,21 @@ struct DocumentScannerView: UIViewControllerRepresentable {
                                           didFinishWith scan: VNDocumentCameraScan) {
             var images: [UIImage] = []
             for page in 0..<scan.pageCount { images.append(scan.imageOfPage(at: page)) }
-            controller.dismiss(animated: true) { self.onComplete(images) }
+            finish(controller, images)
         }
         func documentCameraViewControllerDidCancel(_ controller: VNDocumentCameraViewController) {
-            controller.dismiss(animated: true) { self.onComplete([]) }
+            finish(controller, [])
         }
         func documentCameraViewController(_ controller: VNDocumentCameraViewController,
                                           didFailWithError error: Error) {
-            controller.dismiss(animated: true) { self.onComplete([]) }
+            finish(controller, [])
+        }
+
+        // Делегат VisionKit вызывается на главном потоке; завершаем на главном акторе.
+        private func finish(_ controller: VNDocumentCameraViewController, _ images: [UIImage]) {
+            MainActor.assumeIsolated {
+                controller.dismiss(animated: true) { self.onComplete(images) }
+            }
         }
     }
 }
@@ -38,17 +45,15 @@ struct DocumentScannerView: UIViewControllerRepresentable {
 enum DocumentOCR {
     static func recognizeText(_ image: UIImage) async -> String {
         guard let cg = image.cgImage else { return "" }
-        return await withCheckedContinuation { continuation in
-            let request = VNRecognizeTextRequest { request, _ in
-                let observations = request.results as? [VNRecognizedTextObservation] ?? []
-                let text = observations.compactMap { $0.topCandidates(1).first?.string }.joined(separator: "\n")
-                continuation.resume(returning: text)
-            }
+        return await Task.detached(priority: .userInitiated) { () -> String in
+            let request = VNRecognizeTextRequest()
             request.recognitionLevel = .accurate
             request.usesLanguageCorrection = false
             request.recognitionLanguages = ["ru-RU", "en-US"]
             let handler = VNImageRequestHandler(cgImage: cg, options: [:])
-            DispatchQueue.global(qos: .userInitiated).async { try? handler.perform([request]) }
-        }
+            try? handler.perform([request])
+            let observations = request.results ?? []
+            return observations.compactMap { $0.topCandidates(1).first?.string }.joined(separator: "\n")
+        }.value
     }
 }
