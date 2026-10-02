@@ -57,7 +57,10 @@ struct DocumentEditorView: View {
     private var isExisting: Bool { model.items.contains { $0.id == original.id } }
 
     /// Кнопка сканирования в блоке вложений — только для существующего документа.
-    private var attachmentsScanAction: (() -> Void)? { isExisting ? startScan : nil }
+    private var attachmentsScanAction: (() -> Void)? {
+        guard isExisting else { return nil }
+        return { startScan() }
+    }
 
     private var formBody: some View {
         Form {
