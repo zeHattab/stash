@@ -33,6 +33,20 @@ public struct PasswordHistoryEntry: Codable, Sendable, Equatable, Identifiable {
     }
 }
 
+/// Вложение документа (скан/фото или PDF). Байты хранятся ВНУТРИ слота (в payload),
+/// никаких отдельных файлов вне контейнера (требование SECURITY.md).
+public struct Attachment: Codable, Sendable, Equatable, Identifiable {
+    public enum Kind: String, Codable, Sendable, Equatable { case image, pdf }
+    public var id: UUID
+    public var name: String
+    public var kind: Kind
+    public var data: Data
+
+    public init(id: UUID = UUID(), name: String, kind: Kind, data: Data) {
+        self.id = id; self.name = name; self.kind = kind; self.data = data
+    }
+}
+
 /// Единица хранения в сейфе.
 public struct VaultItem: Codable, Sendable, Identifiable, Equatable {
     public var id: UUID
@@ -45,6 +59,8 @@ public struct VaultItem: Codable, Sendable, Identifiable, Equatable {
     /// История прежних паролей (для логинов). Optional → старые сейфы без этого
     /// ключа декодируются (synthesized Codable для Optional использует decodeIfPresent).
     public var passwordHistory: [PasswordHistoryEntry]?
+    /// Вложения документа (optional для обратной совместимости).
+    public var attachments: [Attachment]?
 
     public init(
         id: UUID = UUID(),
@@ -54,7 +70,8 @@ public struct VaultItem: Codable, Sendable, Identifiable, Equatable {
         updatedAt: Date = Date(),
         favorite: Bool = false,
         notes: String = "",
-        passwordHistory: [PasswordHistoryEntry]? = nil
+        passwordHistory: [PasswordHistoryEntry]? = nil,
+        attachments: [Attachment]? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -64,5 +81,6 @@ public struct VaultItem: Codable, Sendable, Identifiable, Equatable {
         self.favorite = favorite
         self.notes = notes
         self.passwordHistory = passwordHistory
+        self.attachments = attachments
     }
 }

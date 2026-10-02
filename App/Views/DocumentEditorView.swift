@@ -16,6 +16,7 @@ struct DocumentEditorView: View {
     @State private var freeFields: [FreeField]
     @State private var hasExpiry: Bool
     @State private var expiry: Date
+    @State private var attachments: [Attachment]
     @State private var confirmDelete = false
 
     struct FreeField: Identifiable { let id = UUID(); var name: String; var value: String }
@@ -41,6 +42,7 @@ struct DocumentEditorView: View {
             .map { FreeField(name: $0.key, value: $0.value) })
         _hasExpiry = State(initialValue: exp != nil)
         _expiry = State(initialValue: exp ?? Date())
+        _attachments = State(initialValue: original.attachments ?? [])
     }
 
     private var isExisting: Bool { model.items.contains { $0.id == original.id } }
@@ -79,6 +81,8 @@ struct DocumentEditorView: View {
                     Label("Добавить поле", systemImage: "plus")
                 }.font(.footnote)
             }
+
+            AttachmentsSection(attachments: $attachments)
 
             Section("Срок действия") {
                 Toggle("Есть срок действия", isOn: $hasExpiry)
@@ -137,6 +141,7 @@ struct DocumentEditorView: View {
         }()
         item.kind = .document(type: type, fields: merged,
                               expiresAt: hasExpiry ? expiry : nil, attachmentIDs: attachmentIDs)
+        item.attachments = attachments.isEmpty ? nil : attachments
         if let onCollect {
             onCollect(item); dismiss()
         } else {
