@@ -17,22 +17,25 @@ enum CredentialIdentities {
 
         ASCredentialIdentityStore.shared.getState { state in
             guard state.isEnabled else { return } // расширение не включено в системе
-            if entries.isEmpty {
-                ASCredentialIdentityStore.shared.removeAllCredentialIdentities(completion: nil)
-            } else {
-                let identities: [ASCredentialIdentity] = entries.map { e in
-                    ASPasswordCredentialIdentity(
-                        serviceIdentifier: ASCredentialServiceIdentifier(identifier: e.domain, type: .domain),
-                        user: e.user,
-                        recordIdentifier: e.recordID)
+            Task {
+                let store = ASCredentialIdentityStore.shared
+                if entries.isEmpty {
+                    try? await store.removeAllCredentialIdentities()
+                } else {
+                    let identities: [ASCredentialIdentity] = entries.map { e in
+                        ASPasswordCredentialIdentity(
+                            serviceIdentifier: ASCredentialServiceIdentifier(identifier: e.domain, type: .domain),
+                            user: e.user,
+                            recordIdentifier: e.recordID)
+                    }
+                    try? await store.replaceCredentialIdentities(identities)
                 }
-                ASCredentialIdentityStore.shared.replaceCredentialIdentities(with: identities, completion: nil)
             }
         }
     }
 
     /// Очистить всё хранилище идентичностей (при включении второго пароля).
     static func clearAll() {
-        ASCredentialIdentityStore.shared.removeAllCredentialIdentities(completion: nil)
+        Task { try? await ASCredentialIdentityStore.shared.removeAllCredentialIdentities() }
     }
 }
