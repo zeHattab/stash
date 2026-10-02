@@ -89,10 +89,9 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
         // Ключ больше не нужен в этом процессе — стираем из памяти сразу после выборки.
         if directRecordID != nil {
             await completeDirect(logins: logins)
-            await store.lock()
             return
         }
-        await MainActor.run { showList(logins) }
+        showList(logins)
     }
 
     // MARK: - Экран ввода пароля
@@ -145,7 +144,7 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
                 if #available(iOS 18.0, *), let code = login.currentTOTPCode() {
                     let cred = ASOneTimeCodeCredential(code: code)
                     await store.lock()
-                    extensionContext.completeOneTimeCodeRequest(using: cred)
+                    await extensionContext.completeOneTimeCodeRequest(using: cred)
                 } else {
                     await store.lock()
                     cancel()
@@ -156,20 +155,20 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
 
     private func completeDirect(logins: [AutoFillLogin]) async {
         guard let id = directRecordID, let login = logins.first(where: { $0.id.uuidString == id }) else {
-            await MainActor.run { showList(logins) }
+            showList(logins)
             return
         }
-        await MainActor.run {
-            switch mode {
-            case .password:
-                extensionContext.completeRequest(
-                    withSelectedCredential: ASPasswordCredential(user: login.username, password: login.password))
-            case .oneTimeCode:
-                if #available(iOS 18.0, *), let code = login.currentTOTPCode() {
-                    extensionContext.completeOneTimeCodeRequest(using: ASOneTimeCodeCredential(code: code))
-                } else {
-                    cancel()
-                }
+        switch mode {
+        case .password:
+            await store.lock()
+            extensionContext.completeRequest(
+                withSelectedCredential: ASPasswordCredential(user: login.username, password: login.password))
+        case .oneTimeCode:
+            if #available(iOS 18.0, *), let code = login.currentTOTPCode() {
+                await store.lock()
+                await extensionContext.completeOneTimeCodeRequest(using: ASOneTimeCodeCredential(code: code))
+            } else {
+                cancel()
             }
         }
     }
