@@ -1,5 +1,5 @@
 import SwiftUI
-import VisionKit
+@preconcurrency import VisionKit
 import Vision
 
 /// Сканер документов (VisionKit). Возвращает отсканированные страницы как изображения.
@@ -14,6 +14,7 @@ struct DocumentScannerView: UIViewControllerRepresentable {
     func updateUIViewController(_ controller: VNDocumentCameraViewController, context: Context) {}
     func makeCoordinator() -> Coordinator { Coordinator(onComplete: onComplete) }
 
+    @MainActor
     final class Coordinator: NSObject, VNDocumentCameraViewControllerDelegate {
         let onComplete: ([UIImage]) -> Void
         init(onComplete: @escaping ([UIImage]) -> Void) { self.onComplete = onComplete }
@@ -22,21 +23,14 @@ struct DocumentScannerView: UIViewControllerRepresentable {
                                           didFinishWith scan: VNDocumentCameraScan) {
             var images: [UIImage] = []
             for page in 0..<scan.pageCount { images.append(scan.imageOfPage(at: page)) }
-            finish(controller, images)
+            controller.dismiss(animated: true) { self.onComplete(images) }
         }
         func documentCameraViewControllerDidCancel(_ controller: VNDocumentCameraViewController) {
-            finish(controller, [])
+            controller.dismiss(animated: true) { self.onComplete([]) }
         }
         func documentCameraViewController(_ controller: VNDocumentCameraViewController,
                                           didFailWithError error: Error) {
-            finish(controller, [])
-        }
-
-        // Делегат VisionKit вызывается на главном потоке; завершаем на главном акторе.
-        private func finish(_ controller: VNDocumentCameraViewController, _ images: [UIImage]) {
-            MainActor.assumeIsolated {
-                controller.dismiss(animated: true) { self.onComplete(images) }
-            }
+            controller.dismiss(animated: true) { self.onComplete([]) }
         }
     }
 }
