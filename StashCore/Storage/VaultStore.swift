@@ -185,6 +185,18 @@ public actor VaultStore {
         return items
     }
 
+    /// Облегчённые логины для расширения AutoFill: без вложений/заметок/истории — чтобы не
+    /// держать лишнее в памяти (у расширения жёсткий лимит). Вложения бывают только у
+    /// документов, поэтому здесь их и не возникает, но на всякий случай ничего лишнего не несём.
+    public func autofillLogins() throws -> [AutoFillLogin] {
+        guard let items = cachedItems, isUnlocked else { throw VaultError.locked }
+        return items.compactMap { item in
+            guard case let .login(username, password, urls, totp) = item.kind else { return nil }
+            return AutoFillLogin(id: item.id, title: item.title, username: username,
+                                 password: password, urls: urls, totpSecret: totp)
+        }
+    }
+
     public func upsert(_ item: VaultItem) throws {
         guard var items = cachedItems, isUnlocked else { throw VaultError.locked }
         if let i = items.firstIndex(where: { $0.id == item.id }) { items[i] = item } else { items.append(item) }
