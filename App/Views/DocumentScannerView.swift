@@ -2,6 +2,7 @@ import SwiftUI
 import VisionKit
 import Vision
 import ImageIO
+import StashCore
 import os
 
 private let scanLog = Logger(subsystem: "com.portie24.stash", category: "scanner")
