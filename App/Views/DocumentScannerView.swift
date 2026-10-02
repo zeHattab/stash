@@ -86,6 +86,15 @@ enum DocumentOCR {
             rows += asm.rows
             joins += asm.joins
         }
+        // Доп. проход по вырезанной и увеличенной нижней полосе (MRZ на развороте мелкая).
+        if let band = DocumentImage.cropBottom(image), let bandCG = band.cgImage {
+            for orient in [CGImagePropertyOrientation.up, .down] {
+                let frags = await observations(cg: bandCG, orientation: orient, languages: ["en-US"], roi: nil)
+                let asm = MRZLineAssembler.assemble(frags)
+                rows += asm.rows
+                joins += asm.joins
+            }
+        }
         return (rows, joins)
     }
 

@@ -874,6 +874,26 @@
         }
       }
     },
+    "Заполнить": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fill"
+          }
+        }
+      }
+    },
+    "Заполнить пустые поля из скана?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fill empty fields from the scan?"
+          }
+        }
+      }
+    },
     "Значение": {
       "localizations": {
         "en": {
@@ -2882,6 +2902,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Delete the original from Photos?"
+          }
+        }
+      }
+    },
+    "Уже заполненные поля не изменятся.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fields that already have values won’t change."
           }
         }
       }

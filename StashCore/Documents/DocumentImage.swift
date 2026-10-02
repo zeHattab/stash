@@ -37,6 +37,29 @@ public enum DocumentImage {
         return (rendered, target)
     }
 
+    /// Пиксельный прямоугольник нижней полосы (где MRZ) — чистая функция, тестируется.
+    public static func bottomBandRect(_ pixelSize: CGSize, fraction: CGFloat) -> CGRect {
+        let f = min(max(fraction, 0.05), 1)
+        let h = (pixelSize.height * f).rounded()
+        return CGRect(x: 0, y: pixelSize.height - h, width: pixelSize.width, height: h)
+    }
+
+    /// Нижняя полоса страницы (MRZ), увеличенная в `scale` раз — мелкий текст читается лучше.
+    public static func cropBottom(_ image: UIImage, fraction: CGFloat = 0.22, scale: CGFloat = 2.5) -> UIImage? {
+        let norm = normalized(image)
+        let rect = bottomBandRect(norm.pixelSize, fraction: fraction)
+        guard let cg = norm.image.cgImage?.cropping(to: rect) else { return nil }
+        let base = UIImage(cgImage: cg)
+        let target = CGSize(width: (CGFloat(cg.width) * scale).rounded(),
+                            height: (CGFloat(cg.height) * scale).rounded())
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        format.opaque = true
+        return UIGraphicsImageRenderer(size: target, format: format).image { _ in
+            base.draw(in: CGRect(origin: .zero, size: target))
+        }
+    }
+
     /// JPEG нормализованного изображения.
     public static func jpeg(_ image: UIImage, maxSide: CGFloat = 2500, quality: CGFloat = 0.8) -> (data: Data, pixelSize: CGSize)? {
         let norm = normalized(image, maxSide: maxSide)

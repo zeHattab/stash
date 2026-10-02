@@ -19,6 +19,14 @@ final class DocumentImageTests: XCTestCase {
         XCTAssertEqual(t, CGSize(width: 1200, height: 1600))
     }
 
+    func testBottomBandRect() {
+        let r = DocumentImage.bottomBandRect(CGSize(width: 1000, height: 2000), fraction: 0.22)
+        XCTAssertEqual(r.width, 1000)
+        XCTAssertEqual(r.height, 440)        // 2000 * 0.22
+        XCTAssertEqual(r.minY, 1560)         // нижняя полоса
+        XCTAssertEqual(r.maxY, 2000)
+    }
+
     #if canImport(UIKit)
     func testNormalizedLongSideIs2500AndScale1() {
         let img = Self.solid(3000, 4000)

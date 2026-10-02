@@ -27,6 +27,8 @@ struct DocumentEditorView: View {
     @State private var recognizedText: String?
     /// Ключи полей, заполненных из MRZ (подсвечиваются до правки/таймаута).
     @State private var mrzFilledKeys: Set<String> = []
+    @State private var pendingMRZ: MRZResult?
+    @State private var confirmFillFromScan = false
 
     struct FreeField: Identifiable { let id = UUID(); var name: String; var value: String }
 
@@ -114,6 +116,12 @@ struct DocumentEditorView: View {
         .onChange(of: hasExpiry) { _, now in
             if now { Task { await ExpiryNotifications.requestAuthorization() } }
         }
+        .alert("Заполнить пустые поля из скана?", isPresented: $confirmFillFromScan, presenting: pendingMRZ) { mrz in
+            Button("Заполнить") { applyMRZ(mrz, onlyEmpty: true) }
+            Button("Отмена", role: .cancel) {}
+        } message: { _ in
+            Text("Уже заполненные поля не изменятся.")
+        }
     }
 
     // MARK: - Сканирование
@@ -185,18 +193,14 @@ struct DocumentEditorView: View {
                 recovered: diag.recovered, attempts: diag.attempts))
 
             if let mrz, mrz.checkDigitsValid {
-                var filled: Set<String> = []
-                fields[DocumentFieldKey.number.rawValue] = mrz.documentNumber
-                filled.insert(DocumentFieldKey.number.rawValue)
-                let name = [mrz.surname, mrz.givenNames].filter { !$0.isEmpty }.joined(separator: " ")
-                if !name.isEmpty { fields[DocumentFieldKey.fullName.rawValue] = name; filled.insert(DocumentFieldKey.fullName.rawValue) }
-                if !mrz.nationality.isEmpty { fields[DocumentFieldKey.country.rawValue] = mrz.nationality; filled.insert(DocumentFieldKey.country.rawValue) }
-                if let birth = mrz.birthDate { fields[DocumentFieldKey.birthDate.rawValue] = Self.isoDate(birth); filled.insert(DocumentFieldKey.birthDate.rawValue) }
-                if let exp = mrz.expiryDate { hasExpiry = true; expiry = exp }
-                scanNote = String(localized: "Заполнено из скана — проверьте поля")
                 recognizedText = nil
-                mrzFilledKeys = filled
-                Task { try? await Task.sleep(nanoseconds: 8_000_000_000); mrzFilledKeys = [] }
+                if isExisting && hasAnyRecommendedFieldFilled {
+                    // В существующем документе не перезаписываем заполненное без спроса.
+                    pendingMRZ = mrz
+                    confirmFillFromScan = true
+                } else {
+                    applyMRZ(mrz, onlyEmpty: false)
+                }
             } else {
                 // Скан уже прикреплён. MRZ не распозналась/не прошла — предлагаем ручной ввод,
                 // а найденный текст показываем, чтобы было откуда скопировать.
@@ -204,6 +208,29 @@ struct DocumentEditorView: View {
                 recognizedText = generalTrimmed.isEmpty ? nil : generalTrimmed
             }
         }
+    }
+
+    private var hasAnyRecommendedFieldFilled: Bool {
+        DocumentFields.recommended(for: type).contains { !(fields[$0.rawValue] ?? "").isEmpty }
+    }
+
+    /// Заполняет поля из MRZ. onlyEmpty=true — не перезаписывает уже заполненные.
+    private func applyMRZ(_ mrz: MRZResult, onlyEmpty: Bool) {
+        var filled: Set<String> = []
+        func put(_ key: DocumentFieldKey, _ value: String) {
+            guard !value.isEmpty else { return }
+            if onlyEmpty, !(fields[key.rawValue] ?? "").isEmpty { return }
+            fields[key.rawValue] = value
+            filled.insert(key.rawValue)
+        }
+        put(.number, mrz.documentNumber)
+        put(.fullName, [mrz.surname, mrz.givenNames].filter { !$0.isEmpty }.joined(separator: " "))
+        put(.country, mrz.nationality)
+        if let birth = mrz.birthDate { put(.birthDate, Self.isoDate(birth)) }
+        if let exp = mrz.expiryDate, !(onlyEmpty && hasExpiry) { hasExpiry = true; expiry = exp }
+        scanNote = String(localized: "Заполнено из скана — проверьте поля")
+        mrzFilledKeys = filled
+        Task { try? await Task.sleep(nanoseconds: 8_000_000_000); mrzFilledKeys = [] }
     }
 
     private static func isoDate(_ date: Date) -> String {
