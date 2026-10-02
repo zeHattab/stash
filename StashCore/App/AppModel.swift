@@ -37,6 +37,8 @@ public final class AppModel {
     public private(set) var pendingRecoveryKey: String?
     public private(set) var recoveryKeySaved = false
     public private(set) var masterReminderInterval: ReminderInterval
+    /// Напоминания о сроках действия документов (по умолчанию включены).
+    public private(set) var expiryRemindersEnabled: Bool
 
     public var biometryType: BiometryKind { biometrics.biometryType }
     public var isBiometricAvailable: Bool { biometrics.isAvailable }
@@ -60,6 +62,7 @@ public final class AppModel {
         static let reminderInterval = "masterReminderInterval"
         static let lastMasterCheck = "lastMasterCheck" // секунды с 1970
         static let installed = "installed"
+        static let expiryRemindersDisabled = "expiryRemindersDisabled" // инвертированный: по умолчанию false→вкл
     }
 
     // Нарастающая пауза после 5 ошибок подряд: 30 c, 1 мин, далее 5 мин.
@@ -96,6 +99,12 @@ public final class AppModel {
         }
         self.masterReminderInterval = ReminderInterval(rawValue: settings.string(forKey: Keys.reminderInterval) ?? "")
             ?? .days14
+        self.expiryRemindersEnabled = !settings.bool(forKey: Keys.expiryRemindersDisabled)
+    }
+
+    public func setExpiryRemindersEnabled(_ enabled: Bool) {
+        expiryRemindersEnabled = enabled
+        settings.set(!enabled, forKey: Keys.expiryRemindersDisabled)
     }
 
     // MARK: - Жизненный цикл

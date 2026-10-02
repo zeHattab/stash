@@ -36,6 +36,11 @@ struct RootView: View {
             // iPhone заблокировали — закрываем сейф сразу, независимо от таймера.
             Task { await model.deviceDidLock() }
         }
+        .onChange(of: model.items) { _, _ in
+            // Планирует уведомления о сроках только открытый сейф.
+            guard model.phase == .unlocked else { return }
+            Task { await ExpiryNotifications.reschedule(items: model.items, enabled: model.expiryRemindersEnabled) }
+        }
     }
 }
 

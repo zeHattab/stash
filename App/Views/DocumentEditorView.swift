@@ -18,6 +18,8 @@ struct DocumentEditorView: View {
     @State private var expiry: Date
     @State private var attachments: [Attachment]
     @State private var confirmDelete = false
+    @State private var showScanner = false
+    @State private var scanNote: String?
 
     struct FreeField: Identifiable { let id = UUID(); var name: String; var value: String }
 
@@ -82,6 +84,13 @@ struct DocumentEditorView: View {
                 }.font(.footnote)
             }
 
+            Section {
+                Button { showScanner = true } label: { Label("Сканировать документ", systemImage: "doc.viewfinder") }
+                if let scanNote {
+                    Text(scanNote).font(.footnote).foregroundStyle(.secondary)
+                }
+            }
+
             AttachmentsSection(attachments: $attachments)
 
             Section("Срок действия") {
@@ -117,6 +126,42 @@ struct DocumentEditorView: View {
             }
             Button("Отмена", role: .cancel) {}
         }
+        .fullScreenCover(isPresented: $showScanner) {
+            DocumentScannerView(onComplete: handleScan).ignoresSafeArea()
+        }
+        .onChange(of: hasExpiry) { _, now in
+            if now { Task { await ExpiryNotifications.requestAuthorization() } }
+        }
+    }
+
+    private func handleScan(_ images: [UIImage]) {
+        guard !images.isEmpty else { return }
+        for (i, img) in images.enumerated() {
+            if let jpeg = AttachmentsSection.compressed(img) {
+                attachments.append(Attachment(name: "Скан \(attachments.count + i + 1).jpg", kind: .image, data: jpeg))
+            }
+        }
+        Task {
+            var text = ""
+            for img in images { text += await DocumentOCR.recognizeText(img) + "\n" }
+            guard let mrz = MRZParser.parse(text) else { return }
+            if mrz.checkDigitsValid {
+                fields[DocumentFieldKey.number.rawValue] = mrz.documentNumber
+                let name = [mrz.surname, mrz.givenNames].filter { !$0.isEmpty }.joined(separator: " ")
+                if !name.isEmpty { fields[DocumentFieldKey.fullName.rawValue] = name }
+                if !mrz.nationality.isEmpty { fields[DocumentFieldKey.country.rawValue] = mrz.nationality }
+                if let birth = mrz.birthDate { fields[DocumentFieldKey.birthDate.rawValue] = Self.isoDate(birth) }
+                if let exp = mrz.expiryDate { hasExpiry = true; expiry = exp }
+                scanNote = "Поля заполнены из MRZ — проверьте их."
+            } else {
+                scanNote = "MRZ не прошёл проверку — заполните поля вручную."
+            }
+        }
+    }
+
+    private static func isoDate(_ date: Date) -> String {
+        let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd"; f.timeZone = TimeZone(identifier: "UTC")
+        return f.string(from: date)
     }
 
     private func fieldBinding(_ key: String) -> Binding<String> {

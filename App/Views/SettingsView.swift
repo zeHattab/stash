@@ -47,6 +47,16 @@ struct SettingsView: View {
                     }
                     Text("При блокировке iPhone сейф закрывается сразу.")
                         .font(.footnote).foregroundStyle(.secondary)
+                    Toggle("Напоминания о сроках", isOn: Binding(
+                        get: { model.expiryRemindersEnabled },
+                        set: { enabled in
+                            model.setExpiryRemindersEnabled(enabled)
+                            Task {
+                                if enabled { await ExpiryNotifications.requestAuthorization() }
+                                await ExpiryNotifications.reschedule(items: model.items, enabled: enabled)
+                            }
+                        }
+                    ))
                     NavigationLink {
                         SecondPasswordView(model: model)
                     } label: {
