@@ -45,6 +45,36 @@
     "Stash": {
       "shouldTranslate": false
     },
+    "Stash включён в автозаполнении": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stash is enabled for AutoFill"
+          }
+        }
+      }
+    },
+    "Stash пока не включён": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stash isn’t enabled yet"
+          }
+        }
+      }
+    },
+    "Stash работает только на этом устройстве и не выходит в интернет.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stash works only on this device and never goes online."
+          }
+        }
+      }
+    },
     "Stash работает только на этом устройстве и не выходит в интернет. Ссылка выше откроется в Safari.": {
       "localizations": {
         "en": {
@@ -100,6 +130,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Auto-lock"
+          }
+        }
+      }
+    },
+    "Автозаполнение": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AutoFill"
           }
         }
       }
@@ -250,6 +290,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "On"
+          }
+        }
+      }
+    },
+    "Включите «Автозаполнение паролей»": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn on “AutoFill Passwords”"
           }
         }
       }
@@ -1686,6 +1736,16 @@
         }
       }
     },
+    "Основные → Автозаполнение и пароли": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "General → AutoFill & Passwords"
+          }
+        }
+      }
+    },
     "Оставить": {
       "localizations": {
         "en": {
@@ -1696,7 +1756,27 @@
         }
       }
     },
+    "Откройте «Настройки» iPhone": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open the iPhone Settings app"
+          }
+        }
+      }
+    },
     "Открыть Настройки": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Settings"
+          }
+        }
+      }
+    },
+    "Открыть настройки": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1762,6 +1842,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cancel"
+          }
+        }
+      }
+    },
+    "Отметьте «Stash» в списке": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select “Stash” in the list"
           }
         }
       }
@@ -1906,6 +1996,26 @@
         }
       }
     },
+    "Подсказки над клавиатурой": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keyboard suggestions"
+          }
+        }
+      }
+    },
+    "Подсказки показывают сайты из сейфа на экране входа — с включённым вторым паролем они отключены.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keyboard suggestions reveal sites from your vault on the login screen — they’re turned off while a second password is on."
+          }
+        }
+      }
+    },
     "Подтвердите, что вы понимаете: пароль нельзя восстановить": {
       "localizations": {
         "en": {
@@ -1982,6 +2092,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Show past passwords"
+          }
+        }
+      }
+    },
+    "Показывают сайты и логины из сейфа над клавиатурой на экранах входа. Пароли в систему не передаются.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shows sites and logins from your vault above the keyboard on login screens. Passwords are never handed to the system."
           }
         }
       }
@@ -2872,6 +2992,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "To unlock with Face ID or Touch ID, set them and a passcode in iPhone Settings. For now, unlock with the master password."
+          }
+        }
+      }
+    },
+    "Шаги": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Steps"
           }
         }
       }

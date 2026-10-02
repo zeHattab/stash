@@ -43,7 +43,11 @@ struct RootView: View {
             Task { await ExpiryNotifications.reschedule(items: model.items,
                                                         enabled: model.expiryRemindersEnabled,
                                                         tag: model.vaultTag) }
+            CredentialIdentities.sync(model: model)
         }
+        .onChange(of: model.secondPasswordEnabled) { _, _ in CredentialIdentities.sync(model: model) }
+        .onChange(of: model.keyboardHintsEnabled) { _, _ in CredentialIdentities.sync(model: model) }
+        .onChange(of: model.isDecoySession) { _, _ in CredentialIdentities.sync(model: model) }
     }
 }
 

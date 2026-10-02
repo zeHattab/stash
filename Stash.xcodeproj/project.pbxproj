@@ -39,6 +39,7 @@
 		FF0000000000000000000038 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoFillTests.swift; sourceTree = "<group>";};
 		FF000000000000000000003D = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordEntryController.swift; sourceTree = "<group>";};
 		FF000000000000000000003E = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginListController.swift; sourceTree = "<group>";};
+		FF0000000000000000000041 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/CredentialIdentities.swift; sourceTree = "<group>";};
 		00000000000000000000000F = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypto/Crypto.swift; sourceTree = "<group>";};
 		000000000000000000000010 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypto/PasswordStrength.swift; sourceTree = "<group>";};
 		000000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/VaultItem.swift; sourceTree = "<group>";};
@@ -148,6 +149,7 @@
 		FF000000000000000000003C = {isa = PBXBuildFile; fileRef = FF0000000000000000000038;};
 		FF000000000000000000003F = {isa = PBXBuildFile; fileRef = FF000000000000000000003D;};
 		FF0000000000000000000040 = {isa = PBXBuildFile; fileRef = FF000000000000000000003E;};
+		FF0000000000000000000042 = {isa = PBXBuildFile; fileRef = FF0000000000000000000041;};
 		000000000000000000000060 = {isa = PBXBuildFile; fileRef = 00000000000000000000000F;};
 		000000000000000000000061 = {isa = PBXBuildFile; fileRef = 000000000000000000000010;};
 		000000000000000000000062 = {isa = PBXBuildFile; fileRef = 000000000000000000000011;};
@@ -225,6 +227,7 @@
 				FF0000000000000000000016,
 				FF0000000000000000000017,
 				FF0000000000000000000033,
+				FF0000000000000000000041,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -360,6 +363,7 @@
 				FF0000000000000000000026,
 				FF0000000000000000000027,
 				FF0000000000000000000034,
+				FF0000000000000000000042,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

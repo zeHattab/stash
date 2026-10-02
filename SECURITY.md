@@ -336,3 +336,37 @@ other's reminders and the identifiers reveal nothing about which vault exists.
 **Deleting the photo original** goes through the system (`PHAssetChangeRequest`), which
 shows its own confirmation; Stash never deletes photos silently. A PDF imported from
 Files is copied into the slot; the original is left in place.
+
+## AutoFill, one-time codes and keyboard suggestions (v4 functionality)
+
+**Notification tag from the key, not the salt.** Local reminders are scoped to a vault by
+an opaque tag `HMAC-SHA256(VK, "stash-notif-v1")` — derived from the vault key, which does
+not exist outside the slot. Earlier the tag came from the slot's salt, which is stored in
+the file in the clear; a forensic examiner could then correlate scheduled reminders with
+slots and prove a second vault exists. The key-based tag cannot be computed from the file.
+
+**One-time codes (TOTP)** are generated entirely on the device (RFC 6238). The secret lives
+only inside the slot, as part of the login record; copying a code uses the local-only
+pasteboard with a short expiry.
+
+**AutoFill extension.** The extension opens the same vault file (shared via the App Group)
+and unlocks the same way as the app: Face ID through the shared Keychain item when no second
+password is set, otherwise the master password (which opens whichever slot it matches). The
+vault key is wiped from the extension's memory (`store.lock()`) as soon as a credential is
+handed over. Without interaction the extension cannot unlock, so it returns
+`userInteractionRequired`. Domain matching is by label boundary (accounts.google.com matches
+google.com, but evilgoogle.com does not).
+
+**Keyboard suggestions (ASCredentialIdentityStore) and the decoy vault.** iOS can show the
+sites/logins from your vault above the keyboard on any login screen. These identities
+(domain + login, **never** the password) are stored by the system **outside the slots, in
+the clear**. Therefore:
+- With a **second password** set, keyboard suggestions are forced **off** and the identity
+  store is cleared (`removeAllCredentialIdentities`) — otherwise the real vault's sites would
+  be visible on the lock screen and would prove a second vault exists. AutoFill still works
+  through the Passwords button / choosing Stash.
+- With no second password, only domain + login are registered (no passwords), refreshed when
+  records change and cleared when the setting is turned off.
+- In a decoy session nothing is registered.
+Only the domain and the login (username/title) leave the slot into the system store; the
+password and all other fields never do.

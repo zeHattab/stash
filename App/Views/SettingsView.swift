@@ -1,4 +1,5 @@
 import SwiftUI
+import AuthenticationServices
 import StashCore
 
 /// Признак тестовой сборки (DEBUG или TestFlight sandbox) — для скрытых отладочных экранов.
@@ -102,6 +103,21 @@ struct SettingsView: View {
                     NavigationLink("Сменить мастер-пароль") {
                         ChangePasswordView(model: model)
                     }
+                }
+
+                Section("Автозаполнение") {
+                    if model.secondPasswordEnabled {
+                        Toggle("Подсказки над клавиатурой", isOn: .constant(false)).disabled(true)
+                        Text("Подсказки показывают сайты из сейфа на экране входа — с включённым вторым паролем они отключены.")
+                            .font(.footnote).foregroundStyle(.secondary)
+                    } else {
+                        Toggle("Подсказки над клавиатурой", isOn: Binding(
+                            get: { model.keyboardHintsEnabled },
+                            set: { model.setKeyboardHintsEnabled($0) }))
+                        Text("Показывают сайты и логины из сейфа над клавиатурой на экранах входа. Пароли в систему не передаются.")
+                            .font(.footnote).foregroundStyle(.secondary)
+                    }
+                    NavigationLink("Как включить автозаполнение") { AutoFillHelpView() }
                 }
 
                 Section("О приложении") {
@@ -265,6 +281,55 @@ struct RecoverySettingsView: View {
                 errorText = "Не удалось создать ключ."
             }
         }
+    }
+}
+
+/// Как включить автозаполнение Stash в системе.
+struct AutoFillHelpView: View {
+    @State private var enabled: Bool?
+
+    var body: some View {
+        Form {
+            Section {
+                switch enabled {
+                case .some(true):
+                    Label("Stash включён в автозаполнении", systemImage: "checkmark.seal").foregroundStyle(.green)
+                case .some(false):
+                    Label("Stash пока не включён", systemImage: "exclamationmark.triangle").foregroundStyle(.orange)
+                case .none:
+                    ProgressView()
+                }
+            }
+            Section("Шаги") {
+                Label("Откройте «Настройки» iPhone", systemImage: "1.circle")
+                Label("Основные → Автозаполнение и пароли", systemImage: "2.circle")
+                Label("Включите «Автозаполнение паролей»", systemImage: "3.circle")
+                Label("Отметьте «Stash» в списке", systemImage: "4.circle")
+            }
+            Section {
+                Button {
+                    openAutoFillSettings()
+                } label: {
+                    Label("Открыть настройки", systemImage: "arrow.up.forward.app")
+                }
+            } footer: {
+                Text("Stash работает только на этом устройстве и не выходит в интернет.")
+            }
+        }
+        .navigationTitle("Автозаполнение")
+        .navigationBarTitleDisplayMode(.inline)
+        .task { refresh() }
+    }
+
+    private func refresh() {
+        ASCredentialIdentityStore.shared.getState { state in
+            Task { @MainActor in enabled = state.isEnabled }
+        }
+    }
+
+    private func openAutoFillSettings() {
+        // iOS 17+ открывает именно раздел автозаполнения; иначе — общие настройки приложения.
+        Task { try? await ASSettingsHelper.openCredentialProviderAppSettings() }
     }
 }
 
