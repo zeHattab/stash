@@ -9,6 +9,25 @@ public enum VaultAnalysis {
         return nil
     }
 
+    /// Срок действия документа (или nil).
+    public static func expiryDate(of item: VaultItem) -> Date? {
+        if case let .document(_, _, expiresAt, _) = item.kind { return expiresAt }
+        return nil
+    }
+
+    /// Документы, срок которых истекает в ближайшие `days` дней (а также уже истёкшие),
+    /// по возрастанию даты.
+    public static func soonExpiring(_ items: [VaultItem], within days: Int, now: Date) -> [VaultItem] {
+        let limit = now.addingTimeInterval(Double(days) * 86_400)
+        return items
+            .compactMap { item -> (VaultItem, Date)? in
+                guard let e = expiryDate(of: item), e <= limit else { return nil }
+                return (item, e)
+            }
+            .sorted { $0.1 < $1.1 }
+            .map(\.0)
+    }
+
     /// Сколько ДРУГИХ записей используют тот же пароль (пустые пароли не считаются).
     public static func reuseCount(ofItemID id: UUID, in items: [VaultItem]) -> Int {
         guard let target = items.first(where: { $0.id == id }),

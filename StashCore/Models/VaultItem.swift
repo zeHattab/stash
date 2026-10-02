@@ -1,11 +1,14 @@
 import Foundation
 
 /// Тип документа для записи `document`.
-public enum DocumentType: String, Codable, Sendable, Equatable {
-    case passport
-    case residencePermit
-    case driverLicense
-    case insurance
+public enum DocumentType: String, Codable, Sendable, Equatable, CaseIterable {
+    case passport            // паспорт
+    case foreignPassport     // загранпаспорт
+    case residencePermit     // ВНЖ
+    case idCard              // ID-карта
+    case driverLicense       // водительские права
+    case insurance           // страховка
+    case certificate         // свидетельство
     case other
 }
 
