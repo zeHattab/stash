@@ -337,16 +337,18 @@ public enum MRZParser {
         // Строки с сильным признаком (TD3 начинается с 'P') ставим первыми, чтобы правильно
         // выбрать строку имён при склейке.
         func lines(target: Int) -> [String] {
+            // Длинные ряды — первыми: строка ДАННЫХ (с контрольными цифрами) всего длиннее,
+            // короткие (имена/заголовки) не должны вытеснить её кандидатов из-под предела.
+            let eligible = rows.filter { let n = normLen($0); return n >= 8 && n <= target + 2 }
+                .sorted { normLen($0) > normLen($1) }
             var seen = Set<String>()
             var out: [String] = []
-            for row in rows {
-                let n = normLen(row)
-                guard n >= 8, n <= target + 2 else { continue }
+            for row in eligible {
                 for c in candidateLines(for: row, target: target) where seen.insert(c).inserted {
                     out.append(c)
                 }
             }
-            return Array(out.prefix(40))
+            return Array(out.prefix(48))
         }
 
         // TD3 — две строки по 44.
