@@ -1,5 +1,5 @@
 import SwiftUI
-@preconcurrency import VisionKit
+import VisionKit
 import Vision
 
 /// Сканер документов (VisionKit). Возвращает отсканированные страницы как изображения.
@@ -15,7 +15,7 @@ struct DocumentScannerView: UIViewControllerRepresentable {
     func makeCoordinator() -> Coordinator { Coordinator(onComplete: onComplete) }
 
     @MainActor
-    final class Coordinator: NSObject, VNDocumentCameraViewControllerDelegate {
+    final class Coordinator: NSObject, @preconcurrency VNDocumentCameraViewControllerDelegate {
         let onComplete: ([UIImage]) -> Void
         init(onComplete: @escaping ([UIImage]) -> Void) { self.onComplete = onComplete }
 
