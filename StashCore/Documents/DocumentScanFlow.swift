@@ -1,5 +1,26 @@
 import Foundation
 
+/// Техническая диагностика последнего скана для скрытого экрана отладки.
+/// СТРОГО без текста и данных документа — только размеры/признаки.
+public struct ScanDiagnostics: Sendable, Equatable {
+    public var imageWidth: Int
+    public var imageHeight: Int
+    public var orientationRaw: Int
+    public var recognizedLineCount: Int
+    public var mrzCandidateCount: Int
+    public var detectedFormat: String?
+    public var failedChecks: [String]
+    public var recovered: Bool
+    public init(imageWidth: Int, imageHeight: Int, orientationRaw: Int,
+                recognizedLineCount: Int, mrzCandidateCount: Int,
+                detectedFormat: String?, failedChecks: [String], recovered: Bool) {
+        self.imageWidth = imageWidth; self.imageHeight = imageHeight
+        self.orientationRaw = orientationRaw; self.recognizedLineCount = recognizedLineCount
+        self.mrzCandidateCount = mrzCandidateCount; self.detectedFormat = detectedFormat
+        self.failedChecks = failedChecks; self.recovered = recovered
+    }
+}
+
 /// Доступность сканера (результат предпроверки камеры в UI).
 public enum ScanAvailability: Equatable, Sendable {
     case ready            // камера разрешена и поддерживается

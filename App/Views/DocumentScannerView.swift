@@ -1,6 +1,7 @@
 import SwiftUI
 import VisionKit
 import Vision
+import ImageIO
 import os
 
 private let scanLog = Logger(subsystem: "com.portie24.stash", category: "scanner")
@@ -44,19 +45,42 @@ struct DocumentScannerView: UIViewControllerRepresentable {
     }
 }
 
-/// Распознавание текста на устройстве (Vision), ru + en, без сети.
+/// Распознавание текста на устройстве (Vision), без сети.
 enum DocumentOCR {
-    static func recognizeText(_ image: UIImage) async -> String {
-        guard let cg = image.cgImage else { return "" }
-        return await Task.detached(priority: .userInitiated) { () -> String in
+    /// Базовый проход: язык(и), ориентация, опциональная область интереса (ROI в
+    /// нормализованных координатах Vision — начало в левом НИЖНЕМ углу).
+    private static func recognizeLines(cg: CGImage, orientation: CGImagePropertyOrientation,
+                                       languages: [String], roi: CGRect?) async -> [String] {
+        await Task.detached(priority: .userInitiated) { () -> [String] in
             let request = VNRecognizeTextRequest()
             request.recognitionLevel = .accurate
             request.usesLanguageCorrection = false
-            request.recognitionLanguages = ["ru-RU", "en-US"]
-            let handler = VNImageRequestHandler(cgImage: cg, options: [:])
+            request.recognitionLanguages = languages
+            if let roi { request.regionOfInterest = roi }
+            let handler = VNImageRequestHandler(cgImage: cg, orientation: orientation, options: [:])
             try? handler.perform([request])
             let observations = request.results ?? []
-            return observations.compactMap { $0.topCandidates(1).first?.string }.joined(separator: "\n")
+            return observations.compactMap { $0.topCandidates(1).first?.string }
         }.value
+    }
+
+    /// Строки-кандидаты MRZ: латиница (en-US), полное изображение + нижние 35% (там MRZ)
+    /// + те же проходы для перевёрнутого изображения (.down), на случай «вверх ногами».
+    static func mrzCandidateLines(_ image: UIImage) async -> [String] {
+        guard let cg = image.cgImage else { return [] }
+        let bottom = CGRect(x: 0, y: 0, width: 1, height: 0.35)
+        var lines: [String] = []
+        lines += await recognizeLines(cg: cg, orientation: .up, languages: ["en-US"], roi: nil)
+        lines += await recognizeLines(cg: cg, orientation: .up, languages: ["en-US"], roi: bottom)
+        lines += await recognizeLines(cg: cg, orientation: .down, languages: ["en-US"], roi: nil)
+        lines += await recognizeLines(cg: cg, orientation: .down, languages: ["en-US"], roi: bottom)
+        return lines
+    }
+
+    /// Общий текст (ru + en) — для показа пользователю, если MRZ не распозналась.
+    static func recognizeText(_ image: UIImage) async -> String {
+        guard let cg = image.cgImage else { return "" }
+        let lines = await recognizeLines(cg: cg, orientation: .up, languages: ["ru-RU", "en-US"], roi: nil)
+        return lines.joined(separator: "\n")
     }
 }

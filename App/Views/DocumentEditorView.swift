@@ -194,16 +194,36 @@ struct DocumentEditorView: View {
     private func handleScan(_ images: [UIImage]) {
         guard !images.isEmpty else { return }
         scanNote = nil
+        // Нормализуем (ориентация .up, длинная сторона ≤2500) ОДИН раз; эти же картинки
+        // идут и во вложение, и в OCR — что видно, то и распознаётся.
+        var normalizedImages: [UIImage] = []
+        var lastPixel = CGSize.zero
         for (i, img) in images.enumerated() {
-            if let jpeg = AttachmentsSection.compressed(img) {
-                attachments.append(Attachment(name: "Скан \(attachments.count + i + 1).jpg", kind: .image, data: jpeg))
+            let norm = DocumentImage.normalized(img)
+            normalizedImages.append(norm.image)
+            lastPixel = norm.pixelSize
+            if let data = norm.image.jpegData(compressionQuality: 0.8) {
+                attachments.append(Attachment(name: "Скан \(attachments.count + i + 1).jpg", kind: .image, data: data))
             }
         }
+        let orientationRaw = images.first?.imageOrientation.rawValue ?? 0
         Task {
-            var text = ""
-            for img in images { text += await DocumentOCR.recognizeText(img) + "\n" }
-            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-            if let mrz = MRZParser.parse(text), mrz.checkDigitsValid {
+            var mrzLines: [String] = []
+            for img in normalizedImages { mrzLines += await DocumentOCR.mrzCandidateLines(img) }
+            let (mrz, diag) = MRZParser.parseRecovering(lines: mrzLines)
+
+            var general = ""
+            for img in normalizedImages { general += await DocumentOCR.recognizeText(img) + "\n" }
+            let generalTrimmed = general.trimmingCharacters(in: .whitespacesAndNewlines)
+            let lineCount = generalTrimmed.isEmpty ? 0 : generalTrimmed.split(whereSeparator: \.isNewline).count
+
+            model.setScanDiagnostics(ScanDiagnostics(
+                imageWidth: Int(lastPixel.width), imageHeight: Int(lastPixel.height),
+                orientationRaw: orientationRaw, recognizedLineCount: lineCount,
+                mrzCandidateCount: diag.candidateLineCount, detectedFormat: diag.detectedFormat,
+                failedChecks: diag.failedChecks, recovered: diag.recovered))
+
+            if let mrz, mrz.checkDigitsValid {
                 fields[DocumentFieldKey.number.rawValue] = mrz.documentNumber
                 let name = [mrz.surname, mrz.givenNames].filter { !$0.isEmpty }.joined(separator: " ")
                 if !name.isEmpty { fields[DocumentFieldKey.fullName.rawValue] = name }
@@ -213,10 +233,10 @@ struct DocumentEditorView: View {
                 scanNote = String(localized: "Поля заполнены из MRZ — проверьте их.")
                 recognizedText = nil
             } else {
-                // Скан уже прикреплён. MRZ не распознана/не прошла — предлагаем ручной ввод,
+                // Скан уже прикреплён. MRZ не распозналась/не прошла — предлагаем ручной ввод,
                 // а найденный текст показываем, чтобы было откуда скопировать.
                 scanNote = String(localized: "Не удалось распознать автоматически — проверьте поля вручную.")
-                recognizedText = trimmed.isEmpty ? nil : trimmed
+                recognizedText = generalTrimmed.isEmpty ? nil : generalTrimmed
             }
         }
     }

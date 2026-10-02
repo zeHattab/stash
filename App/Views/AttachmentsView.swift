@@ -20,8 +20,12 @@ struct AttachmentsSection: View {
         Section("Вложения") {
             ForEach(attachments) { att in
                 Button { viewing = att } label: {
-                    Label(att.name, systemImage: att.kind == .pdf ? "doc.richtext" : "photo")
-                        .contentShape(Rectangle())
+                    HStack(spacing: 12) {
+                        AttachmentThumbnail(attachment: att)
+                        Text(att.name).lineLimit(1)
+                        Spacer()
+                    }
+                    .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
             }
@@ -41,8 +45,8 @@ struct AttachmentsSection: View {
             guard let newItem else { return }
             Task {
                 if let data = try? await newItem.loadTransferable(type: Data.self),
-                   let image = UIImage(data: data), let jpeg = Self.compressed(image) {
-                    attachments.append(Attachment(name: "Фото \(attachments.count + 1).jpg", kind: .image, data: jpeg))
+                   let image = UIImage(data: data), let out = DocumentImage.jpeg(image) {
+                    attachments.append(Attachment(name: "Фото \(attachments.count + 1).jpg", kind: .image, data: out.data))
                     if let id = newItem.itemIdentifier {
                         pendingDeleteAssetID = id
                         showDeleteOriginal = true
@@ -81,14 +85,25 @@ struct AttachmentsSection: View {
         }
     }
 
-    /// Сжатие изображения: длинная сторона ≤ 2500 px, JPEG.
-    static func compressed(_ image: UIImage, maxSide: CGFloat = 2500, quality: CGFloat = 0.7) -> Data? {
-        let longest = max(image.size.width, image.size.height)
-        let scale = longest > maxSide ? maxSide / longest : 1
-        let target = CGSize(width: image.size.width * scale, height: image.size.height * scale)
-        let renderer = UIGraphicsImageRenderer(size: target)
-        let resized = renderer.image { _ in image.draw(in: CGRect(origin: .zero, size: target)) }
-        return resized.jpegData(compressionQuality: quality)
+}
+
+/// Миниатюра вложения в списке — чтобы сразу видеть, что сохранилось.
+struct AttachmentThumbnail: View {
+    let attachment: Attachment
+    var body: some View {
+        Group {
+            if attachment.kind == .image, let img = UIImage(data: attachment.data) {
+                Image(uiImage: img).resizable().scaledToFill()
+            } else {
+                ZStack {
+                    Color(uiColor: .secondarySystemBackground)
+                    Image(systemName: "doc.richtext").foregroundStyle(.secondary)
+                }
+            }
+        }
+        .frame(width: 44, height: 44)
+        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color(uiColor: .separator), lineWidth: 0.5))
     }
 }
 
@@ -154,18 +169,83 @@ struct AttachmentViewer: View {
     }
 }
 
-struct ZoomableImage: View {
+/// Просмотр изображения: вся страница вписана в экран (aspect fit), pinch-zoom и
+/// двойной тап. Масштабы считает UIScrollView ПОСЛЕ layout (в layoutSubviews),
+/// поэтому при открытии видно всю страницу без размытия, а не угол в 1×.
+struct ZoomableImage: UIViewRepresentable {
     let image: UIImage
-    @State private var scale: CGFloat = 1
 
-    var body: some View {
-        ScrollView([.horizontal, .vertical]) {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFit()
-                .scaleEffect(scale)
-                .gesture(MagnificationGesture().onChanged { scale = max(1, min($0, 5)) }
-                    .onEnded { _ in if scale < 1 { scale = 1 } })
+    func makeUIView(context: Context) -> ZoomImageScrollView {
+        let view = ZoomImageScrollView()
+        view.setImage(image)
+        let doubleTap = UITapGestureRecognizer(target: view, action: #selector(ZoomImageScrollView.handleDoubleTap(_:)))
+        doubleTap.numberOfTapsRequired = 2
+        view.addGestureRecognizer(doubleTap)
+        return view
+    }
+
+    func updateUIView(_ view: ZoomImageScrollView, context: Context) {
+        view.setImage(image)
+    }
+}
+
+/// UIScrollView с вписанным изображением; min/zoom-scale пересчитываются в layoutSubviews.
+final class ZoomImageScrollView: UIScrollView, @preconcurrency UIScrollViewDelegate {
+    private let imageView = UIImageView()
+    private var lastBoundsSize: CGSize = .zero
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        delegate = self
+        showsVerticalScrollIndicator = false
+        showsHorizontalScrollIndicator = false
+        bouncesZoom = true
+        imageView.contentMode = .scaleAspectFit
+        imageView.isUserInteractionEnabled = true
+        addSubview(imageView)
+    }
+    required init?(coder: NSCoder) { fatalError("init(coder:) не используется") }
+
+    func setImage(_ image: UIImage) {
+        if imageView.image !== image {
+            imageView.image = image
+            imageView.frame = CGRect(origin: .zero, size: image.size)
+            contentSize = image.size
+            lastBoundsSize = .zero  // пересчитать масштаб в layoutSubviews
+            setNeedsLayout()
+        }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        guard let image = imageView.image, bounds.width > 0, bounds.height > 0 else { return }
+        if bounds.size != lastBoundsSize {
+            lastBoundsSize = bounds.size
+            let sx = bounds.width / image.size.width
+            let sy = bounds.height / image.size.height
+            let fit = min(sx, sy)
+            minimumZoomScale = fit
+            maximumZoomScale = max(fit * 4, fit)
+            zoomScale = fit
+        }
+        centerImage()
+    }
+
+    private func centerImage() {
+        let w = imageView.frame.width, h = imageView.frame.height
+        let insetX = max(0, (bounds.width - w) / 2)
+        let insetY = max(0, (bounds.height - h) / 2)
+        contentInset = UIEdgeInsets(top: insetY, left: insetX, bottom: insetY, right: insetX)
+    }
+
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? { imageView }
+    func scrollViewDidZoom(_ scrollView: UIScrollView) { centerImage() }
+
+    @objc func handleDoubleTap(_ g: UITapGestureRecognizer) {
+        if zoomScale > minimumZoomScale {
+            setZoomScale(minimumZoomScale, animated: true)
+        } else {
+            setZoomScale(min(minimumZoomScale * 3, maximumZoomScale), animated: true)
         }
     }
 }

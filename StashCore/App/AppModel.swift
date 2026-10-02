@@ -46,6 +46,8 @@ public final class AppModel {
     /// неактив/фон НЕ срабатывает; блокировка самого iPhone работает всегда.
     public private(set) var presentingSystemScreen = false
     private var systemScreenDepth = 0
+    /// Диагностика последнего скана (только для скрытого экрана отладки; НЕ сохраняется).
+    public private(set) var lastScanDiagnostics: ScanDiagnostics?
 
     public var biometryType: BiometryKind { biometrics.biometryType }
     public var isBiometricAvailable: Bool { biometrics.isAvailable }
@@ -113,6 +115,9 @@ public final class AppModel {
         expiryRemindersEnabled = enabled
         settings.set(!enabled, forKey: Keys.expiryRemindersDisabled)
     }
+
+    /// Диагностика скана (техническая, без данных документа). Живёт только в памяти.
+    public func setScanDiagnostics(_ d: ScanDiagnostics?) { lastScanDiagnostics = d }
 
     /// Открыли свой системный экран (камера/пикер/шара/запрос доступа).
     public func beginSystemScreen() {
@@ -283,6 +288,7 @@ public final class AppModel {
         isDecoySession = false
         secondPasswordEnabled = false
         vaultTag = nil
+        lastScanDiagnostics = nil
         backgroundedAt = nil
         lockReason = reason
         if phase == .unlocked { phase = .locked }

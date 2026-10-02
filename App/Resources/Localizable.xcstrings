@@ -274,6 +274,16 @@
         }
       }
     },
+    "Восстановлено": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovered"
+          }
+        }
+      }
+    },
     "Все": {
       "localizations": {
         "en": {
@@ -470,6 +480,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Valid until"
+          }
+        }
+      }
+    },
+    "Диагностика скана": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan diagnostics"
           }
         }
       }
@@ -810,6 +830,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "To fill the decoy vault: lock Stash and sign in with the second password."
+          }
+        }
+      }
+    },
+    "Кандидатов MRZ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MRZ candidates"
           }
         }
       }
@@ -1196,6 +1226,16 @@
         }
       }
     },
+    "Не сошлись": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Failed checks"
+          }
+        }
+      }
+    },
     "Не удалось включить второй пароль.": {
       "localizations": {
         "en": {
@@ -1462,6 +1502,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Issuing authority"
+          }
+        }
+      }
+    },
+    "Ориентация": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orientation"
           }
         }
       }
@@ -1796,6 +1846,16 @@
         }
       }
     },
+    "Последний скан": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last scan"
+          }
+        }
+      }
+    },
     "Почта": {
       "localizations": {
         "en": {
@@ -1892,6 +1952,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Unlock Stash"
+          }
+        }
+      }
+    },
+    "Размер, px": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Size, px"
           }
         }
       }
@@ -2022,6 +2092,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Scan document"
+          }
+        }
+      }
+    },
+    "Сканов в этой сессии ещё не было.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No scans in this session yet."
           }
         }
       }
@@ -2296,6 +2376,16 @@
         }
       }
     },
+    "Строк распознано": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lines recognized"
+          }
+        }
+      }
+    },
     "Строчные (a–z)": {
       "localizations": {
         "en": {
@@ -2386,6 +2476,16 @@
         }
       }
     },
+    "Только технические данные. Текст документа и его поля здесь не показываются и не сохраняются.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Technical data only. The document’s text and fields are neither shown here nor stored."
+          }
+        }
+      }
+    },
     "Убрать": {
       "localizations": {
         "en": {
@@ -2472,6 +2572,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Filter and sort"
+          }
+        }
+      }
+    },
+    "Формат": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Format"
           }
         }
       }

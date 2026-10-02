@@ -4,6 +4,7 @@ import StashCore
 struct SettingsView: View {
     let model: AppModel
     @Environment(\.dismiss) private var dismiss
+    @State private var showDiagnostics = false
 
     private var biometryName: String {
         switch model.biometryType {
@@ -94,6 +95,8 @@ struct SettingsView: View {
 
                 Section("О приложении") {
                     LabeledContent("Версия", value: appVersion)
+                        .contentShape(Rectangle())
+                        .onLongPressGesture(minimumDuration: 1.5) { showDiagnostics = true }
                     LabeledContent("Лицензия", value: "GPLv3")
                     Link(destination: URL(string: "https://github.com/zeHattab/stash")!) {
                         Label("Исходный код на GitHub", systemImage: "chevron.left.forwardslash.chevron.right")
@@ -107,6 +110,7 @@ struct SettingsView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) { Button("Готово") { dismiss() } }
             }
+            .sheet(isPresented: $showDiagnostics) { ScanDiagnosticsView(model: model) }
         }
     }
 
@@ -246,6 +250,43 @@ struct RecoverySettingsView: View {
                 errorText = "Мастер-пароль неверный."
             } catch {
                 errorText = "Не удалось создать ключ."
+            }
+        }
+    }
+}
+
+/// Скрытый экран отладки сканера. Показывает ТОЛЬКО технику последнего скана —
+/// без распознанного текста и без данных документа.
+struct ScanDiagnosticsView: View {
+    let model: AppModel
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                if let d = model.lastScanDiagnostics {
+                    Section("Последний скан") {
+                        LabeledContent("Размер, px", value: "\(d.imageWidth)×\(d.imageHeight)")
+                        LabeledContent("Ориентация", value: "\(d.orientationRaw)")
+                        LabeledContent("Строк распознано", value: "\(d.recognizedLineCount)")
+                        LabeledContent("Кандидатов MRZ", value: "\(d.mrzCandidateCount)")
+                        LabeledContent("Формат", value: d.detectedFormat ?? "—")
+                        LabeledContent("Восстановлено", value: d.recovered ? "да" : "нет")
+                        LabeledContent("Не сошлись", value: d.failedChecks.isEmpty ? "—" : d.failedChecks.joined(separator: ", "))
+                    }
+                    Section {
+                        Text("Только технические данные. Текст документа и его поля здесь не показываются и не сохраняются.")
+                            .font(.footnote).foregroundStyle(.secondary)
+                    }
+                } else {
+                    Text("Сканов в этой сессии ещё не было.")
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .navigationTitle("Диагностика скана")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) { Button("Готово") { dismiss() } }
             }
         }
     }
