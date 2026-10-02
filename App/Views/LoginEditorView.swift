@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 import StashCore
 
 struct LoginEditorView: View {
@@ -23,7 +24,12 @@ struct LoginEditorView: View {
     @State private var confirmDelete = false
     @State private var toast: Toast?
 
-    private let totpSecret: String?
+    @State private var totpSecret: String?
+    @State private var showQRScanner = false
+    @State private var showManualTOTP = false
+    @State private var manualTOTP = ""
+    @State private var totpPhoto: PhotosPickerItem?
+    @State private var totpError: String?
 
     init(model: AppModel, original: VaultItem, onCollect: ((VaultItem) -> Void)? = nil) {
         self.model = model
@@ -34,7 +40,7 @@ struct LoginEditorView: View {
         if case let .login(username, password, urls, totp) = original.kind {
             u = username; p = password; list = urls; t = totp
         }
-        self.totpSecret = t
+        _totpSecret = State(initialValue: t)
         _title = State(initialValue: original.title)
         _username = State(initialValue: u)
         _password = State(initialValue: p)
@@ -116,6 +122,7 @@ struct LoginEditorView: View {
                 }
             }
 
+            totpSection
             urlsSection
             historySection
 
@@ -151,7 +158,130 @@ struct LoginEditorView: View {
             }
             Button("Отмена", role: .cancel) {}
         }
+        .fullScreenCover(isPresented: $showQRScanner, onDismiss: { model.endSystemScreen() }) {
+            qrScannerSheet
+        }
+        .sheet(isPresented: $showManualTOTP) { manualTOTPSheet }
+        .onChange(of: totpPhoto) { _, item in
+            guard let item else { return }
+            Task {
+                if let data = try? await item.loadTransferable(type: Data.self),
+                   let image = UIImage(data: data) {
+                    let codes = await QRImageDecoder.decode(image)
+                    if let first = codes.first(where: { OTPAuth.config(fromStored: $0) != nil })
+                        ?? codes.first {
+                        applyTOTP(first)
+                    } else {
+                        totpError = String(localized: "QR-код не найден на изображении.")
+                    }
+                }
+                totpPhoto = nil
+            }
+        }
         .toast($toast)
+    }
+
+    // MARK: - Код 2FA
+
+    @ViewBuilder
+    private var totpSection: some View {
+        Section("Код 2FA") {
+            if let secret = totpSecret, let cfg = OTPAuth.config(fromStored: secret) {
+                TOTPCodeView(config: cfg) { code, remaining in
+                    Clipboard.copy(code, expiresIn: Double(max(10, remaining)))
+                    toast = Toast(text: String(localized: "Код скопирован"))
+                }
+                if let label = [cfg.issuer, cfg.account].compactMap({ $0 }).first(where: { !$0.isEmpty }) {
+                    Text(label).font(.footnote).foregroundStyle(.secondary)
+                }
+                Button("Удалить код 2FA", role: .destructive) { totpSecret = nil; totpError = nil }
+                    .font(.footnote)
+            } else {
+                if QRScannerView.isSupported {
+                    Button { startQRScan() } label: { Label("Сканировать QR", systemImage: "qrcode.viewfinder") }
+                }
+                PhotosPicker(selection: $totpPhoto, matching: .images) {
+                    Label("Выбрать скриншот QR", systemImage: "photo")
+                }
+                Button { manualTOTP = ""; showManualTOTP = true } label: {
+                    Label("Ввести вручную", systemImage: "keyboard")
+                }
+                if let totpError {
+                    Text(totpError).font(.footnote).foregroundStyle(.red)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var qrScannerSheet: some View {
+        if QRScannerView.isSupported {
+            QRScannerView { result in
+                showQRScanner = false
+                applyTOTP(result)
+            }
+            .ignoresSafeArea()
+            .overlay(alignment: .top) {
+                Text("Наведите на QR-код 2FA")
+                    .padding(8).background(.ultraThinMaterial, in: Capsule()).padding(.top, 60)
+            }
+            .overlay(alignment: .bottomTrailing) {
+                Button("Отмена") { showQRScanner = false }
+                    .padding().tint(.white)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var manualTOTPSheet: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    SecretTextField(text: $manualTOTP, placeholder: "Секрет или otpauth://…", secure: true)
+                } footer: {
+                    Text("Вставьте секрет Base32 или ссылку otpauth://totp/…")
+                }
+            }
+            .navigationTitle("Код 2FA").navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("Отмена") { showManualTOTP = false } }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Готово") { applyTOTP(manualTOTP); showManualTOTP = false }
+                        .disabled(manualTOTP.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
+            }
+        }
+    }
+
+    private func startQRScan() {
+        model.beginSystemScreen()
+        showQRScanner = true
+    }
+
+    /// Разбирает отсканированное/введённое и сохраняет нормализованный otpauth-URL.
+    private func applyTOTP(_ raw: String?) {
+        guard let raw = raw?.trimmingCharacters(in: .whitespacesAndNewlines), !raw.isEmpty else { return }
+        if raw.lowercased().hasPrefix("otpauth-migration://") {
+            switch OTPAuth.parseMigration(raw) {
+            case .success(let cfgs) where cfgs.count == 1:
+                totpSecret = OTPAuth.makeURL(from: cfgs[0]); totpError = nil
+            case .success(let cfgs) where cfgs.isEmpty:
+                totpError = String(localized: "В экспорте нет кодов TOTP.")
+            case .success:
+                totpError = String(localized: "В экспорте несколько кодов — добавьте по одному.")
+            case .failure:
+                totpError = String(localized: "Не удалось разобрать экспорт.")
+            }
+            return
+        }
+        switch OTPAuth.parse(raw) {
+        case .success(let cfg):
+            totpSecret = OTPAuth.makeURL(from: cfg); totpError = nil
+        case .failure(.hotpUnsupported):
+            totpError = String(localized: "HOTP не поддерживается — нужен TOTP.")
+        case .failure:
+            totpError = String(localized: "Не удалось распознать код 2FA.")
+        }
     }
 
     @ViewBuilder

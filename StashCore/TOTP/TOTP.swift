@@ -44,6 +44,23 @@ public enum TOTP {
         return Data(out)
     }
 
+    /// Кодер Base32 (RFC 4648, без паддинга).
+    public static func base32Encode(_ data: Data) -> String {
+        let alphabet = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567")
+        var out = ""
+        var bits = 0, value = 0
+        for b in data {
+            value = (value << 8) | Int(b)
+            bits += 8
+            while bits >= 5 {
+                out.append(alphabet[(value >> (bits - 5)) & 0x1F])
+                bits -= 5
+            }
+        }
+        if bits > 0 { out.append(alphabet[(value << (5 - bits)) & 0x1F]) }
+        return out
+    }
+
     private static func hmac(_ message: Data, key: SymmetricKey, algorithm: TOTPConfig.Algorithm) -> Data {
         switch algorithm {
         case .sha1: return Data(HMAC<Insecure.SHA1>.authenticationCode(for: message, using: key))

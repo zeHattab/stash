@@ -2,6 +2,16 @@
   "sourceLanguage": "ru",
   "version": "1.0",
   "strings": {
+    "HOTP не поддерживается — нужен TOTP.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HOTP isn’t supported — a TOTP code is required."
+          }
+        }
+      }
+    },
     "ID-карта": {
       "localizations": {
         "en": {
@@ -18,6 +28,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "MRZ check failed — fill in the fields manually."
+          }
+        }
+      }
+    },
+    "QR-код не найден на изображении.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No QR code found in the image."
           }
         }
       }
@@ -154,6 +174,26 @@
         }
       }
     },
+    "В экспорте несколько кодов — добавьте по одному.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The export has several codes — add them one at a time."
+          }
+        }
+      }
+    },
+    "В экспорте нет кодов TOTP.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The export has no TOTP codes."
+          }
+        }
+      }
+    },
     "ВНЖ": {
       "localizations": {
         "en": {
@@ -180,6 +220,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Enter the requested groups from the key to confirm you saved it."
+          }
+        }
+      }
+    },
+    "Ввести вручную": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter manually"
           }
         }
       }
@@ -294,6 +344,16 @@
         }
       }
     },
+    "Вставьте секрет Base32 или ссылку otpauth://totp/…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste a Base32 secret or an otpauth://totp/… link"
+          }
+        }
+      }
+    },
     "Всё равно создать": {
       "localizations": {
         "en": {
@@ -360,6 +420,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Unlock with %@?"
+          }
+        }
+      }
+    },
+    "Выбрать скриншот QR": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a QR screenshot"
           }
         }
       }
@@ -470,6 +540,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Date of birth"
+          }
+        }
+      }
+    },
+    "Дважды коснитесь, чтобы скопировать": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double-tap to copy"
           }
         }
       }
@@ -914,6 +994,46 @@
         }
       }
     },
+    "Код 2FA": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2FA code"
+          }
+        }
+      }
+    },
+    "Код двухфакторной защиты": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two-factor code"
+          }
+        }
+      }
+    },
+    "Код скопирован": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code copied"
+          }
+        }
+      }
+    },
+    "Коды 2FA": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2FA codes"
+          }
+        }
+      }
+    },
     "Копировать": {
       "localizations": {
         "en": {
@@ -1126,6 +1246,16 @@
         }
       }
     },
+    "Наведите на QR-код 2FA": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Point at the 2FA QR code"
+          }
+        }
+      }
+    },
     "Надёжность": {
       "localizations": {
         "en": {
@@ -1286,12 +1416,32 @@
         }
       }
     },
+    "Не удалось разобрать экспорт.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t parse the export."
+          }
+        }
+      }
+    },
     "Не удалось распознать автоматически — проверьте поля вручную.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Couldn’t recognize automatically — please check the fields manually."
+          }
+        }
+      }
+    },
+    "Не удалось распознать код 2FA.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t recognize the 2FA code."
           }
         }
       }
@@ -2086,6 +2236,16 @@
         }
       }
     },
+    "Секрет или otpauth://…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Secret or otpauth://…"
+          }
+        }
+      }
+    },
     "Серия": {
       "localizations": {
         "en": {
@@ -2122,6 +2282,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Scanning isn’t available on this device."
+          }
+        }
+      }
+    },
+    "Сканировать QR": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan QR"
           }
         }
       }
@@ -2576,6 +2746,16 @@
         }
       }
     },
+    "Удалить код 2FA": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove 2FA code"
+          }
+        }
+      }
+    },
     "Удалить оригинал из Фото?": {
       "localizations": {
         "en": {
@@ -2824,6 +3004,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "biometrics"
+          }
+        }
+      }
+    },
+    "след.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "next"
           }
         }
       }

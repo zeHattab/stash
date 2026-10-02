@@ -32,6 +32,7 @@
 		FF000000000000000000001F = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TOTP/TOTP.swift; sourceTree = "<group>";};
 		FF0000000000000000000020 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TOTP/OTPAuth.swift; sourceTree = "<group>";};
 		FF0000000000000000000031 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TOTPTests.swift; sourceTree = "<group>";};
+		FF0000000000000000000033 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/TOTPFieldView.swift; sourceTree = "<group>";};
 		00000000000000000000000F = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypto/Crypto.swift; sourceTree = "<group>";};
 		000000000000000000000010 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypto/PasswordStrength.swift; sourceTree = "<group>";};
 		000000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/VaultItem.swift; sourceTree = "<group>";};
@@ -134,6 +135,7 @@
 		FF000000000000000000002F = {isa = PBXBuildFile; fileRef = FF000000000000000000001F;};
 		FF0000000000000000000030 = {isa = PBXBuildFile; fileRef = FF0000000000000000000020;};
 		FF0000000000000000000032 = {isa = PBXBuildFile; fileRef = FF0000000000000000000031;};
+		FF0000000000000000000034 = {isa = PBXBuildFile; fileRef = FF0000000000000000000033;};
 		000000000000000000000060 = {isa = PBXBuildFile; fileRef = 00000000000000000000000F;};
 		000000000000000000000061 = {isa = PBXBuildFile; fileRef = 000000000000000000000010;};
 		000000000000000000000062 = {isa = PBXBuildFile; fileRef = 000000000000000000000011;};
@@ -210,6 +212,7 @@
 				FF0000000000000000000015,
 				FF0000000000000000000016,
 				FF0000000000000000000017,
+				FF0000000000000000000033,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -338,6 +341,7 @@
 				000000000000000000000055,
 				FF0000000000000000000026,
 				FF0000000000000000000027,
+				FF0000000000000000000034,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

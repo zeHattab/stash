@@ -61,6 +61,24 @@ public enum OTPAuth {
         return nil
     }
 
+    /// Нормализованный otpauth://totp/ URL из конфига — его и храним в записи.
+    public static func makeURL(from c: TOTPConfig) -> String {
+        var comps = URLComponents()
+        comps.scheme = "otpauth"
+        comps.host = "totp"
+        let label = [c.issuer, c.account].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: ":")
+        comps.path = "/" + label
+        var items = [
+            URLQueryItem(name: "secret", value: TOTP.base32Encode(c.secret)),
+            URLQueryItem(name: "algorithm", value: c.algorithm.rawValue),
+            URLQueryItem(name: "digits", value: String(c.digits)),
+            URLQueryItem(name: "period", value: String(c.period)),
+        ]
+        if let iss = c.issuer, !iss.isEmpty { items.append(URLQueryItem(name: "issuer", value: iss)) }
+        comps.queryItems = items
+        return comps.string ?? "otpauth://totp/?secret=\(TOTP.base32Encode(c.secret))"
+    }
+
     // MARK: - Импорт из Google Authenticator (otpauth-migration://offline?data=…)
 
     /// Разбирает экспорт Google Authenticator. Возвращает только TOTP-записи.

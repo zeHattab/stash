@@ -69,6 +69,19 @@ final class TOTPTests: XCTestCase {
         XCTAssertEqual(cfg.period, 30)
     }
 
+    func testMakeURLRoundTrip() {
+        let secret = TOTP.base32Decode("JBSWY3DPEHPK3PXP")!
+        let cfg = TOTPConfig(secret: secret, algorithm: .sha256, digits: 8, period: 60,
+                             issuer: "Acme", account: "a@b.com")
+        guard case let .success(back) = OTPAuth.parse(OTPAuth.makeURL(from: cfg)) else { return XCTFail("success") }
+        XCTAssertEqual(back.secret, secret)
+        XCTAssertEqual(back.algorithm, .sha256)
+        XCTAssertEqual(back.digits, 8)
+        XCTAssertEqual(back.period, 60)
+        XCTAssertEqual(back.issuer, "Acme")
+        XCTAssertEqual(back.account, "a@b.com")
+    }
+
     func testHOTPRejected() {
         XCTAssertEqual(OTPAuth.parse("otpauth://hotp/x?secret=JBSWY3DPEHPK3PXP&counter=0"), .failure(.hotpUnsupported))
     }

@@ -2,12 +2,13 @@ import SwiftUI
 import StashCore
 
 enum ItemFilter: String, CaseIterable, Identifiable {
-    case all, logins, notes, documents
+    case all, logins, codes, notes, documents
     var id: String { rawValue }
     var title: LocalizedStringKey {
         switch self {
         case .all: return "Все"
         case .logins: return "Логины"
+        case .codes: return "Коды 2FA"
         case .notes: return "Заметки"
         case .documents: return "Документы"
         }
@@ -180,6 +181,7 @@ struct HomeView: View {
         switch filter {
         case .all: break
         case .logins: list = list.filter { isLogin($0) }
+        case .codes: list = list.filter { hasTOTP($0) }
         case .notes: list = list.filter { isNote($0) }
         case .documents: list = list.filter { isDocument($0) }
         }
@@ -212,6 +214,10 @@ struct HomeView: View {
     }
     private func isDocument(_ item: VaultItem) -> Bool {
         if case .document = item.kind { return true }; return false
+    }
+    private func hasTOTP(_ item: VaultItem) -> Bool {
+        if case let .login(_, _, _, totp) = item.kind, let totp, !totp.isEmpty { return true }
+        return false
     }
 
     // MARK: - Действия
