@@ -4,44 +4,41 @@ import StashCore
 
 /// Локальные уведомления о сроках документов. Текст НЕЙТРАЛЬНЫЙ (без типа, имени,
 /// номера, даты) — это единственные данные вне слота (см. SECURITY.md). Планирует
-/// только открытый сейф; дедуп по дню.
+/// только открытый сейф; идентификаторы ПРИВЯЗАНЫ к сейфу через непрозрачный тег,
+/// поэтому перепланирование не трогает уведомления другого сейфа (планирование —
+/// в StashCore `ExpiryNotificationPlan`, тестируется).
 enum ExpiryNotifications {
-    static let prefix = "stash.expiry."
 
     static func requestAuthorization() async {
         _ = try? await UNUserNotificationCenter.current()
             .requestAuthorization(options: [.alert, .sound, .badge])
     }
 
-    static func reschedule(items: [VaultItem], enabled: Bool) async {
+    static func reschedule(items: [VaultItem], enabled: Bool, tag: String?) async {
+        guard let tag else { return }
         let center = UNUserNotificationCenter.current()
-        let pending = await center.pendingNotificationRequests()
-        let ours = pending.filter { $0.identifier.hasPrefix(prefix) }.map(\.identifier)
+        let pending = await center.pendingNotificationRequests().map(\.identifier)
+        // Снимаем ТОЛЬКО свои (этого сейфа) — чужие и посторонние не трогаем.
+        let ours = ExpiryNotificationPlan.identifiersToRemove(existing: pending, tag: tag)
         center.removePendingNotificationRequests(withIdentifiers: ours)
         guard enabled else { return }
 
         let settings = await center.notificationSettings()
         guard settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional else { return }
 
-        let now = Date()
-        var cal = Calendar(identifier: .gregorian)
-        var days = Set<Date>()
-        for item in items {
-            guard let expiry = VaultAnalysis.expiryDate(of: item) else { continue }
-            for lead in [90, 30, 7] {
-                guard let fire = cal.date(byAdding: .day, value: -lead, to: expiry), fire > now else { continue }
-                days.insert(cal.startOfDay(for: fire))
-            }
-        }
-        for day in days.sorted().prefix(60) {
+        let dates = items.compactMap { VaultAnalysis.expiryDate(of: $0) }
+        let cal = Calendar(identifier: .gregorian)
+        let requests = ExpiryNotificationPlan.requests(
+            expiryDates: dates, tag: tag, now: Date(), calendar: cal)
+
+        for req in requests {
             let content = UNMutableNotificationContent()
             content.title = "Stash"
             content.body = NSLocalizedString("Проверьте сроки документов", comment: "")
-            var comps = cal.dateComponents([.year, .month, .day], from: day)
-            comps.hour = 10
+            var comps = DateComponents()
+            comps.year = req.year; comps.month = req.month; comps.day = req.day; comps.hour = req.hour
             let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)
-            let id = prefix + String(Int(day.timeIntervalSince1970))
-            try? await center.add(UNNotificationRequest(identifier: id, content: content, trigger: trigger))
+            try? await center.add(UNNotificationRequest(identifier: req.identifier, content: content, trigger: trigger))
         }
     }
 }

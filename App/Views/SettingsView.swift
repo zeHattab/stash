@@ -53,7 +53,7 @@ struct SettingsView: View {
                             model.setExpiryRemindersEnabled(enabled)
                             Task {
                                 if enabled { await ExpiryNotifications.requestAuthorization() }
-                                await ExpiryNotifications.reschedule(items: model.items, enabled: enabled)
+                                await ExpiryNotifications.reschedule(items: model.items, enabled: enabled, tag: model.vaultTag)
                             }
                         }
                     ))

@@ -49,6 +49,16 @@ public actor VaultStore {
     public func currentSecondPasswordEnabled() -> Bool { secondEnabledFlag }
     public func currentRecoveryKeySaved() -> Bool { recoverySavedFlag }
     public func currentDecoyNeedsFilling() -> Bool { decoyNeedsFillingFlag }
+
+    /// Непрозрачный тег открытого сейфа для привязки локальных уведомлений.
+    /// Хэш соли слота (соль неизменна за жизнь слота в v4) с доменным разделителем —
+    /// у настоящего и ложного сейфов он разный, саму соль не раскрывает.
+    public func currentVaultTag() -> String? {
+        guard let salt = currentSalt else { return nil }
+        let digest = SHA256.hash(data: Data("stash-notif-tag".utf8) + salt)
+        return digest.prefix(8).map { String(format: "%02x", $0) }.joined()
+    }
+
     func openedSlotForTesting() -> Int? { openedSlot }
     func slotSizeForTesting() -> Int { slotSize }
     func setSimulateWriteFailureForTesting(_ value: Bool) { config.simulateWriteFailure = value }

@@ -39,6 +39,13 @@ public final class AppModel {
     public private(set) var masterReminderInterval: ReminderInterval
     /// Напоминания о сроках действия документов (по умолчанию включены).
     public private(set) var expiryRemindersEnabled: Bool
+    /// Непрозрачный тег открытого сейфа — для привязки локальных уведомлений к сейфу.
+    public private(set) var vaultTag: String?
+    /// Открыт системный экран, который мы сами показали (камера, выбор фото/файла,
+    /// «Поделиться», запрос разрешения). Пока он открыт — автоблокировка по уходу в
+    /// неактив/фон НЕ срабатывает; блокировка самого iPhone работает всегда.
+    public private(set) var presentingSystemScreen = false
+    private var systemScreenDepth = 0
 
     public var biometryType: BiometryKind { biometrics.biometryType }
     public var isBiometricAvailable: Bool { biometrics.isAvailable }
@@ -107,6 +114,18 @@ public final class AppModel {
         settings.set(!enabled, forKey: Keys.expiryRemindersDisabled)
     }
 
+    /// Открыли свой системный экран (камера/пикер/шара/запрос доступа).
+    public func beginSystemScreen() {
+        systemScreenDepth += 1
+        presentingSystemScreen = true
+    }
+
+    /// Закрыли свой системный экран.
+    public func endSystemScreen() {
+        systemScreenDepth = max(0, systemScreenDepth - 1)
+        presentingSystemScreen = systemScreenDepth > 0
+    }
+
     // MARK: - Жизненный цикл
 
     /// Определяет стартовую фазу: есть файл сейфа → экран блокировки, иначе онбординг.
@@ -131,6 +150,7 @@ public final class AppModel {
         secondPasswordEnabled = await store.currentSecondPasswordEnabled()
         recoveryKeySaved = await store.currentRecoveryKeySaved()
         decoyNeedsFilling = await store.currentDecoyNeedsFilling()
+        vaultTag = await store.currentVaultTag()
     }
 
     private func recordMasterCheck() {
@@ -262,6 +282,7 @@ public final class AppModel {
         items = []
         isDecoySession = false
         secondPasswordEnabled = false
+        vaultTag = nil
         backgroundedAt = nil
         lockReason = reason
         if phase == .unlocked { phase = .locked }
@@ -379,8 +400,11 @@ public final class AppModel {
     }
 
     /// Уход в фон. При таймауте «сразу» блокируем немедленно, иначе запоминаем время.
+    /// Если открыт наш системный экран (камера/пикер/шара) — это не настоящий уход,
+    /// не блокируем и не запускаем таймер до возврата. Блокировка iPhone — отдельно (всегда).
     public func didEnterBackground(at date: Date) async {
         guard phase == .unlocked else { return }
+        if presentingSystemScreen { return }
         if autoLockTimeout == .immediately {
             await lock(reason: .background)
         } else {
@@ -391,6 +415,10 @@ public final class AppModel {
     /// Возврат на передний план. Блокируем, если прошло >= таймаута (по времени, не по таймерам).
     public func willEnterForeground(at date: Date) async {
         guard phase == .unlocked, let since = backgroundedAt else {
+            backgroundedAt = nil
+            return
+        }
+        if presentingSystemScreen {
             backgroundedAt = nil
             return
         }

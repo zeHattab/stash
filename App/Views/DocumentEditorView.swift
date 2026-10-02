@@ -1,4 +1,7 @@
 import SwiftUI
+import UIKit
+import AVFoundation
+import VisionKit
 import StashCore
 
 struct DocumentEditorView: View {
@@ -19,7 +22,9 @@ struct DocumentEditorView: View {
     @State private var attachments: [Attachment]
     @State private var confirmDelete = false
     @State private var showScanner = false
+    @State private var showCameraDenied = false
     @State private var scanNote: String?
+    @State private var recognizedText: String?
 
     struct FreeField: Identifiable { let id = UUID(); var name: String; var value: String }
 
@@ -85,13 +90,21 @@ struct DocumentEditorView: View {
             }
 
             Section {
-                Button { showScanner = true } label: { Label("Сканировать документ", systemImage: "doc.viewfinder") }
+                Button { startScan() } label: { Label("Сканировать документ", systemImage: "doc.viewfinder") }
                 if let scanNote {
                     Text(scanNote).font(.footnote).foregroundStyle(.secondary)
                 }
+                if let recognizedText, !recognizedText.isEmpty {
+                    DisclosureGroup("Распознанный текст") {
+                        Text(recognizedText)
+                            .font(.footnote.monospaced())
+                            .textSelection(.enabled)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
             }
 
-            AttachmentsSection(attachments: $attachments)
+            AttachmentsSection(model: model, attachments: $attachments)
 
             Section("Срок действия") {
                 Toggle("Есть срок действия", isOn: $hasExpiry)
@@ -126,16 +139,61 @@ struct DocumentEditorView: View {
             }
             Button("Отмена", role: .cancel) {}
         }
-        .fullScreenCover(isPresented: $showScanner) {
-            DocumentScannerView(onComplete: handleScan).ignoresSafeArea()
+        .fullScreenCover(isPresented: $showScanner, onDismiss: { model.endSystemScreen() }) {
+            DocumentScannerView { images in
+                showScanner = false   // SwiftUI снимает презентацию; сканер себя не закрывает
+                handleScan(images)
+            }
+            .ignoresSafeArea()
+        }
+        .alert("Нужен доступ к камере", isPresented: $showCameraDenied) {
+            Button("Открыть Настройки") {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+            }
+            Button("Отмена", role: .cancel) {}
+        } message: {
+            Text("Разрешите доступ к камере в Настройках, чтобы сканировать документы.")
         }
         .onChange(of: hasExpiry) { _, now in
             if now { Task { await ExpiryNotifications.requestAuthorization() } }
         }
     }
 
+    // MARK: - Сканирование
+
+    /// Предпроверка перед показом камеры: без неё контроллер мог завершаться сразу и
+    /// экран «схлопывался» молча. Теперь недоступность показывает причину.
+    private func startScan() {
+        recognizedText = nil
+        guard VNDocumentCameraViewController.isSupported else {
+            scanNote = String(localized: "Сканирование недоступно на этом устройстве.")
+            return
+        }
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:
+            presentScanner()
+        case .notDetermined:
+            model.beginSystemScreen()
+            Task {
+                let granted = await AVCaptureDevice.requestAccess(for: .video)
+                model.endSystemScreen()
+                if granted { presentScanner() } else { showCameraDenied = true }
+            }
+        default:
+            showCameraDenied = true
+        }
+    }
+
+    private func presentScanner() {
+        model.beginSystemScreen()
+        showScanner = true
+    }
+
     private func handleScan(_ images: [UIImage]) {
         guard !images.isEmpty else { return }
+        scanNote = nil
         for (i, img) in images.enumerated() {
             if let jpeg = AttachmentsSection.compressed(img) {
                 attachments.append(Attachment(name: "Скан \(attachments.count + i + 1).jpg", kind: .image, data: jpeg))
@@ -144,17 +202,21 @@ struct DocumentEditorView: View {
         Task {
             var text = ""
             for img in images { text += await DocumentOCR.recognizeText(img) + "\n" }
-            guard let mrz = MRZParser.parse(text) else { return }
-            if mrz.checkDigitsValid {
+            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+            if let mrz = MRZParser.parse(text), mrz.checkDigitsValid {
                 fields[DocumentFieldKey.number.rawValue] = mrz.documentNumber
                 let name = [mrz.surname, mrz.givenNames].filter { !$0.isEmpty }.joined(separator: " ")
                 if !name.isEmpty { fields[DocumentFieldKey.fullName.rawValue] = name }
                 if !mrz.nationality.isEmpty { fields[DocumentFieldKey.country.rawValue] = mrz.nationality }
                 if let birth = mrz.birthDate { fields[DocumentFieldKey.birthDate.rawValue] = Self.isoDate(birth) }
                 if let exp = mrz.expiryDate { hasExpiry = true; expiry = exp }
-                scanNote = "Поля заполнены из MRZ — проверьте их."
+                scanNote = String(localized: "Поля заполнены из MRZ — проверьте их.")
+                recognizedText = nil
             } else {
-                scanNote = "MRZ не прошёл проверку — заполните поля вручную."
+                // Скан уже прикреплён. MRZ не распознана/не прошла — предлагаем ручной ввод,
+                // а найденный текст показываем, чтобы было откуда скопировать.
+                scanNote = String(localized: "Не удалось распознать автоматически — проверьте поля вручную.")
+                recognizedText = trimmed.isEmpty ? nil : trimmed
             }
         }
     }

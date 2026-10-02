@@ -29,6 +29,12 @@ jobs:
           fi
           echo "OK: SecureField в App/ не найден"
 
+      - name: Project integrity (pbxproj + все .swift зарегистрированы)
+        run: python3 tools/check_project.py
+
+      - name: Localization coverage (en для всех русских UI-строк)
+        run: python3 tools/check_strings.py
+
       - name: Select newest Xcode 26.x
         run: |
           set -euo pipefail

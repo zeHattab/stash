@@ -309,3 +309,30 @@ to save the master password to iCloud Keychain nor suggests strong passwords.
 ключом). Ступени 256 КБ → 1 → 4 → 16 → 64 МБ → +64 МБ, предел 512 МБ (понятная ошибка без
 порчи). Запись атомарна — при сбое старый файл цел. Сторонние клавиатуры запрещены во всём
 приложении; все поля секретов — через единую обёртку `SecretTextField`.
+
+> Разделы про v2 и v3 выше оставлены как история формата. Актуальный формат — **v4**;
+> старые файлы мигрируют в v4 при первой разблокировке.
+
+## Documents, scanner and notifications (v4 functionality)
+
+**Attachments and scans stay inside the slot.** Photos and PDFs attached to a document
+are stored as bytes inside the encrypted payload — never as separate files, caches or
+temp files outside the container, because their presence or size would reveal slot
+occupancy and break deniability. The only exception is "Share": it writes one temp file
+with `.completeFileProtection` and deletes it immediately when the share sheet closes.
+
+**Scanning is on-device.** The document scanner (VisionKit) and text recognition
+(Vision OCR, ru/en) run entirely on the device with no network. Recognized text and MRZ
+fields are placed into the document's fields inside the slot; the raw scan image is never
+stored anywhere but the slot. MRZ fields auto-fill only when the ICAO 9303 check digits
+pass; otherwise the user is asked to fill them manually and the scan is still attached.
+
+**Local notifications carry no secrets.** Expiry reminders are the only data that leaves
+the slot, so their text is neutral ("Stash" / "Проверьте сроки документов") — never a
+document type, name, number or date. Identifiers are scoped to the open vault via an
+opaque tag (a hash of the slot's salt), so rescheduling in one vault never touches the
+other's reminders and the identifiers reveal nothing about which vault exists.
+
+**Deleting the photo original** goes through the system (`PHAssetChangeRequest`), which
+shows its own confirmation; Stash never deletes photos silently. A PDF imported from
+Files is copied into the slot; the original is left in place.

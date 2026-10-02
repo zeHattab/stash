@@ -15,8 +15,9 @@ struct RootView: View {
             case .unlocked: HomeView(model: model)
             }
 
-            // В переключателе приложений и при .inactive прячем содержимое заглушкой.
-            if scenePhase != .active {
+            // В переключателе приложений и при .inactive прячем содержимое заглушкой —
+            // но НЕ поверх системного экрана, который мы сами открыли (камера/пикер/шара).
+            if scenePhase != .active && !model.presentingSystemScreen {
                 PrivacyShade()
             }
         }
@@ -39,7 +40,9 @@ struct RootView: View {
         .onChange(of: model.items) { _, _ in
             // Планирует уведомления о сроках только открытый сейф.
             guard model.phase == .unlocked else { return }
-            Task { await ExpiryNotifications.reschedule(items: model.items, enabled: model.expiryRemindersEnabled) }
+            Task { await ExpiryNotifications.reschedule(items: model.items,
+                                                        enabled: model.expiryRemindersEnabled,
+                                                        tag: model.vaultTag) }
         }
     }
 }

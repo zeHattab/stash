@@ -1,12 +1,18 @@
 import SwiftUI
 import VisionKit
 import Vision
+import os
 
-/// Сканер документов (VisionKit). Возвращает отсканированные страницы как изображения.
+private let scanLog = Logger(subsystem: "com.portie24.stash", category: "scanner")
+
+/// Сканер документов (VisionKit). Возвращает страницы в `onComplete` и НЕ закрывает себя сам —
+/// родитель снимает презентацию через биндинг (иначе само-dismiss конфликтует со SwiftUI и
+/// экран схлопывается сразу). В каждый метод делегата — лог (без персональных данных).
 struct DocumentScannerView: UIViewControllerRepresentable {
     var onComplete: ([UIImage]) -> Void
 
     func makeUIViewController(context: Context) -> VNDocumentCameraViewController {
+        scanLog.info("make VNDocumentCameraViewController (supported=\(VNDocumentCameraViewController.isSupported, privacy: .public))")
         let controller = VNDocumentCameraViewController()
         controller.delegate = context.coordinator
         return controller
@@ -23,14 +29,17 @@ struct DocumentScannerView: UIViewControllerRepresentable {
                                           didFinishWith scan: VNDocumentCameraScan) {
             var images: [UIImage] = []
             for page in 0..<scan.pageCount { images.append(scan.imageOfPage(at: page)) }
-            controller.dismiss(animated: true) { self.onComplete(images) }
+            scanLog.info("delegate didFinish pages=\(images.count, privacy: .public)")
+            onComplete(images)
         }
         func documentCameraViewControllerDidCancel(_ controller: VNDocumentCameraViewController) {
-            controller.dismiss(animated: true) { self.onComplete([]) }
+            scanLog.info("delegate didCancel")
+            onComplete([])
         }
         func documentCameraViewController(_ controller: VNDocumentCameraViewController,
                                           didFailWithError error: Error) {
-            controller.dismiss(animated: true) { self.onComplete([]) }
+            scanLog.error("delegate didFail: \(error.localizedDescription, privacy: .public)")
+            onComplete([])
         }
     }
 }

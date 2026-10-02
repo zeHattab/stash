@@ -894,6 +894,26 @@
         }
       }
     },
+    "Копия добавлена в Stash. Оригинал остался в «Файлах».": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A copy was added to Stash. The original stays in Files."
+          }
+        }
+      }
+    },
+    "Копия уже сохранена в Stash. Удаление подтвердит система.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A copy is already saved in Stash. The system will confirm deletion."
+          }
+        }
+      }
+    },
     "Лицензия": {
       "localizations": {
         "en": {
@@ -1216,6 +1236,16 @@
         }
       }
     },
+    "Не удалось распознать автоматически — проверьте поля вручную.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t recognize automatically — please check the fields manually."
+          }
+        }
+      }
+    },
     "Не удалось сменить второй пароль.": {
       "localizations": {
         "en": {
@@ -1396,6 +1426,16 @@
         }
       }
     },
+    "Нужен доступ к камере": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Camera access needed"
+          }
+        }
+      }
+    },
     "О приложении": {
       "localizations": {
         "en": {
@@ -1422,6 +1462,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Issuing authority"
+          }
+        }
+      }
+    },
+    "Оставить": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep"
+          }
+        }
+      }
+    },
+    "Открыть Настройки": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Settings"
           }
         }
       }
@@ -1836,6 +1896,26 @@
         }
       }
     },
+    "Разрешите доступ к камере в Настройках, чтобы сканировать документы.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow camera access in Settings to scan documents."
+          }
+        }
+      }
+    },
+    "Распознанный текст": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recognized text"
+          }
+        }
+      }
+    },
     "Свидетельство": {
       "localizations": {
         "en": {
@@ -1922,6 +2002,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Symbols (!@#…)"
+          }
+        }
+      }
+    },
+    "Сканирование недоступно на этом устройстве.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scanning isn’t available on this device."
           }
         }
       }
@@ -2332,6 +2422,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Delete item?"
+          }
+        }
+      }
+    },
+    "Удалить оригинал из Фото?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete the original from Photos?"
           }
         }
       }

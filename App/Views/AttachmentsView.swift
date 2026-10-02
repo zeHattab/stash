@@ -1,15 +1,20 @@
 import SwiftUI
 import PhotosUI
+import Photos
 import PDFKit
 import UniformTypeIdentifiers
 import StashCore
 
 /// Секция вложений документа. Байты хранятся в записи (в слоте); отдельных файлов нет.
 struct AttachmentsSection: View {
+    let model: AppModel
     @Binding var attachments: [Attachment]
     @State private var photoItem: PhotosPickerItem?
     @State private var showPDFImporter = false
     @State private var viewing: Attachment?
+    @State private var pendingDeleteAssetID: String?
+    @State private var showDeleteOriginal = false
+    @State private var hint: String?
 
     var body: some View {
         Section("Вложения") {
@@ -22,10 +27,15 @@ struct AttachmentsSection: View {
             }
             .onDelete { attachments.remove(atOffsets: $0) }
 
-            PhotosPicker(selection: $photoItem, matching: .images) {
+            // .shared() даёт локальный идентификатор, чтобы предложить удалить оригинал.
+            PhotosPicker(selection: $photoItem, matching: .images, photoLibrary: .shared()) {
                 Label("Добавить фото", systemImage: "photo.badge.plus")
             }
             Button { showPDFImporter = true } label: { Label("Добавить PDF", systemImage: "doc.badge.plus") }
+
+            if let hint {
+                Text(hint).font(.footnote).foregroundStyle(.secondary)
+            }
         }
         .onChange(of: photoItem) { _, newItem in
             guard let newItem else { return }
@@ -33,6 +43,10 @@ struct AttachmentsSection: View {
                 if let data = try? await newItem.loadTransferable(type: Data.self),
                    let image = UIImage(data: data), let jpeg = Self.compressed(image) {
                     attachments.append(Attachment(name: "Фото \(attachments.count + 1).jpg", kind: .image, data: jpeg))
+                    if let id = newItem.itemIdentifier {
+                        pendingDeleteAssetID = id
+                        showDeleteOriginal = true
+                    }
                 }
                 photoItem = nil
             }
@@ -43,10 +57,28 @@ struct AttachmentsSection: View {
                 defer { if scoped { url.stopAccessingSecurityScopedResource() } }
                 if let data = try? Data(contentsOf: url) {
                     attachments.append(Attachment(name: url.lastPathComponent, kind: .pdf, data: data))
+                    hint = String(localized: "Копия добавлена в Stash. Оригинал остался в «Файлах».")
                 }
             }
         }
-        .sheet(item: $viewing) { att in AttachmentViewer(attachment: att) }
+        .alert("Удалить оригинал из Фото?", isPresented: $showDeleteOriginal, presenting: pendingDeleteAssetID) { id in
+            Button("Удалить", role: .destructive) { Self.deleteAsset(id) }
+            Button("Оставить", role: .cancel) {}
+        } message: { _ in
+            Text("Копия уже сохранена в Stash. Удаление подтвердит система.")
+        }
+        .sheet(item: $viewing) { att in AttachmentViewer(model: model, attachment: att) }
+    }
+
+    /// Удаление оригинала из медиатеки. Система показывает собственное подтверждение.
+    /// Выборку делаем ВНУТРИ change-блока, чтобы не тащить несендабельный PHFetchResult
+    /// через границу очереди (Swift 6).
+    static func deleteAsset(_ localID: String) {
+        PHPhotoLibrary.shared().performChanges {
+            let assets = PHAsset.fetchAssets(withLocalIdentifiers: [localID], options: nil)
+            guard assets.count > 0 else { return }
+            PHAssetChangeRequest.deleteAssets(assets)
+        }
     }
 
     /// Сжатие изображения: длинная сторона ≤ 2500 px, JPEG.
@@ -61,6 +93,7 @@ struct AttachmentsSection: View {
 }
 
 struct AttachmentViewer: View {
+    let model: AppModel
     let attachment: Attachment
     @Environment(\.dismiss) private var dismiss
     @State private var shareURL: URL?
@@ -87,7 +120,12 @@ struct AttachmentViewer: View {
                 }
             }
             .alert("Поделиться вложением?", isPresented: $confirmShare) {
-                Button("Поделиться") { shareURL = Self.writeTemp(attachment) }
+                Button("Поделиться") {
+                    if let url = Self.writeTemp(attachment) {
+                        model.beginSystemScreen()
+                        shareURL = url
+                    }
+                }
                 Button("Отмена", role: .cancel) {}
             } message: {
                 Text("Файл временно покинет Stash и попадёт в выбранное приложение.")
@@ -100,7 +138,11 @@ struct AttachmentViewer: View {
     }
 
     private func cleanup() {
-        if let url = shareURL { try? FileManager.default.removeItem(at: url); shareURL = nil }
+        if let url = shareURL {
+            try? FileManager.default.removeItem(at: url)
+            shareURL = nil
+            model.endSystemScreen()
+        }
     }
 
     static func writeTemp(_ attachment: Attachment) -> URL? {

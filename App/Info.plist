@@ -33,6 +33,8 @@
 	<string>Face ID нужен, чтобы быстро открывать ваш сейф.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Камера нужна для сканирования документов и QR-кодов двухфакторной защиты.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Доступ к фото нужен, чтобы прикрепить изображение к документу и, по желанию, удалить оригинал.</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UISupportedInterfaceOrientations</key>
