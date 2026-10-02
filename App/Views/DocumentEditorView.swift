@@ -56,6 +56,9 @@ struct DocumentEditorView: View {
 
     private var isExisting: Bool { model.items.contains { $0.id == original.id } }
 
+    /// Кнопка сканирования в блоке вложений — только для существующего документа.
+    private var attachmentsScanAction: (() -> Void)? { isExisting ? startScan : nil }
+
     private var formBody: some View {
         Form {
             headerSection
@@ -63,7 +66,7 @@ struct DocumentEditorView: View {
             fieldsSection
             freeFieldsSection
             // существующий документ: кнопка скана — в блоке вложений
-            AttachmentsSection(model: model, attachments: $attachments, onScan: isExisting ? startScan : nil)
+            AttachmentsSection(model: model, attachments: $attachments, onScan: attachmentsScanAction)
             if isExisting { scanFeedback }
             expirySection
             noteSection
