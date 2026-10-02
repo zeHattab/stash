@@ -145,7 +145,7 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
                 if #available(iOS 18.0, *), let code = login.currentTOTPCode() {
                     let cred = ASOneTimeCodeCredential(code: code)
                     await store.lock()
-                    extensionContext.completeOneTimeCodeRequest(withSelectedCredential: cred)
+                    extensionContext.completeOneTimeCodeRequest(using: cred)
                 } else {
                     await store.lock()
                     cancel()
@@ -166,7 +166,7 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
                     withSelectedCredential: ASPasswordCredential(user: login.username, password: login.password))
             case .oneTimeCode:
                 if #available(iOS 18.0, *), let code = login.currentTOTPCode() {
-                    extensionContext.completeOneTimeCodeRequest(withSelectedCredential: ASOneTimeCodeCredential(code: code))
+                    extensionContext.completeOneTimeCodeRequest(using: ASOneTimeCodeCredential(code: code))
                 } else {
                     cancel()
                 }
