@@ -28,6 +28,10 @@
 		FF000000000000000000001B = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Documents/DocumentImage.swift; sourceTree = "<group>";};
 		FF000000000000000000001C = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanRecoveryTests.swift; sourceTree = "<group>";};
 		FF000000000000000000001D = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Documents/MRZLineAssembler.swift; sourceTree = "<group>";};
+		FF000000000000000000001E = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Documents/VaultTag.swift; sourceTree = "<group>";};
+		FF000000000000000000001F = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TOTP/TOTP.swift; sourceTree = "<group>";};
+		FF0000000000000000000020 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TOTP/OTPAuth.swift; sourceTree = "<group>";};
+		FF0000000000000000000031 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TOTPTests.swift; sourceTree = "<group>";};
 		00000000000000000000000F = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypto/Crypto.swift; sourceTree = "<group>";};
 		000000000000000000000010 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypto/PasswordStrength.swift; sourceTree = "<group>";};
 		000000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/VaultItem.swift; sourceTree = "<group>";};
@@ -126,6 +130,10 @@
 		FF000000000000000000002B = {isa = PBXBuildFile; fileRef = FF000000000000000000001B;};
 		FF000000000000000000002C = {isa = PBXBuildFile; fileRef = FF000000000000000000001C;};
 		FF000000000000000000002D = {isa = PBXBuildFile; fileRef = FF000000000000000000001D;};
+		FF000000000000000000002E = {isa = PBXBuildFile; fileRef = FF000000000000000000001E;};
+		FF000000000000000000002F = {isa = PBXBuildFile; fileRef = FF000000000000000000001F;};
+		FF0000000000000000000030 = {isa = PBXBuildFile; fileRef = FF0000000000000000000020;};
+		FF0000000000000000000032 = {isa = PBXBuildFile; fileRef = FF0000000000000000000031;};
 		000000000000000000000060 = {isa = PBXBuildFile; fileRef = 00000000000000000000000F;};
 		000000000000000000000061 = {isa = PBXBuildFile; fileRef = 000000000000000000000010;};
 		000000000000000000000062 = {isa = PBXBuildFile; fileRef = 000000000000000000000011;};
@@ -250,6 +258,9 @@
 				FF0000000000000000000019,
 				FF000000000000000000001B,
 				FF000000000000000000001D,
+				FF000000000000000000001E,
+				FF000000000000000000001F,
+				FF0000000000000000000020,
 			);
 			path = StashCore;
 			sourceTree = "<group>";
@@ -276,6 +287,7 @@
 				FF0000000000000000000013,
 				FF000000000000000000001A,
 				FF000000000000000000001C,
+				FF0000000000000000000031,
 			);
 			path = StashCoreTests;
 			sourceTree = "<group>";
@@ -434,6 +446,9 @@
 				FF0000000000000000000029,
 				FF000000000000000000002B,
 				FF000000000000000000002D,
+				FF000000000000000000002E,
+				FF000000000000000000002F,
+				FF0000000000000000000030,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -474,6 +489,7 @@
 				FF0000000000000000000023,
 				FF000000000000000000002A,
 				FF000000000000000000002C,
+				FF0000000000000000000032,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

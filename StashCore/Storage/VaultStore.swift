@@ -50,13 +50,12 @@ public actor VaultStore {
     public func currentRecoveryKeySaved() -> Bool { recoverySavedFlag }
     public func currentDecoyNeedsFilling() -> Bool { decoyNeedsFillingFlag }
 
-    /// Непрозрачный тег открытого сейфа для привязки локальных уведомлений.
-    /// Хэш соли слота (соль неизменна за жизнь слота в v4) с доменным разделителем —
-    /// у настоящего и ложного сейфов он разный, саму соль не раскрывает.
+    /// Непрозрачный тег открытого сейфа для привязки локальных уведомлений — из КЛЮЧА сейфа
+    /// (HMAC-SHA256(VK, …)), которого вне слота нет. Из соли (она в файле открыто) не
+    /// вычисляется, поэтому по уведомлениям нельзя сопоставить слоты (см. VaultTag).
     public func currentVaultTag() -> String? {
-        guard let salt = currentSalt else { return nil }
-        let digest = SHA256.hash(data: Data("stash-notif-tag".utf8) + salt)
-        return digest.prefix(8).map { String(format: "%02x", $0) }.joined()
+        guard let vk = vaultKey else { return nil }
+        return VaultTag.make(vaultKey: vk)
     }
 
     func openedSlotForTesting() -> Int? { openedSlot }

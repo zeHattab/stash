@@ -14,13 +14,26 @@ enum ExpiryNotifications {
             .requestAuthorization(options: [.alert, .sound, .badge])
     }
 
+    /// Ключ флага разовой миграции меток (соль→ключ).
+    private static let migrationKey = "notifTagV1Migrated"
+
     static func reschedule(items: [VaultItem], enabled: Bool, tag: String?) async {
         guard let tag else { return }
         let center = UNUserNotificationCenter.current()
         let pending = await center.pendingNotificationRequests().map(\.identifier)
-        // Снимаем ТОЛЬКО свои (этого сейфа) — чужие и посторонние не трогаем.
-        let ours = ExpiryNotificationPlan.identifiersToRemove(existing: pending, tag: tag)
-        center.removePendingNotificationRequests(withIdentifiers: ours)
+
+        // Разовая миграция: старые метки выводились из соли (лежит в файле открыто).
+        // Снимаем ВСЕ прежние уведомления о сроках один раз — каждый сейф перепланирует
+        // свои с новой меткой (из ключа) при открытии.
+        if !UserDefaults.standard.bool(forKey: migrationKey) {
+            let old = pending.filter { $0.hasPrefix(ExpiryNotificationPlan.rootPrefix) }
+            center.removePendingNotificationRequests(withIdentifiers: old)
+            UserDefaults.standard.set(true, forKey: migrationKey)
+        } else {
+            // Снимаем ТОЛЬКО свои (этого сейфа) — чужие и посторонние не трогаем.
+            let ours = ExpiryNotificationPlan.identifiersToRemove(existing: pending, tag: tag)
+            center.removePendingNotificationRequests(withIdentifiers: ours)
+        }
         guard enabled else { return }
 
         let settings = await center.notificationSettings()
