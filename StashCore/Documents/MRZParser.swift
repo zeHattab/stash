@@ -197,19 +197,14 @@ public enum MRZParser {
         return g.filter { $0.isNumber }
     }
 
-    /// Кандидаты для буквенно-цифровой позиции. Для буквы-двойника цифру пробуем ПЕРВОЙ
-    /// (номера документов чаще цифровые) — это детерминированно разрешает неоднозначности
-    /// B↔8, O↔0 в пользу цифр, когда контрольные совпадают у обоих вариантов.
+    /// Кандидаты для буквенно-цифровой позиции: ОРИГИНАЛ первым (как прочитал OCR), затем
+    /// двойники. Если прочитанное уже проходит контрольную — ничего не меняем; подстановка
+    /// включается только при несовпадении. Истинные коллизии (оба варианта валидны)
+    /// однозначно разрешить нельзя — остаётся прочитанное.
     private static func alnumCandidates(_ ch: Character) -> [Character] {
         if ch == "<" { return ["<"] }
         guard let g = confusionGroup(of: ch) else { return [ch] }
-        let digits = g.filter { $0.isNumber }.sorted()
-        let letters = g.filter { !$0.isNumber }.sorted()
-        if ch.isNumber {
-            return [ch] + letters
-        } else {
-            return digits + [ch] + letters.filter { $0 != ch }
-        }
+        return [ch] + g.filter { $0 != ch }.sorted()
     }
 
     /// Значение контрольной цифры из символа (с учётом '<'=0 и похожих на цифры).

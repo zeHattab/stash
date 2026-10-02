@@ -75,10 +75,11 @@ final class MRZRecoveryTests: XCTestCase {
     }
 
     func testOCRErrorsTD3Recover() throws {
-        // O↔0, I↔1, S↔5, B↔8, «→< ; имена-строка с «кавычками-заполнителями».
+        // Ошибки в ДАТАХ (O→0, I→1, S→5, B→8 — однозначно сводятся к цифрам) и «→<
+        // в строке имён. Номер прочитан верно; составная подтверждает корректность.
         let lines = [
             "P<UTOERIKSSON<<ANNA<MARIA«««««««««««««««««««",
-            "LB9B9O2C36UTO74OB122F12O4IS9ZE184226B<<<<<10",
+            "L898902C36UTO74O8I22FI2O4IS9ZE184226B<<<<<10",
         ]
         let (r, _) = MRZParser.parseRecovering(lines: lines)
         let res = try XCTUnwrap(r)
