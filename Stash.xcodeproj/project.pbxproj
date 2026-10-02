@@ -72,7 +72,9 @@
 		00000000000000000000003E = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/LockView.swift; sourceTree = "<group>";};
 		00000000000000000000003F = {isa = PBXBuildFile; fileRef = 00000000000000000000003E;};
 		000000000000000000000040 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/HomeView.swift; sourceTree = "<group>";};
+		FF0000000000000000000014 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/DocumentEditorView.swift; sourceTree = "<group>";};
 		000000000000000000000041 = {isa = PBXBuildFile; fileRef = 000000000000000000000040;};
+		FF0000000000000000000024 = {isa = PBXBuildFile; fileRef = FF0000000000000000000014;};
 		000000000000000000000042 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SettingsView.swift; sourceTree = "<group>";};
 		000000000000000000000043 = {isa = PBXBuildFile; fileRef = 000000000000000000000042;};
 		000000000000000000000044 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Clipboard.swift; sourceTree = "<group>";};
@@ -178,6 +180,7 @@
 				000000000000000000000001,
 				000000000000000000000002,
 				000000000000000000000088,
+				FF0000000000000000000014,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -282,6 +285,7 @@
 				00000000000000000000003D,
 				00000000000000000000003F,
 				000000000000000000000041,
+				FF0000000000000000000024,
 				000000000000000000000043,
 				000000000000000000000045,
 				000000000000000000000047,

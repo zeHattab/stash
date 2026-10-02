@@ -38,8 +38,8 @@ struct ItemRow: View {
             return "Логин"
         case .secureNote:
             return "Заметка"
-        case .document:
-            return "Документ"
+        case let .document(type, _, _, _):
+            return DocumentEditorView.typeName(type)
         }
     }
 

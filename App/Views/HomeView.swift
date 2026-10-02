@@ -2,13 +2,14 @@ import SwiftUI
 import StashCore
 
 enum ItemFilter: String, CaseIterable, Identifiable {
-    case all, logins, notes
+    case all, logins, notes, documents
     var id: String { rawValue }
     var title: LocalizedStringKey {
         switch self {
         case .all: return "Все"
         case .logins: return "Логины"
         case .notes: return "Заметки"
+        case .documents: return "Документы"
         }
     }
 }
@@ -74,8 +75,19 @@ struct HomeView: View {
                 Text("Ничего не найдено")
                     .foregroundStyle(.secondary)
             } else {
+                if !expiringSoon.isEmpty && searchText.isEmpty {
+                    Section("Скоро истекают") {
+                        ForEach(expiringSoon) { item in
+                            Button { editing = item } label: {
+                                ItemRow(item: item).contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
                 section("Избранное", items: favorites)
                 section("Логины", items: logins)
+                section("Документы", items: documents)
                 section("Заметки", items: notes)
             }
         }
@@ -148,6 +160,7 @@ struct HomeView: View {
             Menu {
                 Button { addLogin() } label: { Label("Логин", systemImage: "key") }
                 Button { addNote() } label: { Label("Заметка", systemImage: "note.text") }
+                Button { addDocument() } label: { Label("Документ", systemImage: "doc.text") }
             } label: {
                 Image(systemName: "plus")
             }
@@ -168,6 +181,7 @@ struct HomeView: View {
         case .all: break
         case .logins: list = list.filter { isLogin($0) }
         case .notes: list = list.filter { isNote($0) }
+        case .documents: list = list.filter { isDocument($0) }
         }
         list = VaultSearch.filter(list, query: searchText)
         return sorted(list)
@@ -176,6 +190,10 @@ struct HomeView: View {
     private var favorites: [VaultItem] { pool.filter(\.favorite) }
     private var logins: [VaultItem] { pool.filter { isLogin($0) && !$0.favorite } }
     private var notes: [VaultItem] { pool.filter { isNote($0) && !$0.favorite } }
+    private var documents: [VaultItem] { pool.filter { isDocument($0) && !$0.favorite } }
+    private var expiringSoon: [VaultItem] {
+        VaultAnalysis.soonExpiring(model.items, within: 90, now: Date())
+    }
 
     private func sorted(_ items: [VaultItem]) -> [VaultItem] {
         switch model.sortOrder {
@@ -192,6 +210,9 @@ struct HomeView: View {
     private func isNote(_ item: VaultItem) -> Bool {
         if case .secureNote = item.kind { return true }; return false
     }
+    private func isDocument(_ item: VaultItem) -> Bool {
+        if case .document = item.kind { return true }; return false
+    }
 
     // MARK: - Действия
 
@@ -200,6 +221,9 @@ struct HomeView: View {
     }
     private func addNote() {
         editing = VaultItem(kind: .secureNote, title: "")
+    }
+    private func addDocument() {
+        editing = VaultItem(kind: .document(type: .passport, fields: [:], expiresAt: nil, attachmentIDs: []), title: "")
     }
 
     private func delete(_ item: VaultItem) {
@@ -212,10 +236,10 @@ struct HomeView: View {
     @ViewBuilder
     private func editor(for item: VaultItem) -> some View {
         NavigationStack {
-            if case .secureNote = item.kind {
-                NoteEditorView(model: model, original: item)
-            } else {
-                LoginEditorView(model: model, original: item)
+            switch item.kind {
+            case .secureNote: NoteEditorView(model: model, original: item)
+            case .document: DocumentEditorView(model: model, original: item)
+            case .login: LoginEditorView(model: model, original: item)
             }
         }
     }
