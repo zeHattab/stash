@@ -56,7 +56,7 @@ struct DocumentEditorView: View {
 
     private var isExisting: Bool { model.items.contains { $0.id == original.id } }
 
-    var body: some View {
+    private var formBody: some View {
         Form {
             headerSection
             if !isExisting { scanBlock }   // новый документ: скан первым блоком
@@ -69,6 +69,10 @@ struct DocumentEditorView: View {
             noteSection
             if isExisting { deleteSection }
         }
+    }
+
+    var body: some View {
+        formBody
         .navigationTitle(isExisting ? "Документ" : "Новый документ")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
