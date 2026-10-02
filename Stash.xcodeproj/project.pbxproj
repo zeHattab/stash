@@ -37,6 +37,8 @@
 		FF0000000000000000000036 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoFill/CredentialIdentityPlan.swift; sourceTree = "<group>";};
 		FF0000000000000000000037 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoFill/AutoFillLogin.swift; sourceTree = "<group>";};
 		FF0000000000000000000038 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoFillTests.swift; sourceTree = "<group>";};
+		FF000000000000000000003D = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordEntryController.swift; sourceTree = "<group>";};
+		FF000000000000000000003E = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginListController.swift; sourceTree = "<group>";};
 		00000000000000000000000F = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypto/Crypto.swift; sourceTree = "<group>";};
 		000000000000000000000010 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypto/PasswordStrength.swift; sourceTree = "<group>";};
 		000000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/VaultItem.swift; sourceTree = "<group>";};
@@ -144,6 +146,8 @@
 		FF000000000000000000003A = {isa = PBXBuildFile; fileRef = FF0000000000000000000036;};
 		FF000000000000000000003B = {isa = PBXBuildFile; fileRef = FF0000000000000000000037;};
 		FF000000000000000000003C = {isa = PBXBuildFile; fileRef = FF0000000000000000000038;};
+		FF000000000000000000003F = {isa = PBXBuildFile; fileRef = FF000000000000000000003D;};
+		FF0000000000000000000040 = {isa = PBXBuildFile; fileRef = FF000000000000000000003E;};
 		000000000000000000000060 = {isa = PBXBuildFile; fileRef = 00000000000000000000000F;};
 		000000000000000000000061 = {isa = PBXBuildFile; fileRef = 000000000000000000000010;};
 		000000000000000000000062 = {isa = PBXBuildFile; fileRef = 000000000000000000000011;};
@@ -233,6 +237,8 @@
 				000000000000000000000008,
 				000000000000000000000009,
 				00000000000000000000000A,
+				FF000000000000000000003D,
+				FF000000000000000000003E,
 			);
 			path = AutoFill;
 			sourceTree = "<group>";
@@ -402,6 +408,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				000000000000000000000059,
+				FF000000000000000000003F,
+				FF0000000000000000000040,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

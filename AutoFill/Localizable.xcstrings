@@ -1,18 +1,98 @@
 {
-  "sourceLanguage" : "ru",
-  "strings" : {
-    "Отмена" : {
-      "comment" : "Кнопка закрытия заглушки расширения AutoFill",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
+  "sourceLanguage": "ru",
+  "strings": {
+    "Введите мастер-пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter your master password"
+          }
+        }
+      }
+    },
+    "Мастер-пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Master password"
+          }
+        }
+      }
+    },
+    "На этом сайте": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For this site"
+          }
+        }
+      }
+    },
+    "Неверный пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wrong password"
+          }
+        }
+      }
+    },
+    "Остальные": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other"
+          }
+        }
+      }
+    },
+    "Отмена": {
+      "comment": "Кнопка закрытия заглушки расширения AutoFill",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        }
+      }
+    },
+    "Разблокировать": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlock"
+          }
+        }
+      }
+    },
+    "Разблокировать Stash": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlock Stash"
+          }
+        }
+      }
+    },
+    "Сейф ещё не создан. Откройте приложение Stash.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The vault isn’t set up yet. Open the Stash app."
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }
