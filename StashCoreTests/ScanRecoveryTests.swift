@@ -150,6 +150,21 @@ final class MRZRecoveryTests: XCTestCase {
         XCTAssertEqual(diag.candidateLineCount, 0)
     }
 
+    // Заход 7.4 п.1: голосование по кадрам сводит шумные копии к верной строке.
+    func testVotingYieldsCorrectLine() throws {
+        let clean = cleanTD3[1] // "L898902C36UTO7408122F1204159ZE184226B<<<<<10"
+        // Три «кадра» с разными ошибками в разных позициях.
+        var f1 = Array(clean); f1[1] = "B"          // 8→B
+        var f2 = Array(clean); f2[15] = "O"          // 0→O (в дате)
+        var f3 = Array(clean); f3[40] = "K"          // '<'→K (в хвосте)
+        let voted = try XCTUnwrap(MRZVote.consensus([String(f1), String(f2), String(f3), clean, clean]))
+        XCTAssertEqual(voted, clean)                 // большинство в каждой позиции — верный символ
+        let (r, _) = MRZParser.parseRecovering(rows: [["P<UTOERIKSSON<<ANNA<MARIA"], [voted]], prefer: .td3)
+        let res = try XCTUnwrap(r)
+        XCTAssertTrue(res.checkDigitsValid)
+        XCTAssertEqual(res.documentNumber, "L898902C3")
+    }
+
     // Заход 7.4: стык фрагментов ПЕРЕД датами + потеря '<' в хвосте доп. поля.
     // Старый код клал недостающие '<' на стык (перед датой) → дата рождения сдвигалась и
     // КЦ не сходилась. Новый перебирает позиции вставки и находит верное размещение.

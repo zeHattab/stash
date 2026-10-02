@@ -40,6 +40,8 @@
 		FF000000000000000000003D = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordEntryController.swift; sourceTree = "<group>";};
 		FF000000000000000000003E = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginListController.swift; sourceTree = "<group>";};
 		FF0000000000000000000041 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/CredentialIdentities.swift; sourceTree = "<group>";};
+		FF0000000000000000000043 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Documents/MRZVote.swift; sourceTree = "<group>";};
+		FF0000000000000000000044 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/LiveMRZScannerView.swift; sourceTree = "<group>";};
 		00000000000000000000000F = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypto/Crypto.swift; sourceTree = "<group>";};
 		000000000000000000000010 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypto/PasswordStrength.swift; sourceTree = "<group>";};
 		000000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/VaultItem.swift; sourceTree = "<group>";};
@@ -150,6 +152,8 @@
 		FF000000000000000000003F = {isa = PBXBuildFile; fileRef = FF000000000000000000003D;};
 		FF0000000000000000000040 = {isa = PBXBuildFile; fileRef = FF000000000000000000003E;};
 		FF0000000000000000000042 = {isa = PBXBuildFile; fileRef = FF0000000000000000000041;};
+		FF0000000000000000000045 = {isa = PBXBuildFile; fileRef = FF0000000000000000000043;};
+		FF0000000000000000000046 = {isa = PBXBuildFile; fileRef = FF0000000000000000000044;};
 		000000000000000000000060 = {isa = PBXBuildFile; fileRef = 00000000000000000000000F;};
 		000000000000000000000061 = {isa = PBXBuildFile; fileRef = 000000000000000000000010;};
 		000000000000000000000062 = {isa = PBXBuildFile; fileRef = 000000000000000000000011;};
@@ -228,6 +232,7 @@
 				FF0000000000000000000017,
 				FF0000000000000000000033,
 				FF0000000000000000000041,
+				FF0000000000000000000044,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -284,6 +289,7 @@
 				FF0000000000000000000035,
 				FF0000000000000000000036,
 				FF0000000000000000000037,
+				FF0000000000000000000043,
 			);
 			path = StashCore;
 			sourceTree = "<group>";
@@ -364,6 +370,7 @@
 				FF0000000000000000000027,
 				FF0000000000000000000034,
 				FF0000000000000000000042,
+				FF0000000000000000000046,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -480,6 +487,7 @@
 				FF0000000000000000000039,
 				FF000000000000000000003A,
 				FF000000000000000000003B,
+				FF0000000000000000000045,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

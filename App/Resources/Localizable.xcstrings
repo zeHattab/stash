@@ -1326,6 +1326,16 @@
         }
       }
     },
+    "Наведите на две нижние строки паспорта": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Point at the two bottom lines of the passport"
+          }
+        }
+      }
+    },
     "Надёжность": {
       "localizations": {
         "en": {
@@ -1412,6 +1422,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Settings"
+          }
+        }
+      }
+    },
+    "Не получилось — заполните вручную или сделайте фото": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Didn’t work — fill in manually or take a photo"
           }
         }
       }
@@ -2752,6 +2772,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lowercase (a–z)"
+          }
+        }
+      }
+    },
+    "Сфотографировать страницы": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Photograph the pages"
+          }
+        }
+      }
+    },
+    "Считать с камеры": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read with camera"
           }
         }
       }

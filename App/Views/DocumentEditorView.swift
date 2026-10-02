@@ -29,6 +29,7 @@ struct DocumentEditorView: View {
     @State private var mrzFilledKeys: Set<String> = []
     @State private var pendingMRZ: MRZResult?
     @State private var confirmFillFromScan = false
+    @State private var showLiveScanner = false
 
     struct FreeField: Identifiable { let id = UUID(); var name: String; var value: String }
 
@@ -58,10 +59,14 @@ struct DocumentEditorView: View {
 
     private var isExisting: Bool { model.items.contains { $0.id == original.id } }
 
-    /// Кнопка сканирования в блоке вложений — только для существующего документа.
+    /// Кнопки сканирования в блоке вложений — только для существующего документа.
     private var attachmentsScanAction: (() -> Void)? {
         guard isExisting else { return nil }
         return { startScan() }
+    }
+    private var attachmentsLiveScanAction: (() -> Void)? {
+        guard isExisting, LiveMRZScannerView.isSupported else { return nil }
+        return { startLiveScan() }
     }
 
     private var formBody: some View {
@@ -70,8 +75,9 @@ struct DocumentEditorView: View {
             if !isExisting { scanBlock }   // новый документ: скан первым блоком
             fieldsSection
             freeFieldsSection
-            // существующий документ: кнопка скана — в блоке вложений
-            AttachmentsSection(model: model, attachments: $attachments, onScan: attachmentsScanAction)
+            // существующий документ: кнопки скана — в блоке вложений
+            AttachmentsSection(model: model, attachments: $attachments,
+                               onScan: attachmentsScanAction, onLiveScan: attachmentsLiveScanAction)
             if isExisting { scanFeedback }
             expirySection
             noteSection
@@ -102,6 +108,15 @@ struct DocumentEditorView: View {
                 handleScan(images)
             }
             .ignoresSafeArea()
+        }
+        .fullScreenCover(isPresented: $showLiveScanner, onDismiss: { model.endSystemScreen() }) {
+            if LiveMRZScannerView.isSupported {
+                LiveMRZScannerView(prefer: expectedFormat()) { mrz in
+                    showLiveScanner = false
+                    handleLiveResult(mrz)
+                }
+                .ignoresSafeArea()
+            }
         }
         .alert("Нужен доступ к камере", isPresented: $showCameraDenied) {
             Button("Открыть Настройки") {
@@ -154,6 +169,30 @@ struct DocumentEditorView: View {
         showScanner = true
     }
 
+    private func startLiveScan() {
+        model.beginSystemScreen()
+        showLiveScanner = true
+    }
+
+    private func handleLiveResult(_ mrz: MRZResult?) {
+        if let mrz, mrz.checkDigitsValid {
+            fillFromMRZ(mrz)
+        } else {
+            scanNote = String(localized: "Не получилось — заполните вручную или сделайте фото")
+        }
+    }
+
+    /// Решает, как заполнять: в существующем документе с заполненными полями — спросить.
+    private func fillFromMRZ(_ mrz: MRZResult) {
+        recognizedText = nil
+        if isExisting && hasAnyRecommendedFieldFilled {
+            pendingMRZ = mrz
+            confirmFillFromScan = true
+        } else {
+            applyMRZ(mrz, onlyEmpty: false)
+        }
+    }
+
     private func handleScan(_ images: [UIImage]) {
         guard !images.isEmpty else { return }
         scanNote = nil
@@ -193,14 +232,7 @@ struct DocumentEditorView: View {
                 recovered: diag.recovered, attempts: diag.attempts))
 
             if let mrz, mrz.checkDigitsValid {
-                recognizedText = nil
-                if isExisting && hasAnyRecommendedFieldFilled {
-                    // В существующем документе не перезаписываем заполненное без спроса.
-                    pendingMRZ = mrz
-                    confirmFillFromScan = true
-                } else {
-                    applyMRZ(mrz, onlyEmpty: false)
-                }
+                fillFromMRZ(mrz)
             } else {
                 // Скан уже прикреплён. MRZ не распозналась/не прошла — предлагаем ручной ввод,
                 // а найденный текст показываем, чтобы было откуда скопировать.
@@ -312,13 +344,18 @@ struct DocumentEditorView: View {
     /// Крупный блок для нового документа: кнопка + подсказка, после скана — миниатюра и статус.
     @ViewBuilder private var scanBlock: some View {
         Section {
-            Button { startScan() } label: {
-                VStack(spacing: 6) {
-                    Image(systemName: "doc.viewfinder").font(.largeTitle)
-                    Text("Сканировать документ").font(.headline)
-                    Text("Поля заполнятся автоматически").font(.footnote).foregroundStyle(.secondary)
+            if LiveMRZScannerView.isSupported {
+                Button { startLiveScan() } label: {
+                    VStack(spacing: 6) {
+                        Image(systemName: "camera.viewfinder").font(.largeTitle)
+                        Text("Считать с камеры").font(.headline)
+                        Text("Поля заполнятся автоматически").font(.footnote).foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity).padding(.vertical, 8)
                 }
-                .frame(maxWidth: .infinity).padding(.vertical, 8)
+            }
+            Button { startScan() } label: {
+                Label("Сфотографировать страницы", systemImage: "doc.viewfinder")
             }
             if let first = attachments.first(where: { $0.kind == .image }) {
                 HStack(spacing: 12) {

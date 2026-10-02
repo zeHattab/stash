@@ -10,6 +10,7 @@ struct AttachmentsSection: View {
     let model: AppModel
     @Binding var attachments: [Attachment]
     var onScan: (() -> Void)? = nil
+    var onLiveScan: (() -> Void)? = nil
     @State private var photoItem: PhotosPickerItem?
     @State private var showPDFImporter = false
     @State private var viewing: Attachment?
@@ -19,8 +20,11 @@ struct AttachmentsSection: View {
 
     var body: some View {
         Section("Вложения") {
+            if let onLiveScan {
+                Button { onLiveScan() } label: { Label("Считать с камеры", systemImage: "camera.viewfinder") }
+            }
             if let onScan {
-                Button { onScan() } label: { Label("Сканировать документ", systemImage: "doc.viewfinder") }
+                Button { onScan() } label: { Label("Сфотографировать страницы", systemImage: "doc.viewfinder") }
             }
             ForEach(attachments) { att in
                 Button { viewing = att } label: {
