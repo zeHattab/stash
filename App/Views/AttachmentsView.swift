@@ -83,6 +83,7 @@ struct AttachmentViewer: View {
                 ToolbarItem(placement: .topBarLeading) { Button("Закрыть") { dismiss() } }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { confirmShare = true } label: { Image(systemName: "square.and.arrow.up") }
+                        .accessibilityLabel("Поделиться")
                 }
             }
             .alert("Поделиться вложением?", isPresented: $confirmShare) {
