@@ -354,10 +354,14 @@ public enum MRZParser {
         // TD3 — две строки по 44.
         let td3 = lines(target: 44)
         if !td3.isEmpty {
+            // Строка имён начинается с 'P' — берём её как l1 (фамилия/имена), чтобы имя не
+            // пришло из строки данных. Если 'P'-строк нет — пробуем все как l1.
+            let pLines = td3.filter { $0.first == "P" }
+            let l1Candidates = pLines.isEmpty ? td3 : pLines
             var fail: [String] = []
-            outer3: for i in td3.indices {
-                for j in td3.indices where j != i {
-                    let (res, fails) = recoverTD3(td3[i], td3[j])
+            outer3: for l1 in l1Candidates {
+                for l2 in td3 where l2 != l1 {
+                    let (res, fails) = recoverTD3(l1, l2)
                     if let res, res.checkDigitsValid { valid[.td3] = res; break outer3 }
                     if fail.isEmpty { fail = fails }
                 }
