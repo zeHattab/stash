@@ -142,6 +142,31 @@ final class MRZRecoveryTests: XCTestCase {
         XCTAssertEqual(diag.candidateLineCount, 0)
     }
 
+    // Заход 7.4: стык фрагментов ПЕРЕД датами + потеря '<' в хвосте доп. поля.
+    // Старый код клал недостающие '<' на стык (перед датой) → дата рождения сдвигалась и
+    // КЦ не сходилась. Новый перебирает позиции вставки и находит верное размещение.
+    func testTD3SplitBeforeDatesRecovers() throws {
+        let data = ["L898902C36", "UTO7408122F1204159ZE184226B", "10"] // потеряны 5 '<' в хвосте
+        let names = ["P<UTOERIKSSON<<ANNA<MARIA"]
+        let (r, diag) = MRZParser.parseRecovering(rows: [names, data], prefer: .td3)
+        let res = try XCTUnwrap(r)
+        XCTAssertTrue(res.checkDigitsValid)
+        XCTAssertEqual(res.documentNumber, "L898902C3")
+        XCTAssertEqual(res.birthDate, utc(1974, 8, 12))
+        XCTAssertEqual(res.expiryDate, utc(2012, 4, 15))
+        XCTAssertEqual(diag.detectedFormat, "td3")
+    }
+
+    func testTD3ExtraCharRecovers() throws {
+        // Лишний символ в хвосте — удаляется перебором.
+        let data = ["L898902C36UTO7408122F1204159ZE184226B<<<<<10X"]
+        let (r, _) = MRZParser.parseRecovering(rows: [["P<UTOERIKSSON<<ANNA<MARIA"], data], prefer: .td3)
+        let res = try XCTUnwrap(r)
+        XCTAssertTrue(res.checkDigitsValid)
+        XCTAssertEqual(res.documentNumber, "L898902C3")
+        XCTAssertEqual(res.birthDate, utc(1974, 8, 12))
+    }
+
     // Загранпаспорт — TD3; не должен ошибочно опознаваться как TD1.
     func testTD3PreferredNotMisreadAsTD1() throws {
         // Склеенные строки TD3 (44) — единственный валидный формат.

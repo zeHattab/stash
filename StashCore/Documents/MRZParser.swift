@@ -246,30 +246,52 @@ public enum MRZParser {
         recoverAll(field: field, cdChar: cdChar, digitsOnly: digitsOnly, cap: cap).first
     }
 
-    private static func fit(_ s: String, to n: Int) -> String {
-        if s.count == n { return s }
-        if s.count > n { return String(s.prefix(n)) }
-        return s + String(repeating: "<", count: n - s.count)
-    }
-
-    /// Варианты полной строки для формата заданной длины `target` из кусков `row`.
-    /// Промежутки между кусками — заполнители '<'; распределяем недостающие '<' по стыкам
-    /// (композиции, с ограничением). Это восстанавливает длину точно, не угадывая по ширине.
-    static func candidateLines(for row: [String], target: Int) -> [String] {
+    /// Варианты полной строки формата длины `target` из кусков `row`. Недостающие '<'
+    /// НЕЛЬЗЯ слепо вставлять на стык фрагментов: во 2-й строке TD3 стык часто между
+    /// [номер+КЦ] и [RUS…], и вставка там сдвигает дату рождения — её КЦ не сходится
+    /// (систематический сбой, заход 7.4). Поэтому пробуем вставку недостающих '<' в КАЖДУЮ
+    /// позицию (с конца — там поле доп. данных и хвост имён, где '<' и живут), а валидность
+    /// размещения решают контрольные цифры при разборе. Дубликаты убираем, порядок храним.
+    static func candidateLines(for row: [String], target: Int, cap: Int = 24) -> [String] {
         let pieces = row.map(normalizeLine).filter { !$0.isEmpty }
         guard !pieces.isEmpty else { return [] }
-        let content = pieces.reduce(0) { $0 + $1.count }
-        if pieces.count == 1 { return [fit(pieces[0], to: target)] }
-        let need = target - content
-        if need < 0 { return [fit(pieces.joined(), to: target)] }
-        let gaps = pieces.count - 1
+        let content = pieces.joined()
+        var seen = Set<String>()
         var out: [String] = []
-        for comp in compositions(total: need, parts: gaps, cap: 400) {
-            var s = pieces[0]
-            for g in 0..<gaps { s += String(repeating: "<", count: comp[g]) + pieces[g + 1] }
-            out.append(fit(s, to: target))
+        func add(_ s: String) { if s.count == target, seen.insert(s).inserted { out.append(s) } }
+
+        let chars = Array(content)
+        if content.count == target {
+            add(content)
+        } else if content.count < target {
+            let need = target - content.count
+            // Вставка всех недостающих '<' в одну позицию — с конца к началу (хвост доп. данных
+            // и заполнители имён — самый частый случай одного потерянного прогона).
+            for p in stride(from: chars.count, through: 0, by: -1) {
+                add(String(chars[0..<p]) + String(repeating: "<", count: need) + String(chars[p...]))
+                if out.count >= cap { break }
+            }
+            // Плюс распределение по стыкам фрагментов (несколько потерянных прогонов).
+            if pieces.count > 1 && out.count < cap {
+                for comp in compositions(total: need, parts: pieces.count - 1, cap: 60) {
+                    var s = pieces[0]
+                    for g in 0..<(pieces.count - 1) { s += String(repeating: "<", count: comp[g]) + pieces[g + 1] }
+                    add(s)
+                    if out.count >= cap { break }
+                }
+            }
+        } else {
+            let extra = content.count - target
+            add(String(chars.prefix(target)))
+            add(String(chars.suffix(target)))
+            if extra <= 3 {
+                for p in 0...(chars.count - extra) {
+                    var c = chars; c.removeSubrange(p..<(p + extra)); add(String(c))
+                    if out.count >= cap { break }
+                }
+            }
         }
-        return out.isEmpty ? [fit(pieces.joined(), to: target)] : out
+        return out
     }
 
     /// Композиции числа `total` на `parts` неотрицательных слагаемых (с ограничением числа).
@@ -314,21 +336,21 @@ public enum MRZParser {
         // короче (OCR отбрасывает хвостовые '<'), поэтому берём всё, что не длиннее target+2.
         // Строки с сильным признаком (TD3 начинается с 'P') ставим первыми, чтобы правильно
         // выбрать строку имён при склейке.
-        func lines(target: Int, strongPrefix: Character?) -> [String] {
+        func lines(target: Int) -> [String] {
+            var seen = Set<String>()
             var out: [String] = []
             for row in rows {
                 let n = normLen(row)
                 guard n >= 8, n <= target + 2 else { continue }
-                out += candidateLines(for: row, target: target)
+                for c in candidateLines(for: row, target: target) where seen.insert(c).inserted {
+                    out.append(c)
+                }
             }
-            if let p = strongPrefix {
-                out.sort { ($0.first == p ? 0 : 1) < ($1.first == p ? 0 : 1) }
-            }
-            return Array(out.prefix(10))
+            return Array(out.prefix(40))
         }
 
         // TD3 — две строки по 44.
-        let td3 = lines(target: 44, strongPrefix: "P")
+        let td3 = lines(target: 44)
         if !td3.isEmpty {
             var fail: [String] = []
             outer3: for i in td3.indices {
@@ -338,12 +360,12 @@ public enum MRZParser {
                     if fail.isEmpty { fail = fails }
                 }
             }
-            diag.attempts.append("td3 len=\(td3.map(\.count))" + (valid[.td3] != nil ? " ok" : " fail:\(fail.joined(separator: ","))"))
+            diag.attempts.append("td3 n=\(td3.count)" + (valid[.td3] != nil ? " ok" : " fail:\(fail.joined(separator: ","))"))
             if valid[.td3] == nil { diag.failedChecks = fail }
         }
 
         // TD2 — две строки по 36.
-        let td2 = lines(target: 36, strongPrefix: nil)
+        let td2 = lines(target: 36)
         if !td2.isEmpty {
             var fail: [String] = []
             outer2: for i in td2.indices {
@@ -353,11 +375,11 @@ public enum MRZParser {
                     if fail.isEmpty { fail = fails }
                 }
             }
-            diag.attempts.append("td2 len=\(td2.map(\.count))" + (valid[.td2] != nil ? " ok" : " fail:\(fail.joined(separator: ","))"))
+            diag.attempts.append("td2 n=\(td2.count)" + (valid[.td2] != nil ? " ok" : " fail:\(fail.joined(separator: ","))"))
         }
 
         // TD1 — три строки по 30.
-        let td1 = lines(target: 30, strongPrefix: nil)
+        let td1 = lines(target: 30)
         if td1.count >= 3 {
             var fail: [String] = []
             outer1: for perm in orderedTriples(td1) {
@@ -365,7 +387,7 @@ public enum MRZParser {
                 if let res, res.checkDigitsValid { valid[.td1] = res; break outer1 }
                 if fail.isEmpty { fail = fails }
             }
-            diag.attempts.append("td1 len=\(td1.map(\.count))" + (valid[.td1] != nil ? " ok" : " fail:\(fail.joined(separator: ","))"))
+            diag.attempts.append("td1 n=\(td1.count)" + (valid[.td1] != nil ? " ok" : " fail:\(fail.joined(separator: ","))"))
         }
 
         guard !valid.isEmpty else { return (nil, diag) }
@@ -403,14 +425,14 @@ public enum MRZParser {
 
         guard let birth = recover(field: Array(b[13..<19]), cdChar: b[19], digitsOnly: true),
               let birthDate = date(birth, isExpiry: false) else {
-            return (nil, ["дата рождения"])
+            return (nil, ["дата рождения@13"])
         }
         guard let expiry = recover(field: Array(b[21..<27]), cdChar: b[27], digitsOnly: true),
               let expiryDate = date(expiry, isExpiry: true) else {
-            return (nil, ["срок"])
+            return (nil, ["срок@21"])
         }
         let docCandidates = recoverAll(field: Array(b[0..<9]), cdChar: b[9], digitsOnly: false)
-        if docCandidates.isEmpty { return (nil, ["номер"]) }
+        if docCandidates.isEmpty { return (nil, ["номер@0"]) }
         let optField = Array(b[28..<42])
         let optCandidates0 = recoverAll(field: optField, cdChar: b[42], digitsOnly: false)
         let optCandidates = optCandidates0.isEmpty ? [String(optField)] : optCandidates0
@@ -431,7 +453,7 @@ public enum MRZParser {
                 }
             }
         }
-        return (nil, ["составная"])
+        return (nil, ["составная@43"])
     }
 
     /// TD2 (2×36): виза/карта. Строка 2: номер(9)+КЦ, гражд.(3), дата рожд.(6)+КЦ, пол,
