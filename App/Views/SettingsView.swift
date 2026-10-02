@@ -323,7 +323,8 @@ struct AutoFillHelpView: View {
 
     private func refresh() {
         ASCredentialIdentityStore.shared.getState { state in
-            Task { @MainActor in enabled = state.isEnabled }
+            let isEnabled = state.isEnabled
+            Task { @MainActor in enabled = isEnabled }
         }
     }
 

@@ -15,11 +15,10 @@ enum CredentialIdentities {
             secondPasswordEnabled: model.secondPasswordEnabled,
             isDecoySession: model.isDecoySession)
 
-        let store = ASCredentialIdentityStore.shared
-        store.getState { state in
+        ASCredentialIdentityStore.shared.getState { state in
             guard state.isEnabled else { return } // расширение не включено в системе
             if entries.isEmpty {
-                store.removeAllCredentialIdentities(completion: nil)
+                ASCredentialIdentityStore.shared.removeAllCredentialIdentities(completion: nil)
             } else {
                 let identities: [ASCredentialIdentity] = entries.map { e in
                     ASPasswordCredentialIdentity(
@@ -27,7 +26,7 @@ enum CredentialIdentities {
                         user: e.user,
                         recordIdentifier: e.recordID)
                 }
-                store.replaceCredentialIdentities(with: identities, completion: nil)
+                ASCredentialIdentityStore.shared.replaceCredentialIdentities(with: identities, completion: nil)
             }
         }
     }
