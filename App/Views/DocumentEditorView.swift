@@ -58,64 +58,16 @@ struct DocumentEditorView: View {
 
     var body: some View {
         Form {
-            Section {
-                TextField("Название", text: $title)
-                Picker("Тип документа", selection: $type) {
-                    ForEach(DocumentType.allCases, id: \.self) { Text(Self.typeName($0)).tag($0) }
-                }
-                Toggle("Избранное", isOn: $favorite)
-            }
-
-            // Для НОВОГО документа сканирование — первым блоком, сразу под названием/типом.
-            if !isExisting { scanBlock }
-
-            Section("Поля") {
-                ForEach(DocumentFields.recommended(for: type), id: \.self) { key in
-                    HStack {
-                        Text(Self.fieldLabel(key)).foregroundStyle(.secondary)
-                        Spacer()
-                        TextField("", text: fieldBinding(key.rawValue))
-                            .multilineTextAlignment(.trailing)
-                    }
-                    .listRowBackground(mrzFilledKeys.contains(key.rawValue) ? Color.accentColor.opacity(0.12) : nil)
-                }
-            }
-
-            Section("Дополнительные поля") {
-                ForEach($freeFields) { $f in
-                    HStack {
-                        TextField("Название", text: $f.name).frame(maxWidth: 140)
-                        Divider()
-                        TextField("Значение", text: $f.value)
-                    }
-                }
-                .onDelete { freeFields.remove(atOffsets: $0) }
-                Button { freeFields.append(FreeField(name: "", value: "")) } label: {
-                    Label("Добавить поле", systemImage: "plus")
-                }.font(.footnote)
-            }
-
-            // Для СУЩЕСТВУЮЩЕГО документа кнопка сканирования — в блоке вложений.
+            headerSection
+            if !isExisting { scanBlock }   // новый документ: скан первым блоком
+            fieldsSection
+            freeFieldsSection
+            // существующий документ: кнопка скана — в блоке вложений
             AttachmentsSection(model: model, attachments: $attachments, onScan: isExisting ? startScan : nil)
             if isExisting { scanFeedback }
-
-            Section("Срок действия") {
-                Toggle("Есть срок действия", isOn: $hasExpiry)
-                if hasExpiry {
-                    DatePicker("Действителен до", selection: $expiry, displayedComponents: .date)
-                }
-            }
-
-            Section("Заметка") {
-                TextField("Заметка", text: $notes, axis: .vertical).lineLimit(1...6)
-            }
-
-            if isExisting {
-                Section {
-                    Button("Удалить запись", role: .destructive) { confirmDelete = true }
-                        .frame(maxWidth: .infinity)
-                }
-            }
+            expirySection
+            noteSection
+            if isExisting { deleteSection }
         }
         .navigationTitle(isExisting ? "Документ" : "Новый документ")
         .navigationBarTitleDisplayMode(.inline)
@@ -247,6 +199,75 @@ struct DocumentEditorView: View {
     private static func isoDate(_ date: Date) -> String {
         let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd"; f.timeZone = TimeZone(identifier: "UTC")
         return f.string(from: date)
+    }
+
+    // MARK: - Секции формы (разбиты, чтобы не упираться в лимит тайп-чекера)
+
+    @ViewBuilder private var headerSection: some View {
+        Section {
+            TextField("Название", text: $title)
+            Picker("Тип документа", selection: $type) {
+                ForEach(DocumentType.allCases, id: \.self) { Text(Self.typeName($0)).tag($0) }
+            }
+            Toggle("Избранное", isOn: $favorite)
+        }
+    }
+
+    @ViewBuilder private var fieldsSection: some View {
+        Section("Поля") {
+            ForEach(DocumentFields.recommended(for: type), id: \.self) { key in
+                fieldRow(key)
+            }
+        }
+    }
+
+    @ViewBuilder private func fieldRow(_ key: DocumentFieldKey) -> some View {
+        let highlighted = mrzFilledKeys.contains(key.rawValue)
+        HStack {
+            Text(Self.fieldLabel(key)).foregroundStyle(.secondary)
+            Spacer()
+            TextField("", text: fieldBinding(key.rawValue))
+                .multilineTextAlignment(.trailing)
+        }
+        .listRowBackground(highlighted ? Color.accentColor.opacity(0.12) : Color(uiColor: .secondarySystemGroupedBackground))
+    }
+
+    @ViewBuilder private var freeFieldsSection: some View {
+        Section("Дополнительные поля") {
+            ForEach($freeFields) { $f in
+                HStack {
+                    TextField("Название", text: $f.name).frame(maxWidth: 140)
+                    Divider()
+                    TextField("Значение", text: $f.value)
+                }
+            }
+            .onDelete { freeFields.remove(atOffsets: $0) }
+            Button { freeFields.append(FreeField(name: "", value: "")) } label: {
+                Label("Добавить поле", systemImage: "plus")
+            }.font(.footnote)
+        }
+    }
+
+    @ViewBuilder private var expirySection: some View {
+        Section("Срок действия") {
+            Toggle("Есть срок действия", isOn: $hasExpiry)
+            if hasExpiry {
+                DatePicker("Действителен до", selection: $expiry, displayedComponents: .date)
+            }
+        }
+    }
+
+    @ViewBuilder private var noteSection: some View {
+        Section("Заметка") {
+            TextField("Заметка", text: $notes, axis: .vertical).lineLimit(1...6)
+        }
+    }
+
+    @ViewBuilder private var deleteSection: some View {
+        Section {
+            Button("Удалить запись", role: .destructive) { confirmDelete = true }
+                .frame(maxWidth: .infinity)
+        }
     }
 
     // MARK: - Блоки сканирования
