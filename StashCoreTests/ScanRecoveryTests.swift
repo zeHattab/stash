@@ -109,8 +109,8 @@ final class MRZRecoveryTests: XCTestCase {
         data[17] = "X"
         let (r, diag) = MRZParser.parseRecovering(lines: [cleanTD3[0], String(data)])
         XCTAssertNil(r)
-        XCTAssertEqual(diag.detectedFormat, "td3")
         XCTAssertFalse(diag.recovered)
+        XCTAssertTrue(diag.attempts.contains { $0.hasPrefix("td3") && $0.contains("fail") })
     }
 
     func testCleanTD1Recovers() throws {
@@ -140,5 +140,73 @@ final class MRZRecoveryTests: XCTestCase {
         let (r, diag) = MRZParser.parseRecovering(lines: [])
         XCTAssertNil(r)
         XCTAssertEqual(diag.candidateLineCount, 0)
+    }
+
+    // Загранпаспорт — TD3; не должен ошибочно опознаваться как TD1.
+    func testTD3PreferredNotMisreadAsTD1() throws {
+        // Склеенные строки TD3 (44) — единственный валидный формат.
+        let (r, diag) = MRZParser.parseRecovering(lines: cleanTD3, prefer: .td3)
+        let res = try XCTUnwrap(r)
+        XCTAssertEqual(res.format, .td3)
+        XCTAssertEqual(diag.detectedFormat, "td3")
+        XCTAssertEqual(res.documentNumber, "L898902C3")
+    }
+}
+
+// MARK: - Склейка фрагментов MRZ по геометрии
+
+final class MRZLineAssemblerTests: XCTestCase {
+
+    // Один фрагмент на строке — вертикальный центр примерно y, высота h.
+    private func frag(_ text: String, x0: Double, x1: Double, y: Double, h: Double = 0.02) -> MRZFragment {
+        MRZFragment(text: text, minX: x0, maxX: x1, minY: y - h / 2, maxY: y + h / 2)
+    }
+
+    func testGroupsRowPiecesAndCountsJoins() {
+        // Строка TD3-данных разбита на 2 куска с разрывом (Vision рвёт на <<<<).
+        let frags = [
+            frag("L898902C36UTO7408122F1204159ZE184226B", x0: 0.05, x1: 0.70, y: 0.12),
+            frag("10", x0: 0.93, x1: 0.97, y: 0.12), // хвост после серии <<<<<
+            frag("P<UTOERIKSSON<<ANNA<MARIA", x0: 0.05, x1: 0.55, y: 0.17),
+        ]
+        let asm = MRZLineAssembler.assemble(frags)
+        XCTAssertEqual(asm.rows.count, 2)              // два ряда MRZ
+        XCTAssertGreaterThanOrEqual(asm.joins, 1)      // ряд данных склеен из двух кусков
+        let dataRow = asm.rows.first { $0.first?.hasPrefix("L8989") == true }
+        XCTAssertEqual(dataRow?.count, 2)              // два куска в ряду данных
+    }
+
+    func testAssembledTD3FragmentsParse() throws {
+        // Нижняя часть страницы: мусорная строка сверху + TD3 двумя рядами, нижний ряд
+        // в двух фрагментах с разрывом на заполнителях.
+        let frags = [
+            frag("ROSSIYSKAYA FEDERATSIYA", x0: 0.1, x1: 0.9, y: 0.30),
+            frag("P<UTOERIKSSON<<ANNA<MARIA", x0: 0.05, x1: 0.56, y: 0.17),
+            frag("L898902C36UTO7408122F1204159ZE184226B", x0: 0.05, x1: 0.70, y: 0.12),
+            frag("10", x0: 0.93, x1: 0.97, y: 0.12),
+        ]
+        let asm = MRZLineAssembler.assemble(frags)
+        let (r, diag) = MRZParser.parseRecovering(rows: asm.rows, prefer: .td3)
+        let res = try XCTUnwrap(r)
+        XCTAssertTrue(res.checkDigitsValid)
+        XCTAssertEqual(res.format, .td3)
+        XCTAssertEqual(res.documentNumber, "L898902C3")
+        XCTAssertEqual(res.surname, "ERIKSSON")
+        XCTAssertEqual(res.birthDate, utc1974812())
+        XCTAssertEqual(diag.detectedFormat, "td3")
+    }
+
+    func testDoesNotMergeDistinctRows() {
+        let frags = [
+            frag("AAAAAAAAAA", x0: 0.1, x1: 0.5, y: 0.20),
+            frag("BBBBBBBBBB", x0: 0.1, x1: 0.5, y: 0.10),
+        ]
+        let asm = MRZLineAssembler.assemble(frags)
+        XCTAssertEqual(asm.rows.count, 2)
+    }
+
+    private func utc1974812() -> Date {
+        var c = Calendar(identifier: .gregorian); c.timeZone = TimeZone(identifier: "UTC")!
+        return c.date(from: DateComponents(year: 1974, month: 8, day: 12))!
     }
 }

@@ -9,6 +9,7 @@ import StashCore
 struct AttachmentsSection: View {
     let model: AppModel
     @Binding var attachments: [Attachment]
+    var onScan: (() -> Void)? = nil
     @State private var photoItem: PhotosPickerItem?
     @State private var showPDFImporter = false
     @State private var viewing: Attachment?
@@ -18,6 +19,9 @@ struct AttachmentsSection: View {
 
     var body: some View {
         Section("Вложения") {
+            if let onScan {
+                Button { onScan() } label: { Label("Сканировать документ", systemImage: "doc.viewfinder") }
+            }
             ForEach(attachments) { att in
                 Button { viewing = att } label: {
                     HStack(spacing: 12) {

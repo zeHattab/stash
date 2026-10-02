@@ -8,16 +8,20 @@ public struct ScanDiagnostics: Sendable, Equatable {
     public var orientationRaw: Int
     public var recognizedLineCount: Int
     public var mrzCandidateCount: Int
+    public var joinCount: Int
     public var detectedFormat: String?
     public var failedChecks: [String]
     public var recovered: Bool
+    public var attempts: [String]
     public init(imageWidth: Int, imageHeight: Int, orientationRaw: Int,
-                recognizedLineCount: Int, mrzCandidateCount: Int,
-                detectedFormat: String?, failedChecks: [String], recovered: Bool) {
+                recognizedLineCount: Int, mrzCandidateCount: Int, joinCount: Int = 0,
+                detectedFormat: String?, failedChecks: [String], recovered: Bool,
+                attempts: [String] = []) {
         self.imageWidth = imageWidth; self.imageHeight = imageHeight
         self.orientationRaw = orientationRaw; self.recognizedLineCount = recognizedLineCount
-        self.mrzCandidateCount = mrzCandidateCount; self.detectedFormat = detectedFormat
-        self.failedChecks = failedChecks; self.recovered = recovered
+        self.mrzCandidateCount = mrzCandidateCount; self.joinCount = joinCount
+        self.detectedFormat = detectedFormat
+        self.failedChecks = failedChecks; self.recovered = recovered; self.attempts = attempts
     }
 }
 

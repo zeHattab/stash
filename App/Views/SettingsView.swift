@@ -1,6 +1,17 @@
 import SwiftUI
 import StashCore
 
+/// Признак тестовой сборки (DEBUG или TestFlight sandbox) — для скрытых отладочных экранов.
+enum AppBuild {
+    static var isDiagnosticsAvailable: Bool {
+        #if DEBUG
+        return true
+        #else
+        return Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
+        #endif
+    }
+}
+
 struct SettingsView: View {
     let model: AppModel
     @Environment(\.dismiss) private var dismiss
@@ -96,7 +107,9 @@ struct SettingsView: View {
                 Section("О приложении") {
                     LabeledContent("Версия", value: appVersion)
                         .contentShape(Rectangle())
-                        .onLongPressGesture(minimumDuration: 1.5) { showDiagnostics = true }
+                        .onLongPressGesture(minimumDuration: 1.5) {
+                            if AppBuild.isDiagnosticsAvailable { showDiagnostics = true }
+                        }
                     LabeledContent("Лицензия", value: "GPLv3")
                     Link(destination: URL(string: "https://github.com/zeHattab/stash")!) {
                         Label("Исходный код на GitHub", systemImage: "chevron.left.forwardslash.chevron.right")
@@ -270,9 +283,15 @@ struct ScanDiagnosticsView: View {
                         LabeledContent("Ориентация", value: "\(d.orientationRaw)")
                         LabeledContent("Строк распознано", value: "\(d.recognizedLineCount)")
                         LabeledContent("Кандидатов MRZ", value: "\(d.mrzCandidateCount)")
+                        LabeledContent("Склеек фрагментов", value: "\(d.joinCount)")
                         LabeledContent("Формат", value: d.detectedFormat ?? "—")
                         LabeledContent("Восстановлено", value: d.recovered ? "да" : "нет")
                         LabeledContent("Не сошлись", value: d.failedChecks.isEmpty ? "—" : d.failedChecks.joined(separator: ", "))
+                    }
+                    if !d.attempts.isEmpty {
+                        Section("Попытки формата") {
+                            ForEach(d.attempts, id: \.self) { Text($0).font(.footnote.monospaced()) }
+                        }
                     }
                     Section {
                         Text("Только технические данные. Текст документа и его поля здесь не показываются и не сохраняются.")

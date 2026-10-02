@@ -25,6 +25,8 @@ struct DocumentEditorView: View {
     @State private var showCameraDenied = false
     @State private var scanNote: String?
     @State private var recognizedText: String?
+    /// Ключи полей, заполненных из MRZ (подсвечиваются до правки/таймаута).
+    @State private var mrzFilledKeys: Set<String> = []
 
     struct FreeField: Identifiable { let id = UUID(); var name: String; var value: String }
 
@@ -64,6 +66,9 @@ struct DocumentEditorView: View {
                 Toggle("Избранное", isOn: $favorite)
             }
 
+            // Для НОВОГО документа сканирование — первым блоком, сразу под названием/типом.
+            if !isExisting { scanBlock }
+
             Section("Поля") {
                 ForEach(DocumentFields.recommended(for: type), id: \.self) { key in
                     HStack {
@@ -72,6 +77,7 @@ struct DocumentEditorView: View {
                         TextField("", text: fieldBinding(key.rawValue))
                             .multilineTextAlignment(.trailing)
                     }
+                    .listRowBackground(mrzFilledKeys.contains(key.rawValue) ? Color.accentColor.opacity(0.12) : nil)
                 }
             }
 
@@ -89,22 +95,9 @@ struct DocumentEditorView: View {
                 }.font(.footnote)
             }
 
-            Section {
-                Button { startScan() } label: { Label("Сканировать документ", systemImage: "doc.viewfinder") }
-                if let scanNote {
-                    Text(scanNote).font(.footnote).foregroundStyle(.secondary)
-                }
-                if let recognizedText, !recognizedText.isEmpty {
-                    DisclosureGroup("Распознанный текст") {
-                        Text(recognizedText)
-                            .font(.footnote.monospaced())
-                            .textSelection(.enabled)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                }
-            }
-
-            AttachmentsSection(model: model, attachments: $attachments)
+            // Для СУЩЕСТВУЮЩЕГО документа кнопка сканирования — в блоке вложений.
+            AttachmentsSection(model: model, attachments: $attachments, onScan: isExisting ? startScan : nil)
+            if isExisting { scanFeedback }
 
             Section("Срок действия") {
                 Toggle("Есть срок действия", isOn: $hasExpiry)
@@ -207,10 +200,15 @@ struct DocumentEditorView: View {
             }
         }
         let orientationRaw = images.first?.imageOrientation.rawValue ?? 0
+        let prefer = expectedFormat()
         Task {
-            var mrzLines: [String] = []
-            for img in normalizedImages { mrzLines += await DocumentOCR.mrzCandidateLines(img) }
-            let (mrz, diag) = MRZParser.parseRecovering(lines: mrzLines)
+            var mrzRows: [[String]] = []
+            var joins = 0
+            for img in normalizedImages {
+                let a = await DocumentOCR.mrzAssembledRows(img)
+                mrzRows += a.rows; joins += a.joins
+            }
+            let (mrz, diag) = MRZParser.parseRecovering(rows: mrzRows, prefer: prefer)
 
             var general = ""
             for img in normalizedImages { general += await DocumentOCR.recognizeText(img) + "\n" }
@@ -220,22 +218,27 @@ struct DocumentEditorView: View {
             model.setScanDiagnostics(ScanDiagnostics(
                 imageWidth: Int(lastPixel.width), imageHeight: Int(lastPixel.height),
                 orientationRaw: orientationRaw, recognizedLineCount: lineCount,
-                mrzCandidateCount: diag.candidateLineCount, detectedFormat: diag.detectedFormat,
-                failedChecks: diag.failedChecks, recovered: diag.recovered))
+                mrzCandidateCount: diag.candidateLineCount, joinCount: joins,
+                detectedFormat: diag.detectedFormat, failedChecks: diag.failedChecks,
+                recovered: diag.recovered, attempts: diag.attempts))
 
             if let mrz, mrz.checkDigitsValid {
+                var filled: Set<String> = []
                 fields[DocumentFieldKey.number.rawValue] = mrz.documentNumber
+                filled.insert(DocumentFieldKey.number.rawValue)
                 let name = [mrz.surname, mrz.givenNames].filter { !$0.isEmpty }.joined(separator: " ")
-                if !name.isEmpty { fields[DocumentFieldKey.fullName.rawValue] = name }
-                if !mrz.nationality.isEmpty { fields[DocumentFieldKey.country.rawValue] = mrz.nationality }
-                if let birth = mrz.birthDate { fields[DocumentFieldKey.birthDate.rawValue] = Self.isoDate(birth) }
+                if !name.isEmpty { fields[DocumentFieldKey.fullName.rawValue] = name; filled.insert(DocumentFieldKey.fullName.rawValue) }
+                if !mrz.nationality.isEmpty { fields[DocumentFieldKey.country.rawValue] = mrz.nationality; filled.insert(DocumentFieldKey.country.rawValue) }
+                if let birth = mrz.birthDate { fields[DocumentFieldKey.birthDate.rawValue] = Self.isoDate(birth); filled.insert(DocumentFieldKey.birthDate.rawValue) }
                 if let exp = mrz.expiryDate { hasExpiry = true; expiry = exp }
-                scanNote = String(localized: "Поля заполнены из MRZ — проверьте их.")
+                scanNote = String(localized: "Заполнено из скана — проверьте поля")
                 recognizedText = nil
+                mrzFilledKeys = filled
+                Task { try? await Task.sleep(nanoseconds: 8_000_000_000); mrzFilledKeys = [] }
             } else {
                 // Скан уже прикреплён. MRZ не распозналась/не прошла — предлагаем ручной ввод,
                 // а найденный текст показываем, чтобы было откуда скопировать.
-                scanNote = String(localized: "Не удалось распознать автоматически — проверьте поля вручную.")
+                scanNote = String(localized: "Не удалось распознать — заполните вручную")
                 recognizedText = generalTrimmed.isEmpty ? nil : generalTrimmed
             }
         }
@@ -246,8 +249,62 @@ struct DocumentEditorView: View {
         return f.string(from: date)
     }
 
+    // MARK: - Блоки сканирования
+
+    /// Крупный блок для нового документа: кнопка + подсказка, после скана — миниатюра и статус.
+    @ViewBuilder private var scanBlock: some View {
+        Section {
+            Button { startScan() } label: {
+                VStack(spacing: 6) {
+                    Image(systemName: "doc.viewfinder").font(.largeTitle)
+                    Text("Сканировать документ").font(.headline)
+                    Text("Поля заполнятся автоматически").font(.footnote).foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity).padding(.vertical, 8)
+            }
+            if let first = attachments.first(where: { $0.kind == .image }) {
+                HStack(spacing: 12) {
+                    AttachmentThumbnail(attachment: first)
+                    if let scanNote { Text(scanNote).font(.footnote).foregroundStyle(.secondary) }
+                }
+            } else if let scanNote {
+                Text(scanNote).font(.footnote).foregroundStyle(.secondary)
+            }
+            recognizedDisclosure
+        }
+    }
+
+    /// Статус скана для существующего документа (кнопка — в блоке вложений).
+    @ViewBuilder private var scanFeedback: some View {
+        if scanNote != nil || (recognizedText?.isEmpty == false) {
+            Section {
+                if let scanNote { Text(scanNote).font(.footnote).foregroundStyle(.secondary) }
+                recognizedDisclosure
+            }
+        }
+    }
+
+    @ViewBuilder private var recognizedDisclosure: some View {
+        if let recognizedText, !recognizedText.isEmpty {
+            DisclosureGroup("Распознанный текст") {
+                Text(recognizedText)
+                    .font(.footnote.monospaced())
+                    .textSelection(.enabled)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+    }
+
+    private func expectedFormat() -> MRZResult.Format? {
+        switch type {
+        case .passport, .foreignPassport: return .td3
+        case .idCard, .residencePermit: return .td1
+        default: return nil
+        }
+    }
+
     private func fieldBinding(_ key: String) -> Binding<String> {
-        Binding(get: { fields[key] ?? "" }, set: { fields[key] = $0 })
+        Binding(get: { fields[key] ?? "" }, set: { fields[key] = $0; mrzFilledKeys.remove(key) })
     }
 
     private func save() {

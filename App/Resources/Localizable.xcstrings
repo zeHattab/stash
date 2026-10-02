@@ -734,6 +734,16 @@
         }
       }
     },
+    "Заполнено из скана — проверьте поля": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filled from the scan — please check"
+          }
+        }
+      }
+    },
     "Значение": {
       "localizations": {
         "en": {
@@ -1282,6 +1292,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Couldn’t recognize automatically — please check the fields manually."
+          }
+        }
+      }
+    },
+    "Не удалось распознать — заполните вручную": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t recognize — fill in manually"
           }
         }
       }
@@ -1836,12 +1856,32 @@
         }
       }
     },
+    "Поля заполнятся автоматически": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fields will be filled automatically"
+          }
+        }
+      }
+    },
     "Попробуйте ещё раз.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Try again."
+          }
+        }
+      }
+    },
+    "Попытки формата": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Format attempts"
           }
         }
       }
@@ -2102,6 +2142,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "No scans in this session yet."
+          }
+        }
+      }
+    },
+    "Склеек фрагментов": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragment joins"
           }
         }
       }

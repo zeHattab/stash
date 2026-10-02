@@ -14,21 +14,23 @@ public struct MRZResult: Sendable, Equatable {
     /// Все контрольные цифры сошлись. Если false — поля НЕ автозаполнять молча.
     public var checkDigitsValid: Bool
 
-    public enum Format: String, Sendable, Equatable { case td1, td3 }
+    public enum Format: String, Sendable, Equatable { case td1, td2, td3 }
 }
 
 /// Техническая диагностика распознавания MRZ — БЕЗ текста и данных документа.
 public struct MRZDiagnostics: Sendable, Equatable {
     public var candidateLineCount: Int
-    public var detectedFormat: String?     // "td3" / "td1" / nil
+    public var detectedFormat: String?     // "td3" / "td2" / "td1" / nil
     public var failedChecks: [String]      // имена несошедшихся контрольных цифр
     public var recovered: Bool             // удалось ли восстановить до валидности
+    public var attempts: [String]          // краткий итог по каждому формату (длины, какие КЦ)
     public init(candidateLineCount: Int = 0, detectedFormat: String? = nil,
-                failedChecks: [String] = [], recovered: Bool = false) {
+                failedChecks: [String] = [], recovered: Bool = false, attempts: [String] = []) {
         self.candidateLineCount = candidateLineCount
         self.detectedFormat = detectedFormat
         self.failedChecks = failedChecks
         self.recovered = recovered
+        self.attempts = attempts
     }
 }
 
@@ -250,36 +252,133 @@ public enum MRZParser {
         return s + String(repeating: "<", count: n - s.count)
     }
 
-    /// Разбор из набора строк-кандидатов OCR с коррекцией ошибок. Заполняет поля
-    /// ТОЛЬКО если все требуемые контрольные цифры сошлись (`checkDigitsValid`).
-    public static func parseRecovering(lines rawLines: [String]) -> (result: MRZResult?, diagnostics: MRZDiagnostics) {
-        let norm = rawLines.map(normalizeLine).filter { $0.count >= 28 && $0.count <= 46 }
-        var diag = MRZDiagnostics(candidateLineCount: norm.count)
+    /// Варианты полной строки для формата заданной длины `target` из кусков `row`.
+    /// Промежутки между кусками — заполнители '<'; распределяем недостающие '<' по стыкам
+    /// (композиции, с ограничением). Это восстанавливает длину точно, не угадывая по ширине.
+    static func candidateLines(for row: [String], target: Int) -> [String] {
+        let pieces = row.map(normalizeLine).filter { !$0.isEmpty }
+        guard !pieces.isEmpty else { return [] }
+        let content = pieces.reduce(0) { $0 + $1.count }
+        if pieces.count == 1 { return [fit(pieces[0], to: target)] }
+        let need = target - content
+        if need < 0 { return [fit(pieces.joined(), to: target)] }
+        let gaps = pieces.count - 1
+        var out: [String] = []
+        for comp in compositions(total: need, parts: gaps, cap: 400) {
+            var s = pieces[0]
+            for g in 0..<gaps { s += String(repeating: "<", count: comp[g]) + pieces[g + 1] }
+            out.append(fit(s, to: target))
+        }
+        return out.isEmpty ? [fit(pieces.joined(), to: target)] : out
+    }
 
-        // TD3 — две строки ~44, оба порядка.
-        let td3 = norm.filter { abs($0.count - 44) <= 2 }
-        for i in td3.indices {
-            for j in td3.indices where j != i {
-                let (res, fails) = recoverTD3(fit(td3[i], to: 44), fit(td3[j], to: 44))
-                if let res, res.checkDigitsValid {
-                    diag.detectedFormat = "td3"; diag.recovered = true
-                    return (res, diag)
-                }
-                if diag.detectedFormat == nil { diag.detectedFormat = "td3"; diag.failedChecks = fails }
+    /// Композиции числа `total` на `parts` неотрицательных слагаемых (с ограничением числа).
+    private static func compositions(total: Int, parts: Int, cap: Int) -> [[Int]] {
+        guard parts > 0 else { return [] }
+        if parts == 1 { return [[total]] }
+        var result: [[Int]] = []
+        func go(_ remaining: Int, _ left: Int, _ acc: [Int]) {
+            if result.count >= cap { return }
+            if left == 1 { result.append(acc + [remaining]); return }
+            for v in 0...remaining {
+                if result.count >= cap { return }
+                go(remaining - v, left - 1, acc + [v])
             }
         }
+        go(total, parts, [])
+        return result
+    }
 
-        // TD1 — три строки ~30.
-        let td1 = norm.filter { abs($0.count - 30) <= 2 }
-        if td1.count >= 3 {
-            for perm in orderedTriples(td1) {
-                let (res, fails) = recoverTD1(fit(perm.0, to: 30), fit(perm.1, to: 30), fit(perm.2, to: 30))
-                if let res, res.checkDigitsValid {
-                    diag.detectedFormat = "td1"; diag.recovered = true
-                    return (res, diag)
-                }
-                if diag.detectedFormat == nil { diag.detectedFormat = "td1"; diag.failedChecks = fails }
+    /// Разбор из набора строк-кандидатов OCR с коррекцией ошибок. Пробует ВСЕ форматы
+    /// (TD3 2×44, TD2 2×36, TD1 3×30) и принимает только тот, где сошлись ВСЕ контрольные.
+    /// Если подходят несколько — предпочитает `prefer` (ожидаемый по типу документа).
+    /// Заполняет поля ТОЛЬКО при `checkDigitsValid`.
+    public static func parseRecovering(lines rawLines: [String],
+                                       prefer: MRZResult.Format? = nil)
+        -> (result: MRZResult?, diagnostics: MRZDiagnostics) {
+        parseRecovering(rows: rawLines.map { [$0] }, prefer: prefer)
+    }
+
+    /// Вариант, принимающий КУСКИ каждой строки (из геометрической склейки). Для каждого
+    /// формата достраивает длину по `candidateLines`.
+    public static func parseRecovering(rows: [[String]],
+                                       prefer: MRZResult.Format? = nil)
+        -> (result: MRZResult?, diagnostics: MRZDiagnostics) {
+        func normLen(_ row: [String]) -> Int { row.map(normalizeLine).reduce(0) { $0 + $1.count } }
+        // Для подсчёта кандидатов в диагностике — те ряды, что похожи на MRZ по суммарной длине.
+        let mrzRows = rows.filter { let n = normLen($0); return n >= 28 && n <= 46 }
+        var diag = MRZDiagnostics(candidateLineCount: mrzRows.count)
+        var valid: [MRZResult.Format: MRZResult] = [:]
+
+        // Полные строки-кандидаты для формата длины target. Ряд имён/документа может быть
+        // короче (OCR отбрасывает хвостовые '<'), поэтому берём всё, что не длиннее target+2.
+        // Строки с сильным признаком (TD3 начинается с 'P') ставим первыми, чтобы правильно
+        // выбрать строку имён при склейке.
+        func lines(target: Int, strongPrefix: Character?) -> [String] {
+            var out: [String] = []
+            for row in rows {
+                let n = normLen(row)
+                guard n >= 8, n <= target + 2 else { continue }
+                out += candidateLines(for: row, target: target)
             }
+            if let p = strongPrefix {
+                out.sort { ($0.first == p ? 0 : 1) < ($1.first == p ? 0 : 1) }
+            }
+            return Array(out.prefix(10))
+        }
+
+        // TD3 — две строки по 44.
+        let td3 = lines(target: 44, strongPrefix: "P")
+        if !td3.isEmpty {
+            var fail: [String] = []
+            outer3: for i in td3.indices {
+                for j in td3.indices where j != i {
+                    let (res, fails) = recoverTD3(td3[i], td3[j])
+                    if let res, res.checkDigitsValid { valid[.td3] = res; break outer3 }
+                    if fail.isEmpty { fail = fails }
+                }
+            }
+            diag.attempts.append("td3 len=\(td3.map(\.count))" + (valid[.td3] != nil ? " ok" : " fail:\(fail.joined(separator: ","))"))
+            if valid[.td3] == nil { diag.failedChecks = fail }
+        }
+
+        // TD2 — две строки по 36.
+        let td2 = lines(target: 36, strongPrefix: nil)
+        if !td2.isEmpty {
+            var fail: [String] = []
+            outer2: for i in td2.indices {
+                for j in td2.indices where j != i {
+                    let (res, fails) = recoverTD2(td2[i], td2[j])
+                    if let res, res.checkDigitsValid { valid[.td2] = res; break outer2 }
+                    if fail.isEmpty { fail = fails }
+                }
+            }
+            diag.attempts.append("td2 len=\(td2.map(\.count))" + (valid[.td2] != nil ? " ok" : " fail:\(fail.joined(separator: ","))"))
+        }
+
+        // TD1 — три строки по 30.
+        let td1 = lines(target: 30, strongPrefix: nil)
+        if td1.count >= 3 {
+            var fail: [String] = []
+            outer1: for perm in orderedTriples(td1) {
+                let (res, fails) = recoverTD1(perm.0, perm.1, perm.2)
+                if let res, res.checkDigitsValid { valid[.td1] = res; break outer1 }
+                if fail.isEmpty { fail = fails }
+            }
+            diag.attempts.append("td1 len=\(td1.map(\.count))" + (valid[.td1] != nil ? " ok" : " fail:\(fail.joined(separator: ","))"))
+        }
+
+        guard !valid.isEmpty else { return (nil, diag) }
+        // Выбор: предпочтительный формат, иначе по приоритету TD3 → TD2 → TD1.
+        let order: [MRZResult.Format] = {
+            if let prefer, valid[prefer] != nil { return [prefer] }
+            return [.td3, .td2, .td1]
+        }()
+        for fmt in order where valid[fmt] != nil {
+            diag.detectedFormat = fmt.rawValue
+            diag.recovered = true
+            diag.failedChecks = []
+            return (valid[fmt], diag)
         }
         return (nil, diag)
     }
@@ -330,6 +429,41 @@ public enum MRZParser {
                                         sex: sex, birthDate: birthDate, expiryDate: expiryDate, checkDigitsValid: true)
                     return (res, [])
                 }
+            }
+        }
+        return (nil, ["составная"])
+    }
+
+    /// TD2 (2×36): виза/карта. Строка 2: номер(9)+КЦ, гражд.(3), дата рожд.(6)+КЦ, пол,
+    /// срок(6)+КЦ, доп.(7), составная КЦ. У доп.поля своей КЦ нет — оно входит в составную.
+    static func recoverTD2(_ l1: String, _ l2: String) -> (MRZResult?, [String]) {
+        guard l1.count == 36, l2.count == 36 else { return (nil, ["формат"]) }
+        let a = Array(l1), b = Array(l2)
+        let issuingState = String(a[2..<5]).trimmingMRZ()
+        let (surname, given) = names(String(a[5..<36]))
+        let nationality = String(b[10..<13]).trimmingMRZ()
+        let sex = normalizeSex(String(b[20..<21]))
+
+        guard let birth = recover(field: Array(b[13..<19]), cdChar: b[19], digitsOnly: true),
+              let birthDate = date(birth, isExpiry: false) else {
+            return (nil, ["дата рождения"])
+        }
+        guard let expiry = recover(field: Array(b[21..<27]), cdChar: b[27], digitsOnly: true),
+              let expiryDate = date(expiry, isExpiry: true) else {
+            return (nil, ["срок"])
+        }
+        let docCandidates = recoverAll(field: Array(b[0..<9]), cdChar: b[9], digitsOnly: false)
+        if docCandidates.isEmpty { return (nil, ["номер"]) }
+        let optional = String(b[28..<35])
+        for docField in docCandidates {
+            let composite = docField + String(checkDigit(docField))
+                + birth + String(checkDigit(birth))
+                + expiry + String(checkDigit(expiry)) + optional
+            if cdValue(b[35]) == checkDigit(composite) {
+                let res = MRZResult(format: .td2, documentNumber: docField.trimmingMRZ(), surname: surname,
+                                    givenNames: given, nationality: nationality, issuingState: issuingState,
+                                    sex: sex, birthDate: birthDate, expiryDate: expiryDate, checkDigitsValid: true)
+                return (res, [])
             }
         }
         return (nil, ["составная"])

@@ -47,11 +47,11 @@ struct DocumentScannerView: UIViewControllerRepresentable {
 
 /// Распознавание текста на устройстве (Vision), без сети.
 enum DocumentOCR {
-    /// Базовый проход: язык(и), ориентация, опциональная область интереса (ROI в
-    /// нормализованных координатах Vision — начало в левом НИЖНЕМ углу).
-    private static func recognizeLines(cg: CGImage, orientation: CGImagePropertyOrientation,
-                                       languages: [String], roi: CGRect?) async -> [String] {
-        await Task.detached(priority: .userInitiated) { () -> [String] in
+    /// Наблюдения одного прохода: текст + bounding box (нормализованные координаты Vision,
+    /// начало в левом НИЖНЕМ углу). ROI ограничивает поиск, координаты — относительно всего кадра.
+    private static func observations(cg: CGImage, orientation: CGImagePropertyOrientation,
+                                     languages: [String], roi: CGRect?) async -> [MRZFragment] {
+        await Task.detached(priority: .userInitiated) { () -> [MRZFragment] in
             let request = VNRecognizeTextRequest()
             request.recognitionLevel = .accurate
             request.usesLanguageCorrection = false
@@ -59,28 +59,39 @@ enum DocumentOCR {
             if let roi { request.regionOfInterest = roi }
             let handler = VNImageRequestHandler(cgImage: cg, orientation: orientation, options: [:])
             try? handler.perform([request])
-            let observations = request.results ?? []
-            return observations.compactMap { $0.topCandidates(1).first?.string }
+            let results = request.results ?? []
+            return results.compactMap { obs -> MRZFragment? in
+                guard let s = obs.topCandidates(1).first?.string else { return nil }
+                let bb = obs.boundingBox
+                return MRZFragment(text: s, minX: bb.minX, maxX: bb.maxX, minY: bb.minY, maxY: bb.maxY)
+            }
         }.value
     }
 
-    /// Строки-кандидаты MRZ: латиница (en-US), полное изображение + нижние 35% (там MRZ)
-    /// + те же проходы для перевёрнутого изображения (.down), на случай «вверх ногами».
-    static func mrzCandidateLines(_ image: UIImage) async -> [String] {
-        guard let cg = image.cgImage else { return [] }
-        let bottom = CGRect(x: 0, y: 0, width: 1, height: 0.35)
-        var lines: [String] = []
-        lines += await recognizeLines(cg: cg, orientation: .up, languages: ["en-US"], roi: nil)
-        lines += await recognizeLines(cg: cg, orientation: .up, languages: ["en-US"], roi: bottom)
-        lines += await recognizeLines(cg: cg, orientation: .down, languages: ["en-US"], roi: nil)
-        lines += await recognizeLines(cg: cg, orientation: .down, languages: ["en-US"], roi: bottom)
-        return lines
+    /// Ряды-кандидаты MRZ (куски каждой строки), СКЛЕЕННЫЕ по геометрии. Латиница (en-US),
+    /// полный кадр и нижние 40% + то же для перевёрнутого (.down), на случай «вверх ногами».
+    /// Склейка — в каждом проходе отдельно (координаты .up и .down не смешиваем).
+    static func mrzAssembledRows(_ image: UIImage) async -> (rows: [[String]], joins: Int) {
+        guard let cg = image.cgImage else { return ([], 0) }
+        let bottom = CGRect(x: 0, y: 0, width: 1, height: 0.40)
+        let passes: [(CGImagePropertyOrientation, CGRect?)] = [
+            (.up, nil), (.up, bottom), (.down, nil), (.down, bottom),
+        ]
+        var rows: [[String]] = []
+        var joins = 0
+        for (orient, roi) in passes {
+            let frags = await observations(cg: cg, orientation: orient, languages: ["en-US"], roi: roi)
+            let asm = MRZLineAssembler.assemble(frags)
+            rows += asm.rows
+            joins += asm.joins
+        }
+        return (rows, joins)
     }
 
     /// Общий текст (ru + en) — для показа пользователю, если MRZ не распозналась.
     static func recognizeText(_ image: UIImage) async -> String {
         guard let cg = image.cgImage else { return "" }
-        let lines = await recognizeLines(cg: cg, orientation: .up, languages: ["ru-RU", "en-US"], roi: nil)
-        return lines.joined(separator: "\n")
+        let frags = await observations(cg: cg, orientation: .up, languages: ["ru-RU", "en-US"], roi: nil)
+        return frags.map(\.text).joined(separator: "\n")
     }
 }
