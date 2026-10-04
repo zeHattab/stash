@@ -1,0 +1,72 @@
+name: App Store screenshots
+
+# Снимает экраны в демо-режиме (без реальных данных) и кладёт PNG артефактом.
+# Только вручную. Демо-данные — вымышленные (DemoData.swift), сейф временный.
+on:
+  workflow_dispatch:
+
+jobs:
+  screenshots:
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select newest Xcode 26.x
+        run: |
+          XC=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1 || true)
+          [ -n "$XC" ] && sudo xcode-select -s "$XC/Contents/Developer" || true
+          xcodebuild -version
+
+      - name: Build app for simulator
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project Stash.xcodeproj -scheme Stash -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath dd CODE_SIGNING_ALLOWED=NO | cat
+          echo "APP=$(pwd)/dd/Build/Products/Debug-iphonesimulator/Stash.app" >> "$GITHUB_ENV"
+
+      - name: Capture screenshots
+        run: |
+          set -eu
+          BUNDLE=com.portie24.stash
+          SCREENS="home login generator document security"
+          # Языки: папка App Store → код -AppleLanguages
+          declare -a LOCALES=("en-US:en" "ru:ru")
+          # Устройства: 6.9" обязателен; второй — ближайший доступный.
+          pick() { xcrun simctl list devices available | grep -m1 "$1" | sed -E 's/.*\(([0-9A-F-]+)\).*/\1/' || true; }
+          DEV69=$(pick "iPhone 16 Pro Max")
+          DEV65=$(pick "iPhone 16 Plus"); [ -z "$DEV65" ] && DEV65=$(pick "iPhone 15 Plus")
+          echo "6.9=$DEV69  alt=$DEV65"
+          shoot() {
+            local udid="$1" tag="$2"
+            [ -z "$udid" ] && { echo "нет устройства $tag — пропускаю"; return; }
+            xcrun simctl boot "$udid" 2>/dev/null || true
+            xcrun simctl bootstatus "$udid" -b || true
+            xcrun simctl install "$udid" "$APP"
+            for pair in "${LOCALES[@]}"; do
+              local folder="${pair%%:*}" lang="${pair##*:}"
+              mkdir -p "appstore/screenshots/$folder"
+              for s in $SCREENS; do
+                xcrun simctl terminate "$udid" "$BUNDLE" 2>/dev/null || true
+                xcrun simctl launch "$udid" "$BUNDLE" STASH_DEMO "STASH_SCREEN=$s" \
+                  -AppleLanguages "($lang)" -AppleLocale "${lang}_US" >/dev/null 2>&1 || \
+                xcrun simctl launch "$udid" "$BUNDLE" STASH_DEMO "STASH_SCREEN=$s" \
+                  -AppleLanguages "($lang)" >/dev/null 2>&1 || true
+                sleep 4
+                xcrun simctl io "$udid" screenshot "appstore/screenshots/$folder/${tag}-${s}.png" || true
+              done
+            done
+            xcrun simctl shutdown "$udid" 2>/dev/null || true
+          }
+          shoot "$DEV69" "69"
+          shoot "$DEV65" "65"
+          ls -R appstore/screenshots || true
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: appstore-screenshots
+          path: appstore/screenshots/**/*.png
+          if-no-files-found: warn

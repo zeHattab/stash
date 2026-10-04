@@ -20,6 +20,7 @@ struct HomeView: View {
 
     @State private var showSettings = false
     @State private var showTOTPImport = false
+    @State private var showGenerator = false
     @State private var editing: VaultItem?
     @State private var pendingDelete: VaultItem?
     @State private var filter: ItemFilter = .all
@@ -39,6 +40,8 @@ struct HomeView: View {
             .toolbar { toolbarContent }
             .sheet(isPresented: $showSettings) { SettingsView(model: model) }
             .sheet(isPresented: $showTOTPImport) { TOTPImportView(model: model) }
+            .sheet(isPresented: $showGenerator) { PasswordGeneratorView(model: model) { _ in } }
+            .task { openDemoScreenIfRequested() }
             .sheet(item: $editing) { item in editor(for: item) }
             .sheet(isPresented: Binding(
                 get: { model.pendingRecoveryKey != nil },
@@ -222,6 +225,19 @@ struct HomeView: View {
     private func hasTOTP(_ item: VaultItem) -> Bool {
         if case let .login(_, _, _, totp) = item.kind, let totp, !totp.isEmpty { return true }
         return false
+    }
+
+    /// Демо-режим для скриншотов: launch-аргумент STASH_SCREEN=<name> сразу открывает экран.
+    private func openDemoScreenIfRequested() {
+        guard let arg = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("STASH_SCREEN=") })
+        else { return }
+        switch String(arg.dropFirst("STASH_SCREEN=".count)) {
+        case "login": editing = model.items.first { hasTOTP($0) }
+        case "generator": showGenerator = true
+        case "document": editing = model.items.first { isDocument($0) }
+        case "security": showSettings = true
+        default: break // "home" — ничего, снимаем список
+        }
     }
 
     // MARK: - Действия
