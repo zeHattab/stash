@@ -1,10 +1,10 @@
 import AuthenticationServices
 import UIKit
+import SwiftUI
 import CryptoKit
 import StashCore
 
-/// Что заполняем: пароль или одноразовый код.
-enum CredentialProviderMode: Equatable { case password, oneTimeCode }
+// CredentialProviderMode объявлен в AutoFillListView.swift (общий с демо-режимом приложения).
 
 /// Расширение автозаполнения. Открывает тот же сейф (файл в App Group), разблокировка —
 /// Face ID через общий Keychain (если второй пароль выключен и ключ есть) либо ввод пароля
@@ -25,8 +25,6 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     private var serviceIdentifiers: [ASCredentialServiceIdentifier] = []
     private var mode: CredentialProviderMode = .password
     private var directRecordID: String?
-
-    private var listController: LoginListController?
 
     // MARK: - Точки входа системы
 
@@ -123,16 +121,15 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     private func showList(_ logins: [AutoFillLogin]) {
         currentLogins = logins
         clearChildren()
-        let requested = serviceIdentifiers.first?.identifier
-        let list = LoginListController(
+        let host = DomainMatch.host(from: serviceIdentifiers.first?.identifier ?? "")
+        let view = AutoFillListView(
             logins: logins,
-            serviceIdentifier: requested,
+            requestHost: host,
             mode: mode,
             onSelect: { [weak self] chosen in self?.select(chosen) },
             onCancel: { [weak self] in self?.cancel() },
             onGenerate: { [weak self] in self?.generatePassword() })
-        listController = list
-        embed(list)
+        embed(UIHostingController(rootView: view))
     }
 
     /// «Сгенерировать новый пароль» в расширении: создать запись для домена запроса или

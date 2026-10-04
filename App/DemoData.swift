@@ -1,8 +1,9 @@
+#if DEBUG
 import Foundation
 import StashCore
 
 /// Вымышленные данные для скриншотов App Store (launch-аргумент STASH_DEMO).
-/// Ни одного реального имени/номера — всё очевидно придуманное.
+/// Ни одного реального имени/номера — всё очевидно придуманное. Только DEBUG.
 enum DemoData {
     static func items(now: Date = Date()) -> [VaultItem] {
         let soon = now.addingTimeInterval(32 * 86_400)   // попадёт в «Скоро истекают»
@@ -44,3 +45,4 @@ enum DemoData {
         ]
     }
 }
+#endif

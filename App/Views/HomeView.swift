@@ -21,6 +21,7 @@ struct HomeView: View {
     @State private var showSettings = false
     @State private var showTOTPImport = false
     @State private var showGenerator = false
+    @State private var showAutoFillDemo = false
     @State private var editing: VaultItem?
     @State private var pendingDelete: VaultItem?
     @State private var filter: ItemFilter = .all
@@ -41,6 +42,12 @@ struct HomeView: View {
             .sheet(isPresented: $showSettings) { SettingsView(model: model) }
             .sheet(isPresented: $showTOTPImport) { TOTPImportView(model: model) }
             .sheet(isPresented: $showGenerator) { PasswordGeneratorView(model: model) { _ in } }
+            .sheet(isPresented: $showAutoFillDemo) {
+                AutoFillListView(logins: demoAutoFillLogins, requestHost: "github.com", mode: .password,
+                                 onSelect: { _ in showAutoFillDemo = false },
+                                 onCancel: { showAutoFillDemo = false },
+                                 onGenerate: {})
+            }
             .task { openDemoScreenIfRequested() }
             .sheet(item: $editing) { item in editor(for: item) }
             .sheet(isPresented: Binding(
@@ -228,7 +235,9 @@ struct HomeView: View {
     }
 
     /// Демо-режим для скриншотов: launch-аргумент STASH_SCREEN=<name> сразу открывает экран.
+    /// Только DEBUG — в релизной сборке демо-кода нет.
     private func openDemoScreenIfRequested() {
+        #if DEBUG
         guard let arg = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("STASH_SCREEN=") })
         else { return }
         switch String(arg.dropFirst("STASH_SCREEN=".count)) {
@@ -236,9 +245,23 @@ struct HomeView: View {
         case "generator": showGenerator = true
         case "document": editing = model.items.first { isDocument($0) }
         case "security": showSettings = true
+        case "autofill": showAutoFillDemo = true
         default: break // "home" — ничего, снимаем список
         }
+        #endif
     }
+
+    #if DEBUG
+    /// Логины для демо-экрана автозаполнения (из уже открытого демо-сейфа).
+    private var demoAutoFillLogins: [AutoFillLogin] {
+        model.items.compactMap { item in
+            guard case let .login(u, p, urls, totp) = item.kind else { return nil }
+            return AutoFillLogin(id: item.id, title: item.title, username: u, password: p, urls: urls, totpSecret: totp)
+        }
+    }
+    #else
+    private var demoAutoFillLogins: [AutoFillLogin] { [] }
+    #endif
 
     // MARK: - Действия
 

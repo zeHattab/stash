@@ -29,6 +29,17 @@ jobs:
           fi
           echo "OK: SecureField в App/ не найден"
 
+      - name: Demo code must be DEBUG-gated (нет в релизе)
+        run: |
+          fail=0
+          for f in $(grep -rl "STASH_DEMO\|func startDemo\|enum DemoData\|STASH_SCREEN" App StashCore 2>/dev/null); do
+            if ! grep -q "#if DEBUG" "$f"; then
+              echo "::error::демо-код не под #if DEBUG: $f"; fail=1
+            fi
+          done
+          [ "$fail" = 0 ] && echo "OK: демо-код только в DEBUG"
+          exit $fail
+
       - name: Project integrity (pbxproj + все .swift зарегистрированы)
         run: python3 tools/check_project.py
 

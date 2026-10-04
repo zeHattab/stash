@@ -404,6 +404,16 @@
         }
       }
     },
+    "Все записи": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All records"
+          }
+        }
+      }
+    },
     "Вставьте секрет Base32 или ссылку otpauth://totp/…": {
       "localizations": {
         "en": {
@@ -644,6 +654,26 @@
         }
       }
     },
+    "Для %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For %@"
+          }
+        }
+      }
+    },
+    "Для %@ сохранённых паролей нет": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No saved passwords for %@"
+          }
+        }
+      }
+    },
     "Добавить": {
       "localizations": {
         "en": {
@@ -760,6 +790,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Additional fields"
+          }
+        }
+      }
+    },
+    "Другие записи": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other records"
           }
         }
       }
@@ -1656,6 +1696,16 @@
         }
       }
     },
+    "Нет сохранённых паролей": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No saved passwords"
+          }
+        }
+      }
+    },
     "Никогда": {
       "localizations": {
         "en": {
@@ -2106,6 +2156,36 @@
         }
       }
     },
+    "Подставить": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fill"
+          }
+        }
+      }
+    },
+    "Подставить пароль от %@ на %@?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fill the password from %@ into %@?"
+          }
+        }
+      }
+    },
+    "Подставить пароль?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fill password?"
+          }
+        }
+      }
+    },
     "Подтвердите, что вы понимаете: пароль нельзя восстановить": {
       "localizations": {
         "en": {
@@ -2432,6 +2512,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Regenerate"
+          }
+        }
+      }
+    },
+    "Сгенерировать новый пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Generate a new password"
+          }
+        }
+      }
+    },
+    "Сгенерировать новый пароль для %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Generate a new password for %@"
           }
         }
       }
@@ -3274,6 +3374,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "biometrics"
+          }
+        }
+      }
+    },
+    "для %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "for %@"
           }
         }
       }

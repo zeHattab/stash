@@ -201,8 +201,9 @@ public final class AppModel {
         pendingBiometricOffer = false
     }
 
+    #if DEBUG
     /// Демо-режим для скриншотов: создаёт временный сейф с вымышленными данными и открывает
-    /// его сразу, без экрана мастер-пароля и без разовых предложений.
+    /// его сразу, без экрана мастер-пароля и без разовых предложений. Только DEBUG.
     public func startDemo(items: [VaultItem]) async {
         _ = try? await store.create(masterPassword: "demo-password-123456")
         for item in items { try? await store.upsert(item) }
@@ -213,6 +214,7 @@ public final class AppModel {
         pendingBiometricOffer = false
         phase = .unlocked
     }
+    #endif
 
     public func dismissRecoveryKey() { pendingRecoveryKey = nil }
 

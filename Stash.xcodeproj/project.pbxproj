@@ -44,6 +44,7 @@
 		FF0000000000000000000044 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/LiveMRZScannerView.swift; sourceTree = "<group>";};
 		FF0000000000000000000047 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/TOTPImportView.swift; sourceTree = "<group>";};
 		FF0000000000000000000049 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoData.swift; sourceTree = "<group>";};
+		FF000000000000000000004B = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoFillListView.swift; sourceTree = "<group>";};
 		00000000000000000000000F = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypto/Crypto.swift; sourceTree = "<group>";};
 		000000000000000000000010 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypto/PasswordStrength.swift; sourceTree = "<group>";};
 		000000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/VaultItem.swift; sourceTree = "<group>";};
@@ -158,6 +159,8 @@
 		FF0000000000000000000046 = {isa = PBXBuildFile; fileRef = FF0000000000000000000044;};
 		FF0000000000000000000048 = {isa = PBXBuildFile; fileRef = FF0000000000000000000047;};
 		FF000000000000000000004A = {isa = PBXBuildFile; fileRef = FF0000000000000000000049;};
+		FF000000000000000000004C = {isa = PBXBuildFile; fileRef = FF000000000000000000004B;};
+		FF000000000000000000004D = {isa = PBXBuildFile; fileRef = FF000000000000000000004B;};
 		000000000000000000000060 = {isa = PBXBuildFile; fileRef = 00000000000000000000000F;};
 		000000000000000000000061 = {isa = PBXBuildFile; fileRef = 000000000000000000000010;};
 		000000000000000000000062 = {isa = PBXBuildFile; fileRef = 000000000000000000000011;};
@@ -253,6 +256,7 @@
 				00000000000000000000000A,
 				FF000000000000000000003D,
 				FF000000000000000000003E,
+				FF000000000000000000004B,
 			);
 			path = AutoFill;
 			sourceTree = "<group>";
@@ -379,6 +383,7 @@
 				FF0000000000000000000046,
 				FF0000000000000000000048,
 				FF000000000000000000004A,
+				FF000000000000000000004D,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -429,6 +434,7 @@
 				000000000000000000000059,
 				FF000000000000000000003F,
 				FF0000000000000000000040,
+				FF000000000000000000004C,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

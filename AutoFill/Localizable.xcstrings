@@ -11,12 +11,52 @@
         }
       }
     },
+    "Все записи": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All records"
+          }
+        }
+      }
+    },
+    "Для %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For %@"
+          }
+        }
+      }
+    },
+    "Для %@ сохранённых паролей нет": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No saved passwords for %@"
+          }
+        }
+      }
+    },
     "Для сайта %@": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "For %@"
+          }
+        }
+      }
+    },
+    "Другие записи": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other records"
           }
         }
       }
@@ -47,6 +87,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wrong password"
+          }
+        }
+      }
+    },
+    "Нет сохранённых паролей": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No saved passwords"
           }
         }
       }
@@ -83,6 +133,46 @@
         }
       }
     },
+    "Подставить": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fill"
+          }
+        }
+      }
+    },
+    "Подставить пароль от %@ на %@?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fill the password from %@ into %@?"
+          }
+        }
+      }
+    },
+    "Подставить пароль?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fill password?"
+          }
+        }
+      }
+    },
+    "Поиск": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search"
+          }
+        }
+      }
+    },
     "Разблокировать": {
       "localizations": {
         "en": {
@@ -113,6 +203,16 @@
         }
       }
     },
+    "Сгенерировать новый пароль для %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Generate a new password for %@"
+          }
+        }
+      }
+    },
     "Сейф ещё не создан. Откройте приложение Stash.": {
       "localizations": {
         "en": {
@@ -129,6 +229,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Create a new record"
+          }
+        }
+      }
+    },
+    "для %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "for %@"
           }
         }
       }

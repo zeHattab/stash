@@ -16,11 +16,19 @@ struct StashApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @State private var model: AppModel
 
+    #if DEBUG
     private let isDemo = ProcessInfo.processInfo.arguments.contains("STASH_DEMO")
+    #else
+    private let isDemo = false
+    #endif
 
     init() {
         let appGroup = "group.com.portie24.stash"
+        #if DEBUG
         let demo = ProcessInfo.processInfo.arguments.contains("STASH_DEMO")
+        #else
+        let demo = false
+        #endif
         // В демо-режиме — временный файл, чтобы не трогать реальный сейф.
         let vaultURL: URL = demo
             ? FileManager.default.temporaryDirectory.appendingPathComponent("stash-demo.stash")
@@ -45,8 +53,10 @@ struct StashApp: App {
         WindowGroup {
             RootView(model: model)
                 .task {
-                    if isDemo { await model.startDemo(items: DemoData.items()) }
-                    else { await model.start() }
+                    #if DEBUG
+                    if isDemo { await model.startDemo(items: DemoData.items()); return }
+                    #endif
+                    await model.start()
                 }
         }
     }
