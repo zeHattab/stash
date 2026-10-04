@@ -211,6 +211,38 @@ public actor VaultStore {
         try persistCurrent()
     }
 
+    /// Создать логин (для генератора в расширении автозаполнения). Возвращает облегчённый вид.
+    @discardableResult
+    public func addLogin(title: String, username: String, password: String,
+                         urls: [String], now: Date) throws -> AutoFillLogin {
+        guard var items = cachedItems, isUnlocked else { throw VaultError.locked }
+        let item = VaultItem(kind: .login(username: username, password: password, urls: urls, totpSecret: nil),
+                             title: title, createdAt: now, updatedAt: now)
+        items.append(item)
+        cachedItems = items
+        try persistCurrent()
+        return AutoFillLogin(id: item.id, title: title, username: username,
+                             password: password, urls: urls, totpSecret: nil)
+    }
+
+    /// Сменить пароль логина; старый уходит в историю. Возвращает облегчённый вид или nil.
+    @discardableResult
+    public func setPassword(itemID: UUID, newPassword: String, now: Date) throws -> AutoFillLogin? {
+        guard var items = cachedItems, isUnlocked else { throw VaultError.locked }
+        guard let idx = items.firstIndex(where: { $0.id == itemID }),
+              case let .login(username, _, urls, totp) = items[idx].kind else { return nil }
+        let previous = items[idx]
+        var updated = previous
+        updated.kind = .login(username: username, password: newPassword, urls: urls, totpSecret: totp)
+        updated.updatedAt = now
+        updated = VaultHistory.applyingPasswordChange(previous: previous, updated: updated, now: now)
+        items[idx] = updated
+        cachedItems = items
+        try persistCurrent()
+        return AutoFillLogin(id: updated.id, title: updated.title, username: username,
+                             password: newPassword, urls: urls, totpSecret: totp)
+    }
+
     public func changeMasterPassword(old: String, new: String) throws {
         guard let vk = vaultKey, let salt = currentSalt, let wrapMaster = currentWrapMaster, isUnlocked else {
             throw VaultError.locked

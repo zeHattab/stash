@@ -42,6 +42,7 @@
 		FF0000000000000000000041 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/CredentialIdentities.swift; sourceTree = "<group>";};
 		FF0000000000000000000043 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Documents/MRZVote.swift; sourceTree = "<group>";};
 		FF0000000000000000000044 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/LiveMRZScannerView.swift; sourceTree = "<group>";};
+		FF0000000000000000000047 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/TOTPImportView.swift; sourceTree = "<group>";};
 		00000000000000000000000F = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypto/Crypto.swift; sourceTree = "<group>";};
 		000000000000000000000010 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypto/PasswordStrength.swift; sourceTree = "<group>";};
 		000000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/VaultItem.swift; sourceTree = "<group>";};
@@ -154,6 +155,7 @@
 		FF0000000000000000000042 = {isa = PBXBuildFile; fileRef = FF0000000000000000000041;};
 		FF0000000000000000000045 = {isa = PBXBuildFile; fileRef = FF0000000000000000000043;};
 		FF0000000000000000000046 = {isa = PBXBuildFile; fileRef = FF0000000000000000000044;};
+		FF0000000000000000000048 = {isa = PBXBuildFile; fileRef = FF0000000000000000000047;};
 		000000000000000000000060 = {isa = PBXBuildFile; fileRef = 00000000000000000000000F;};
 		000000000000000000000061 = {isa = PBXBuildFile; fileRef = 000000000000000000000010;};
 		000000000000000000000062 = {isa = PBXBuildFile; fileRef = 000000000000000000000011;};
@@ -233,6 +235,7 @@
 				FF0000000000000000000033,
 				FF0000000000000000000041,
 				FF0000000000000000000044,
+				FF0000000000000000000047,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -371,6 +374,7 @@
 				FF0000000000000000000034,
 				FF0000000000000000000042,
 				FF0000000000000000000046,
+				FF0000000000000000000048,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -779,7 +783,7 @@
 				"$(inherited)",
 				"@executable_path/Frameworks",
 			);
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -802,7 +806,7 @@
 				"$(inherited)",
 				"@executable_path/Frameworks",
 			);
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -833,7 +837,7 @@
 				"@executable_path/Frameworks",
 				"@executable_path/../../Frameworks",
 			);
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash.autofill;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -856,7 +860,7 @@
 				"@executable_path/Frameworks",
 				"@executable_path/../../Frameworks",
 			);
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash.autofill;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -891,7 +895,7 @@
 				"@executable_path/Frameworks",
 				"@loader_path/Frameworks",
 			);
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash.core;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -918,7 +922,7 @@
 				"@executable_path/Frameworks",
 				"@loader_path/Frameworks",
 			);
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash.core;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -949,7 +953,7 @@
 				"@executable_path/Frameworks",
 				"@loader_path/Frameworks",
 			);
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash.StashCoreTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -969,7 +973,7 @@
 				"@executable_path/Frameworks",
 				"@loader_path/Frameworks",
 			);
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.portie24.stash.StashCoreTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;

@@ -118,19 +118,64 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
 
     // MARK: - Список логинов
 
+    private var currentLogins: [AutoFillLogin] = []
+
     private func showList(_ logins: [AutoFillLogin]) {
+        currentLogins = logins
         clearChildren()
         let requested = serviceIdentifiers.first?.identifier
         let list = LoginListController(
             logins: logins,
             serviceIdentifier: requested,
-            mode: mode) { [weak self] chosen in
-                self?.select(chosen)
-            } onCancel: { [weak self] in
-                self?.cancel()
-            }
+            mode: mode,
+            onSelect: { [weak self] chosen in self?.select(chosen) },
+            onCancel: { [weak self] in self?.cancel() },
+            onGenerate: { [weak self] in self?.generatePassword() })
         listController = list
         embed(list)
+    }
+
+    /// «Сгенерировать новый пароль» в расширении: создать запись для домена запроса или
+    /// обновить существующую (старый пароль — в историю), затем выдать её.
+    private func generatePassword() {
+        guard let password = try? PasswordGenerator.generate(.default) else { return }
+        let host = DomainMatch.host(from: serviceIdentifiers.first?.identifier ?? "")
+        let match = currentLogins.first { host != nil && $0.matches(serviceIdentifier: host!) }
+
+        let alert = UIAlertController(
+            title: String(localized: "Сгенерировать новый пароль"),
+            message: host.map { String(format: String(localized: "Для сайта %@"), $0) },
+            preferredStyle: .actionSheet)
+
+        if let match {
+            alert.addAction(UIAlertAction(
+                title: String(format: String(localized: "Обновить «%@» (старый — в историю)"), match.title),
+                style: .default) { [weak self] _ in self?.applyGenerated(password, updating: match) })
+        }
+        alert.addAction(UIAlertAction(title: String(localized: "Создать новую запись"), style: .default) {
+            [weak self] _ in self?.applyGenerated(password, updating: nil)
+        })
+        alert.addAction(UIAlertAction(title: String(localized: "Отмена"), style: .cancel))
+        alert.popoverPresentationController?.sourceView = view
+        alert.popoverPresentationController?.sourceRect = CGRect(x: view.bounds.midX, y: 0, width: 1, height: 1)
+        present(alert, animated: true)
+    }
+
+    private func applyGenerated(_ password: String, updating existing: AutoFillLogin?) {
+        Task { @MainActor in
+            let host = DomainMatch.host(from: serviceIdentifiers.first?.identifier ?? "") ?? "Stash"
+            let result: AutoFillLogin?
+            if let existing {
+                result = try? await store.setPassword(itemID: existing.id, newPassword: password, now: Date())
+            } else {
+                result = try? await store.addLogin(title: host, username: "", password: password,
+                                                   urls: host.isEmpty ? [] : [host], now: Date())
+            }
+            guard let result else { return }
+            let credential = ASPasswordCredential(user: result.username, password: result.password)
+            await store.lock()
+            extensionContext.completeRequest(withSelectedCredential: credential)
+        }
     }
 
     private func select(_ login: AutoFillLogin) {

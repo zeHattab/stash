@@ -11,6 +11,16 @@
         }
       }
     },
+    "Для сайта %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For %@"
+          }
+        }
+      }
+    },
     "Мастер-пароль": {
       "localizations": {
         "en": {
@@ -37,6 +47,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wrong password"
+          }
+        }
+      }
+    },
+    "Обновить «%@» (старый — в историю)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update “%@” (old goes to history)"
           }
         }
       }
@@ -83,12 +103,32 @@
         }
       }
     },
+    "Сгенерировать новый пароль": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Generate a new password"
+          }
+        }
+      }
+    },
     "Сейф ещё не создан. Откройте приложение Stash.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "The vault isn’t set up yet. Open the Stash app."
+          }
+        }
+      }
+    },
+    "Создать новую запись": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create a new record"
           }
         }
       }

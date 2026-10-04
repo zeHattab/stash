@@ -8,11 +8,14 @@ final class LoginListController: UIViewController {
     private let others: [AutoFillLogin]
     private let onSelect: (AutoFillLogin) -> Void
     private let onCancel: () -> Void
+    private let onGenerate: (() -> Void)?
     private let table = UITableView(frame: .zero, style: .insetGrouped)
 
     init(logins: [AutoFillLogin], serviceIdentifier: String?,
          mode: CredentialProviderMode,
-         onSelect: @escaping (AutoFillLogin) -> Void, onCancel: @escaping () -> Void) {
+         onSelect: @escaping (AutoFillLogin) -> Void, onCancel: @escaping () -> Void,
+         onGenerate: (() -> Void)? = nil) {
+        self.onGenerate = (mode == .password) ? onGenerate : nil
         let usable = (mode == .oneTimeCode) ? logins.filter { $0.totpSecret != nil } : logins
         if let sid = serviceIdentifier, !sid.isEmpty {
             let m = usable.filter { $0.matches(serviceIdentifier: sid) }
@@ -34,6 +37,10 @@ final class LoginListController: UIViewController {
         title = "Stash"
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .cancel, target: self, action: #selector(cancelTapped))
+        if onGenerate != nil {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(
+                image: UIImage(systemName: "dice"), style: .plain, target: self, action: #selector(generateTapped))
+        }
         table.dataSource = self
         table.delegate = self
         table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
@@ -48,6 +55,7 @@ final class LoginListController: UIViewController {
     }
 
     @objc private func cancelTapped() { onCancel() }
+    @objc private func generateTapped() { onGenerate?() }
 
     private func sections() -> [(title: String?, rows: [AutoFillLogin])] {
         var s: [(String?, [AutoFillLogin])] = []

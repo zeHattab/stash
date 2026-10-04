@@ -194,6 +194,16 @@
         }
       }
     },
+    "В Google Authenticator: «Перенести аккаунты» → «Экспортировать» → покажется QR. Отсканируйте его здесь.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Google Authenticator: “Transfer accounts” → “Export” → a QR appears. Scan it here."
+          }
+        }
+      }
+    },
     "В избранное": {
       "localizations": {
         "en": {
@@ -914,6 +924,26 @@
         }
       }
     },
+    "Импорт кодов 2FA": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import 2FA codes"
+          }
+        }
+      }
+    },
+    "Импортировать выбранные": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import selected"
+          }
+        }
+      }
+    },
     "Интернет-магазин": {
       "localizations": {
         "en": {
@@ -1376,6 +1406,16 @@
         }
       }
     },
+    "Найдено кодов: %lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Codes found: %lld"
+          }
+        }
+      }
+    },
     "Наполните ложный сейф": {
       "localizations": {
         "en": {
@@ -1502,6 +1542,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Couldn’t open the attachment"
+          }
+        }
+      }
+    },
+    "Не удалось разобрать экспорт Google Authenticator.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t parse the Google Authenticator export."
           }
         }
       }
@@ -2316,6 +2366,16 @@
         }
       }
     },
+    "Разобрать": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parse"
+          }
+        }
+      }
+    },
     "Разрешите доступ к камере в Настройках, чтобы сканировать документы.": {
       "localizations": {
         "en": {
@@ -2452,6 +2512,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Scan QR"
+          }
+        }
+      }
+    },
+    "Сканировать QR экспорта": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan the export QR"
           }
         }
       }

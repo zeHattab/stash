@@ -19,6 +19,7 @@ struct HomeView: View {
     let model: AppModel
 
     @State private var showSettings = false
+    @State private var showTOTPImport = false
     @State private var editing: VaultItem?
     @State private var pendingDelete: VaultItem?
     @State private var filter: ItemFilter = .all
@@ -37,6 +38,7 @@ struct HomeView: View {
             .searchable(text: $searchText, prompt: "Поиск")
             .toolbar { toolbarContent }
             .sheet(isPresented: $showSettings) { SettingsView(model: model) }
+            .sheet(isPresented: $showTOTPImport) { TOTPImportView(model: model) }
             .sheet(item: $editing) { item in editor(for: item) }
             .sheet(isPresented: Binding(
                 get: { model.pendingRecoveryKey != nil },
@@ -162,6 +164,8 @@ struct HomeView: View {
                 Button { addLogin() } label: { Label("Логин", systemImage: "key") }
                 Button { addNote() } label: { Label("Заметка", systemImage: "note.text") }
                 Button { addDocument() } label: { Label("Документ", systemImage: "doc.text") }
+                Divider()
+                Button { showTOTPImport = true } label: { Label("Импорт кодов 2FA", systemImage: "square.and.arrow.down") }
             } label: {
                 Image(systemName: "plus")
             }
