@@ -1,0 +1,14 @@
+Stash is an offline, on-device password and document manager. There is no account and no sign-up, and the app makes no network calls.
+
+HOW TO TEST
+1. Launch the app and create a master password (any password of 10+ characters). There is no email or account step.
+2. Add a login: tap + → Login, enter a title/username/password. Try the password generator (dice icon).
+3. Two-factor codes: open a login, "2FA code" section, "Enter manually", paste this test secret: JBSWY3DPEHPK3PXP — a live 6-digit code with a countdown appears.
+4. AutoFill: iPhone Settings → General → AutoFill & Passwords → turn on AutoFill and enable "Stash". Then on any login form, choose Stash from the keyboard/Passwords button; unlock with Face ID or the master password.
+5. Document scanner: + → Document → "Read with camera" or "Photograph the pages". The camera is used only to scan documents and 2FA QR codes; images are stored only inside the encrypted vault.
+6. Second password (decoy vault): Settings → Security → Second password. Entering the second password at unlock opens a separate empty vault. This is a duress feature; it stores nothing extra about the real vault.
+
+ENCRYPTION
+Standard Apple cryptography only: CryptoKit (AES-256-GCM) and CommonCrypto (PBKDF2). Keys are derived from the master password; data is stored locally and encrypted. No custom or proprietary cryptography. Export compliance: ITSAppUsesNonExemptEncryption = false (only exempt/standard encryption).
+
+The app is open source: https://github.com/zeHattab/stash

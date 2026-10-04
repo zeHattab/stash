@@ -29,9 +29,21 @@ Stash — нативный менеджер паролей и личных до�
   только сборки из Xcode 26 / iOS 26 SDK.
 - iOS 17.0+, только iPhone.
 
-> На этом этапе (заход 1) в репозитории — только каркас: точки входа, пустой общий
-> модуль, заглушка расширения AutoFill и проходящий юнит-тест. Бизнес-логики,
-> моделей данных, экранов и криптографии ещё нет.
+## Что умеет (версия 1.0)
+
+- Пароли и логины, генератор надёжных паролей, история паролей, поиск.
+- Коды двухфакторной защиты (TOTP): QR, скриншот или ручной ввод; живой код с таймером;
+  массовый импорт из Google Authenticator.
+- Автозаполнение в Safari и приложениях — пароли и одноразовые коды; генерация пароля
+  прямо в расширении.
+- Документы (паспорта, удостоверения, страховки) со сканером на устройстве: захват
+  VisionKit, OCR Vision, разбор MRZ (TD1/TD2/TD3, ICAO 9303), живое считывание камерой.
+- Напоминания о сроках — локальные уведомления с нейтральным текстом.
+- Ключ восстановления и второй (ложный) пароль для защиты под давлением.
+- Бесплатно, без рекламы и встроенных покупок.
+
+Политика конфиденциальности: <https://zehattab.github.io/stash/privacy/> ·
+модель безопасности: [SECURITY.md](SECURITY.md) · изменения: [CHANGELOG.md](CHANGELOG.md).
 
 ## Сборка
 
@@ -104,9 +116,21 @@ These rules hold everywhere in the project, always:
   Store only accepts builds made with Xcode 26 / the iOS 26 SDK.
 - iOS 17.0+, iPhone only.
 
-> At this stage (milestone 1) the repository contains only the scaffold: entry
-> points, an empty shared module, an AutoFill extension stub, and one passing unit
-> test. No business logic, data models, screens, or cryptography yet.
+### What it does (version 1.0)
+
+- Passwords and logins, a strong generator, password history, search.
+- Two-factor codes (TOTP): QR, screenshot, or manual entry; live code with a timer;
+  bulk import from Google Authenticator.
+- AutoFill in Safari and apps — passwords and one-time codes; generate a password inside
+  the extension.
+- Documents (passports, IDs, insurance) with an on-device scanner: VisionKit capture,
+  Vision OCR, MRZ parsing (TD1/TD2/TD3, ICAO 9303), live camera reading.
+- Expiry reminders as local notifications with neutral text.
+- Recovery key and a second (decoy) password for protection under pressure.
+- Free, no ads, no in-app purchases.
+
+Privacy policy: <https://zehattab.github.io/stash/privacy/> ·
+security model: [SECURITY.md](SECURITY.md) · changes: [CHANGELOG.md](CHANGELOG.md).
 
 ### Build
 

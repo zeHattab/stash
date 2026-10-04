@@ -1,0 +1,23 @@
+Stash is a free, open-source password and document manager that works entirely on your iPhone.
+
+No account. No internet. No tracking. Your data is encrypted on the device and never leaves it — Stash makes no network calls at all.
+
+WHAT IT DOES
+• Passwords and logins, with a strong password generator and password history
+• Two-factor codes (TOTP) with a live timer; add them by scanning a QR code, picking a screenshot, or typing a secret
+• AutoFill in Safari and apps — both passwords and one-time codes
+• Documents: passports, IDs, insurance and more, with an on-device scanner that reads the passport machine-readable zone and fills fields for you
+• Expiry reminders for documents — local notifications with neutral text
+• Search across everything
+
+PRIVACY BY DESIGN
+• Works fully offline; nothing is ever uploaded
+• No ads, no analytics, no trackers
+• Encryption uses Apple's standard CryptoKit and CommonCrypto
+• Face ID or Touch ID to unlock
+
+EXTRA PROTECTION
+• A recovery key, in case you forget your master password
+• A second password that opens a separate, decoy vault — useful if you are ever forced to unlock under pressure
+
+Free, with no ads and no in-app purchases. Open source under the GPLv3 license.

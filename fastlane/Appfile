@@ -1,0 +1,2 @@
+app_identifier("com.portie24.stash")
+# apple_id / team_id are taken from the App Store Connect API key (CI secrets).
