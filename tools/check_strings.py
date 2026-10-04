@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
-"""Проверяет англоязычную локализацию каталога строк App/Resources/Localizable.xcstrings.
+"""Проверяет англоязычную локализацию каталогов строк приложения и расширения.
 
-Каталог ведём вручную (ключ = исходная ru-строка; добавляем localizations.en).
-Скрипт находит русские пользовательские литералы в App/**/*.swift и сообщает,
-для каких НЕТ перевода en. Строки с интерполяцией (\\( )) пропускаются — у них
-в каталоге формат-ключи (%@/%lld), которые Xcode извлекает при сборке.
+Каталоги ведём вручную (ключ = исходная ru-строка; добавляем localizations.en).
+Скрипт находит русские пользовательские литералы в .swift и сообщает, для каких НЕТ
+перевода en. Строки с интерполяцией (\\( )) пропускаются — у них в каталоге формат-ключи
+(%@/%lld), которые Xcode извлекает при сборке.
 
-  python3 tools/check_strings.py           # отчёт; exit 1 если есть непереведённые
+Области (каждый .swift сверяется со СВОИМ каталогом; файл, собираемый в оба таргета,
+проверяется в обеих областях):
+  - App/ + общий AutoFill/AutoFillListView.swift → App/Resources/Localizable.xcstrings
+  - AutoFill/                                     → AutoFill/Localizable.xcstrings
+
+  python3 tools/check_strings.py   # отчёт; exit 1 если есть непереведённые
 """
 import glob
 import json
@@ -15,7 +20,14 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CATALOG = os.path.join(ROOT, "App", "Resources", "Localizable.xcstrings")
+
+# (имя области, каталог, список glob-ов исходников)
+SCOPES = [
+    ("App", os.path.join(ROOT, "App", "Resources", "Localizable.xcstrings"),
+     ["App/**/*.swift", "AutoFill/AutoFillListView.swift"]),
+    ("AutoFill", os.path.join(ROOT, "AutoFill", "Localizable.xcstrings"),
+     ["AutoFill/**/*.swift"]),
+]
 
 UI_PATTERNS = [
     r'Text\(\s*"((?:[^"\\]|\\.)*)"',
@@ -49,13 +61,14 @@ def has_en(entry):
     return False
 
 
-def main():
-    with open(CATALOG, encoding="utf-8") as fh:
-        catalog = json.load(fh)
-    strings = catalog["strings"]
-
+def check_scope(name, catalog_path, globs):
+    with open(catalog_path, encoding="utf-8") as fh:
+        strings = json.load(fh)["strings"]
+    files = []
+    for g in globs:
+        files += glob.glob(os.path.join(ROOT, g), recursive=True)
     missing = {}
-    for path in glob.glob(os.path.join(ROOT, "App", "**", "*.swift"), recursive=True):
+    for path in sorted(set(files)):
         with open(path, encoding="utf-8") as fh:
             for line in fh:
                 if line.strip().startswith("//"):
@@ -67,13 +80,20 @@ def main():
                             continue
                         if s not in strings or not has_en(strings[s]):
                             missing.setdefault(s, os.path.basename(path))
-
     if missing:
-        print("Нет перевода en для %d строк:" % len(missing))
+        print("[%s] нет перевода en для %d строк:" % (name, len(missing)))
         for s in sorted(missing):
             print("  %-50r %s" % (s, missing[s]))
+    return missing
+
+
+def main():
+    total = 0
+    for name, catalog, globs in SCOPES:
+        total += len(check_scope(name, catalog, globs))
+    if total:
         return 1
-    print("OK: все русские UI-строки имеют перевод en.")
+    print("OK: все русские UI-строки (App + AutoFill) имеют перевод en.")
     return 0
 
 

@@ -3,6 +3,14 @@
 All notable changes to Stash are documented here. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); versions use the app's marketing version.
 
+## [1.0.1] — unreleased
+
+### Changed
+- Removed the unused `LoginListController` from the AutoFill extension (its screen was
+  replaced by `AutoFillListView` in 1.0.0).
+- `tools/check_strings.py` now also checks the AutoFill extension's string catalog, not
+  just the app's.
+
 ## [1.0.0] — 2026-10-04
 
 First public release.
