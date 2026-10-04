@@ -16,15 +16,22 @@ struct StashApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @State private var model: AppModel
 
+    private let isDemo = ProcessInfo.processInfo.arguments.contains("STASH_DEMO")
+
     init() {
         let appGroup = "group.com.portie24.stash"
-        let vaultURL = FileManager.default
-            .containerURL(forSecurityApplicationGroupIdentifier: appGroup)?
-            .appendingPathComponent("vault.stash")
-            ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let demo = ProcessInfo.processInfo.arguments.contains("STASH_DEMO")
+        // В демо-режиме — временный файл, чтобы не трогать реальный сейф.
+        let vaultURL: URL = demo
+            ? FileManager.default.temporaryDirectory.appendingPathComponent("stash-demo.stash")
+            : (FileManager.default
+                .containerURL(forSecurityApplicationGroupIdentifier: appGroup)?
                 .appendingPathComponent("vault.stash")
+               ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                    .appendingPathComponent("vault.stash"))
+        if demo { try? FileManager.default.removeItem(at: vaultURL) }
 
-        let store = VaultStore(configuration: .init(fileURL: vaultURL, kdfIterations: 600_000))
+        let store = VaultStore(configuration: .init(fileURL: vaultURL, kdfIterations: demo ? 1_000 : 600_000))
         let model = AppModel(
             store: store,
             biometrics: SystemBiometricAuthenticator(),
@@ -37,7 +44,10 @@ struct StashApp: App {
     var body: some Scene {
         WindowGroup {
             RootView(model: model)
-                .task { await model.start() }
+                .task {
+                    if isDemo { await model.startDemo(items: DemoData.items()) }
+                    else { await model.start() }
+                }
         }
     }
 }
