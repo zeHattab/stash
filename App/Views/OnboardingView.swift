@@ -62,11 +62,11 @@ struct OnboardingView: View {
         }
     }
 
-    private func infoPage(icon: String, title: String, text: String, tag: Int) -> some View {
+    private func infoPage(icon: String, title: LocalizedStringKey, text: LocalizedStringKey, tag: Int) -> some View {
         infoContent(icon: icon, title: title, text: text).tag(tag)
     }
 
-    private func infoContent(icon: String, title: String, text: String) -> some View {
+    private func infoContent(icon: String, title: LocalizedStringKey, text: LocalizedStringKey) -> some View {
         VStack(spacing: 20) {
             Image(systemName: icon)
                 .font(.system(size: 64))

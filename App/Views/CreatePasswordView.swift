@@ -77,11 +77,11 @@ struct CreatePasswordView: View {
     }
 
     @ViewBuilder
-    private func passwordField(placeholder: String, text: Binding<String>, isNew: Bool) -> some View {
+    private func passwordField(placeholder: LocalizedStringResource, text: Binding<String>, isNew: Bool) -> some View {
         // Единая обёртка: без автокоррекции/предиктива/textContentType — iOS не предлагает
         // сохранить мастер-пароль в iCloud Keychain и не показывает подсказку сильного пароля.
         SecretTextField(text: text, placeholder: placeholder, secure: !reveal)
-            .accessibilityLabel(placeholder)
+            .accessibilityLabel(Text(placeholder))
     }
 
     private func attemptCreate() {

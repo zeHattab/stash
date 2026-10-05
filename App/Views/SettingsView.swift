@@ -205,7 +205,7 @@ struct ChangePasswordView: View {
     }
 
     @ViewBuilder
-    private func field(_ placeholder: String, text: Binding<String>) -> some View {
+    private func field(_ placeholder: LocalizedStringResource, text: Binding<String>) -> some View {
         SecretTextField(text: text, placeholder: placeholder, secure: !reveal)
     }
 
@@ -351,7 +351,7 @@ struct ScanDiagnosticsView: View {
                         LabeledContent("Кандидатов MRZ", value: "\(d.mrzCandidateCount)")
                         LabeledContent("Склеек фрагментов", value: "\(d.joinCount)")
                         LabeledContent("Формат", value: d.detectedFormat ?? "—")
-                        LabeledContent("Восстановлено", value: d.recovered ? "да" : "нет")
+                        LabeledContent("Восстановлено", value: d.recovered ? String(localized: "да") : String(localized: "нет"))
                         LabeledContent("Не сошлись", value: d.failedChecks.isEmpty ? "—" : d.failedChecks.joined(separator: ", "))
                     }
                     if !d.attempts.isEmpty {

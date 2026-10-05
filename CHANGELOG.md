@@ -5,6 +5,11 @@ All notable changes to Stash are documented here. Format loosely follows
 
 ## [1.0.1] — unreleased
 
+### Fixed
+- Parts of the interface (onboarding, password fields) stayed in Russian when the device
+  language is English — text passed through `String`-typed helpers was shown verbatim.
+  UI-text helpers now take `LocalizedStringKey`/`LocalizedStringResource`.
+
 ### Changed
 - Removed the unused `LoginListController` from the AutoFill extension (its screen was
   replaced by `AutoFillListView` in 1.0.0).

@@ -1054,6 +1054,16 @@
         }
       }
     },
+    "Как включить автозаполнение": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How to enable AutoFill"
+          }
+        }
+      }
+    },
     "Как наполнить ложный сейф: заблокируйте Stash и войдите вторым паролем.": {
       "localizations": {
         "en": {
@@ -3378,12 +3388,32 @@
         }
       }
     },
+    "да": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "yes"
+          }
+        }
+      }
+    },
     "для %@": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "for %@"
+          }
+        }
+      }
+    },
+    "нет": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "no"
           }
         }
       }

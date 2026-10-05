@@ -7,7 +7,9 @@ import UIKit
 /// Сторонние клавиатуры запрещены на уровне приложения (см. AppDelegate).
 struct SecretTextField: UIViewRepresentable {
     @Binding var text: String
-    var placeholder: String = ""
+    /// Локализуемый placeholder: литерал-ключ извлекается в каталог, значение берём
+    /// через String(localized:) (иначе Text(String)/UITextField.placeholder не переводятся).
+    var placeholder: LocalizedStringResource? = nil
     /// true — маскировать точками (secureTextEntry).
     var secure: Bool = true
     /// Для ключа восстановления: заглавные + ASCII-клавиатура.
@@ -35,7 +37,7 @@ struct SecretTextField: UIViewRepresentable {
         context.coordinator.text = $text
         context.coordinator.onSubmit = onSubmit
         if field.text != text { field.text = text }
-        field.placeholder = placeholder.isEmpty ? nil : NSLocalizedString(placeholder, comment: "")
+        field.placeholder = placeholder.map { String(localized: $0) }
         field.isSecureTextEntry = secure
         field.autocapitalizationType = uppercase ? .allCharacters : .none
         field.keyboardType = uppercase ? .asciiCapable : .default

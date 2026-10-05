@@ -95,7 +95,7 @@ struct SecondPasswordView: View {
     }
 
     @ViewBuilder
-    private func passwordField(_ placeholder: String, text: Binding<String>) -> some View {
+    private func passwordField(_ placeholder: LocalizedStringResource, text: Binding<String>) -> some View {
         SecretTextField(text: text, placeholder: placeholder, secure: !reveal)
     }
 

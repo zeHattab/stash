@@ -54,7 +54,13 @@ struct StashApp: App {
             RootView(model: model)
                 .task {
                     #if DEBUG
-                    if isDemo { await model.startDemo(items: DemoData.items()); return }
+                    if isDemo {
+                        // Для скриншота онбординга сейф не создаём — показываем онбординг.
+                        let onboarding = ProcessInfo.processInfo.arguments.contains("STASH_SCREEN=onboarding")
+                        if onboarding { await model.start() }
+                        else { await model.startDemo(items: DemoData.items()) }
+                        return
+                    }
                     #endif
                     await model.start()
                 }
