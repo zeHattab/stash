@@ -75,9 +75,9 @@ struct LockView: View {
 
     private var biometricLabel: String {
         switch model.biometryType {
-        case .faceID: return "Открыть с Face ID"
-        case .touchID: return "Открыть с Touch ID"
-        case .none: return "Открыть с биометрией"
+        case .faceID: return String(localized: "Открыть с Face ID")
+        case .touchID: return String(localized: "Открыть с Touch ID")
+        case .none: return String(localized: "Открыть с биометрией")
         }
     }
 
@@ -97,10 +97,10 @@ struct LockView: View {
             } catch let AppModelError.lockedOut(remaining) {
                 let minutes = Int(ceil(remaining / 60))
                 errorText = minutes <= 1
-                    ? "Слишком много попыток. Повторите примерно через минуту."
+                    ? String(localized: "Слишком много попыток. Повторите примерно через минуту.")
                     : "Слишком много попыток. Повторите примерно через \(minutes) мин."
             } catch {
-                errorText = "Неверный пароль."
+                errorText = String(localized: "Неверный пароль.")
             }
         }
     }

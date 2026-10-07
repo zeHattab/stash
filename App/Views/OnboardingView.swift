@@ -51,6 +51,14 @@ struct OnboardingView: View {
             .navigationDestination(isPresented: $showCreate) {
                 CreatePasswordView(model: model)
             }
+            .task {
+                #if DEBUG
+                // Демо для скриншота QA: сразу открыть экран создания мастер-пароля.
+                if ProcessInfo.processInfo.arguments.contains("STASH_SCREEN=createpassword") {
+                    showCreate = true
+                }
+                #endif
+            }
         }
     }
 

@@ -22,7 +22,7 @@ struct SettingsView: View {
         switch model.biometryType {
         case .faceID: return "Face ID"
         case .touchID: return "Touch ID"
-        case .none: return "Биометрия"
+        case .none: return String(localized: "Биометрия")
         }
     }
 
@@ -218,10 +218,10 @@ struct ChangePasswordView: View {
                 try await model.changeMasterPassword(old: oldPassword, new: newPassword)
                 dismiss()
             } catch VaultError.wrongPassword {
-                errorText = "Текущий пароль неверный."
+                errorText = String(localized: "Текущий пароль неверный.")
                 oldPassword = ""
             } catch {
-                errorText = "Не удалось сменить пароль."
+                errorText = String(localized: "Не удалось сменить пароль.")
             }
         }
     }
@@ -276,9 +276,9 @@ struct RecoverySettingsView: View {
                 newKey = try await model.regenerateRecoveryKey(master: entered)
                 master = ""
             } catch VaultError.wrongPassword {
-                errorText = "Мастер-пароль неверный."
+                errorText = String(localized: "Мастер-пароль неверный.")
             } catch {
-                errorText = "Не удалось создать ключ."
+                errorText = String(localized: "Не удалось создать ключ.")
             }
         }
     }

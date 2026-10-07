@@ -422,7 +422,7 @@ public enum MRZParser {
     }
 
     static func recoverTD3(_ l1: String, _ l2: String) -> (MRZResult?, [String]) {
-        guard l1.count == 44, l2.count == 44 else { return (nil, ["формат"]) }
+        guard l1.count == 44, l2.count == 44 else { return (nil, ["format"]) }
         let a = Array(l1), b = Array(l2)
         let issuingState = String(a[2..<5]).trimmingMRZ()
         let (surname, given) = names(String(a[5..<44]))
@@ -431,14 +431,14 @@ public enum MRZParser {
 
         guard let birth = recover(field: Array(b[13..<19]), cdChar: b[19], digitsOnly: true),
               let birthDate = date(birth, isExpiry: false) else {
-            return (nil, ["дата рождения@13"])
+            return (nil, ["birth@13"])
         }
         guard let expiry = recover(field: Array(b[21..<27]), cdChar: b[27], digitsOnly: true),
               let expiryDate = date(expiry, isExpiry: true) else {
-            return (nil, ["срок@21"])
+            return (nil, ["expiry@21"])
         }
         let docCandidates = recoverAll(field: Array(b[0..<9]), cdChar: b[9], digitsOnly: false)
-        if docCandidates.isEmpty { return (nil, ["номер@0"]) }
+        if docCandidates.isEmpty { return (nil, ["number@0"]) }
         let optField = Array(b[28..<42])
         let optCandidates0 = recoverAll(field: optField, cdChar: b[42], digitsOnly: false)
         let optCandidates = optCandidates0.isEmpty ? [String(optField)] : optCandidates0
@@ -459,13 +459,13 @@ public enum MRZParser {
                 }
             }
         }
-        return (nil, ["составная@43"])
+        return (nil, ["composite@43"])
     }
 
     /// TD2 (2×36): виза/карта. Строка 2: номер(9)+КЦ, гражд.(3), дата рожд.(6)+КЦ, пол,
     /// срок(6)+КЦ, доп.(7), составная КЦ. У доп.поля своей КЦ нет — оно входит в составную.
     static func recoverTD2(_ l1: String, _ l2: String) -> (MRZResult?, [String]) {
-        guard l1.count == 36, l2.count == 36 else { return (nil, ["формат"]) }
+        guard l1.count == 36, l2.count == 36 else { return (nil, ["format"]) }
         let a = Array(l1), b = Array(l2)
         let issuingState = String(a[2..<5]).trimmingMRZ()
         let (surname, given) = names(String(a[5..<36]))
@@ -474,14 +474,14 @@ public enum MRZParser {
 
         guard let birth = recover(field: Array(b[13..<19]), cdChar: b[19], digitsOnly: true),
               let birthDate = date(birth, isExpiry: false) else {
-            return (nil, ["дата рождения"])
+            return (nil, ["birth"])
         }
         guard let expiry = recover(field: Array(b[21..<27]), cdChar: b[27], digitsOnly: true),
               let expiryDate = date(expiry, isExpiry: true) else {
-            return (nil, ["срок"])
+            return (nil, ["expiry"])
         }
         let docCandidates = recoverAll(field: Array(b[0..<9]), cdChar: b[9], digitsOnly: false)
-        if docCandidates.isEmpty { return (nil, ["номер"]) }
+        if docCandidates.isEmpty { return (nil, ["number"]) }
         let optional = String(b[28..<35])
         for docField in docCandidates {
             let composite = docField + String(checkDigit(docField))
@@ -494,11 +494,11 @@ public enum MRZParser {
                 return (res, [])
             }
         }
-        return (nil, ["составная"])
+        return (nil, ["composite"])
     }
 
     static func recoverTD1(_ l1: String, _ l2: String, _ l3: String) -> (MRZResult?, [String]) {
-        guard l1.count == 30, l2.count == 30, l3.count == 30 else { return (nil, ["формат"]) }
+        guard l1.count == 30, l2.count == 30, l3.count == 30 else { return (nil, ["format"]) }
         let a = Array(l1), b = Array(l2), c = Array(l3)
         let issuingState = String(a[2..<5]).trimmingMRZ()
         let (surname, given) = names(String(c[0..<30]))
@@ -507,14 +507,14 @@ public enum MRZParser {
 
         guard let birth = recover(field: Array(b[0..<6]), cdChar: b[6], digitsOnly: true),
               let birthDate = date(birth, isExpiry: false) else {
-            return (nil, ["дата рождения"])
+            return (nil, ["birth"])
         }
         guard let expiry = recover(field: Array(b[8..<14]), cdChar: b[14], digitsOnly: true),
               let expiryDate = date(expiry, isExpiry: true) else {
-            return (nil, ["срок"])
+            return (nil, ["expiry"])
         }
         let docCandidates = recoverAll(field: Array(a[5..<14]), cdChar: a[14], digitsOnly: false)
-        if docCandidates.isEmpty { return (nil, ["номер"]) }
+        if docCandidates.isEmpty { return (nil, ["number"]) }
         let optional1 = String(a[15..<30])
         let optional2 = String(b[18..<29])
         // Составная (КЦ на позиции b[29]): номер+КЦ + optional1 + дата рожд.+КЦ + срок+КЦ + optional2.
@@ -528,7 +528,7 @@ public enum MRZParser {
                 return (res, [])
             }
         }
-        return (nil, ["составная"])
+        return (nil, ["composite"])
     }
 }
 

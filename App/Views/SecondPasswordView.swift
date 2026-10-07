@@ -116,7 +116,7 @@ struct SecondPasswordView: View {
         Task {
             defer { working = false }
             if await model.secondPasswordCollides(entered) {
-                errorText = "Второй пароль должен отличаться от мастер-пароля."
+                errorText = String(localized: "Второй пароль должен отличаться от мастер-пароля.")
             } else {
                 showFill = true
             }
@@ -133,10 +133,10 @@ struct SecondPasswordView: View {
                 try await model.disableSecondPassword(master: entered)
                 dismiss()
             } catch VaultError.wrongPassword {
-                errorText = "Мастер-пароль неверный."
+                errorText = String(localized: "Мастер-пароль неверный.")
                 master = ""
             } catch {
-                errorText = "Не удалось выключить второй пароль."
+                errorText = String(localized: "Не удалось выключить второй пароль.")
             }
         }
     }
@@ -193,12 +193,12 @@ struct ChangeSecondPasswordView: View {
                 try await model.changeSecondPassword(master: m, newSecond: n)
                 dismiss()
             } catch VaultError.wrongPassword {
-                errorText = "Мастер-пароль неверный."
+                errorText = String(localized: "Мастер-пароль неверный.")
                 master = ""
             } catch VaultError.secondPasswordMustDiffer {
-                errorText = "Новый второй пароль должен отличаться от мастер-пароля."
+                errorText = String(localized: "Новый второй пароль должен отличаться от мастер-пароля.")
             } catch {
-                errorText = "Не удалось сменить второй пароль."
+                errorText = String(localized: "Не удалось сменить второй пароль.")
             }
         }
     }

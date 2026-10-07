@@ -430,7 +430,7 @@ struct DocumentEditorView: View {
 
     // MARK: - Подписи
 
-    static func typeName(_ type: DocumentType) -> String {
+    static func typeName(_ type: DocumentType) -> LocalizedStringResource {
         switch type {
         case .passport: return "Паспорт"
         case .foreignPassport: return "Загранпаспорт"
@@ -443,7 +443,7 @@ struct DocumentEditorView: View {
         }
     }
 
-    static func fieldLabel(_ key: DocumentFieldKey) -> String {
+    static func fieldLabel(_ key: DocumentFieldKey) -> LocalizedStringResource {
         switch key {
         case .number: return "Номер"
         case .fullName: return "ФИО"

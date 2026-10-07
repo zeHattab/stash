@@ -9,12 +9,25 @@ All notable changes to Stash are documented here. Format loosely follows
 - Parts of the interface (onboarding, password fields) stayed in Russian when the device
   language is English — text passed through `String`-typed helpers was shown verbatim.
   UI-text helpers now take `LocalizedStringKey`/`LocalizedStringResource`.
+- Document type names and field labels (Passport: Number, Full name, Date of birth,
+  Date of issue, Issued by, …) and several error/recovery strings stayed in Russian on an
+  English device — they were returned from `String`-typed functions or assigned verbatim.
+  They now go through `LocalizedStringResource`/`String(localized:)`.
 
 ### Changed
 - Removed the unused `LoginListController` from the AutoFill extension (its screen was
   replaced by `AutoFillListView` in 1.0.0).
-- `tools/check_strings.py` now also checks the AutoFill extension's string catalog, not
-  just the app's.
+- `tools/check_strings.py` now checks the *context* of every Cyrillic literal — it must be
+  a direct argument of a localizing API, a `LocalizedString*` wrapper/parameter, or returned
+  from a `LocalizedString*`-typed function; `return "…"` from a `String` function is now an
+  error. It also covers the StashCore framework and the AutoFill extension.
+- MRZ parser diagnostics (StashCore) now use Latin codes instead of Russian words — they
+  feed a DEBUG-only developer screen, not user-facing UI.
+
+### Added
+- Runtime localization guard (`StashCoreTests/LocalizationCatalogTests`): every
+  `DocumentType`/`DocumentFieldKey` label must have an English translation with no Cyrillic,
+  and no English translation in any catalog may contain Cyrillic.
 
 ## [1.0.0] — 2026-10-04
 

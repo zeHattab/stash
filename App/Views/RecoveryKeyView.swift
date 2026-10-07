@@ -115,24 +115,24 @@ struct RecoveryKeyView: View {
 
     static func makePDF(key: String) -> URL? {
         // Имя файла и метаданные ОДИНАКОВЫ для настоящего и ложного сейфа (без «ложный/второй»).
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("Stash — ключ восстановления.pdf")
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(String(localized: "Stash — ключ восстановления.pdf"))
         let page = CGRect(x: 0, y: 0, width: 612, height: 792)
         let format = UIGraphicsPDFRendererFormat()
         format.documentInfo = [
-            kCGPDFContextTitle as String: "Stash — ключ восстановления",
+            kCGPDFContextTitle as String: String(localized: "Stash — ключ восстановления"),
             kCGPDFContextCreator as String: "Stash",
         ]
         let renderer = UIGraphicsPDFRenderer(bounds: page, format: format)
         do {
             try renderer.writePDF(to: url) { ctx in
                 ctx.beginPage()
-                ("Stash — ключ восстановления" as NSString).draw(
+                (String(localized: "Stash — ключ восстановления") as NSString).draw(
                     at: CGPoint(x: 40, y: 60),
                     withAttributes: [.font: UIFont.boldSystemFont(ofSize: 20)])
                 (key as NSString).draw(
                     at: CGPoint(x: 40, y: 110),
                     withAttributes: [.font: UIFont.monospacedSystemFont(ofSize: 18, weight: .regular)])
-                ("Храните этот лист в надёжном месте. Этот ключ открывает ваш сейф, если вы забудете мастер-пароль. Любой, у кого есть этот ключ, может открыть сейф." as NSString).draw(
+                (String(localized: "Храните этот лист в надёжном месте. Этот ключ открывает ваш сейф, если вы забудете мастер-пароль. Любой, у кого есть этот ключ, может открыть сейф.") as NSString).draw(
                     in: CGRect(x: 40, y: 150, width: 532, height: 300),
                     withAttributes: [.font: UIFont.systemFont(ofSize: 13)])
             }
@@ -196,9 +196,9 @@ struct ForgotPasswordView: View {
                 try await model.recover(recoveryKey: key, newMasterPassword: newPassword)
                 dismiss()
             } catch VaultError.wrongPassword {
-                errorText = "Этот ключ восстановления не подошёл."
+                errorText = String(localized: "Этот ключ восстановления не подошёл.")
             } catch {
-                errorText = "Не удалось восстановить доступ."
+                errorText = String(localized: "Не удалось восстановить доступ.")
             }
         }
     }

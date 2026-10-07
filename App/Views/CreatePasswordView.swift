@@ -99,7 +99,7 @@ struct CreatePasswordView: View {
                 try await model.createVault(masterPassword: password)
                 // phase → .unlocked: RootView сам покажет главный экран.
             } catch {
-                errorText = "Попробуйте ещё раз."
+                errorText = String(localized: "Попробуйте ещё раз.")
                 creating = false
             }
         }

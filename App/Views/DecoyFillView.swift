@@ -91,9 +91,9 @@ struct DecoyFillView: View {
             do {
                 decoyRecoveryKey = try await model.enableSecondPassword(secondPassword, decoyItems: collected)
             } catch StashCore.VaultError.secondPasswordMustDiffer {
-                errorText = "Второй пароль должен отличаться от мастер-пароля."
+                errorText = String(localized: "Второй пароль должен отличаться от мастер-пароля.")
             } catch {
-                errorText = "Не удалось включить второй пароль."
+                errorText = String(localized: "Не удалось включить второй пароль.")
             }
         }
     }

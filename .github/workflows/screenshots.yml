@@ -70,3 +70,36 @@ jobs:
           name: appstore-screenshots
           path: appstore/screenshots/**/*.png
           if-no-files-found: warn
+
+      # QA-проверка локализации (заход 11.1): снимаем на английском экраны, где всплывала
+      # или могла всплыть кириллица. Отдельный артефакт, НЕ каталог App Store.
+      - name: Capture localization QA screens (en)
+        run: |
+          set -eu
+          BUNDLE=com.portie24.stash
+          SCREENS="onboarding createpassword home document-new document login 2fa generator security recoverykey secondpassword autofill"
+          pick() { xcrun simctl list devices available | grep -m1 "$1" | sed -E 's/.*\(([0-9A-F-]+)\).*/\1/' || true; }
+          DEV=$(pick "iPhone 16 Pro Max")
+          [ -z "$DEV" ] && DEV=$(pick "iPhone 16")
+          echo "QA device=$DEV"
+          [ -z "$DEV" ] && { echo "нет симулятора — пропускаю QA"; exit 0; }
+          xcrun simctl boot "$DEV" 2>/dev/null || true
+          xcrun simctl bootstatus "$DEV" -b || true
+          xcrun simctl install "$DEV" "$APP"
+          mkdir -p qa-screens/en
+          for s in $SCREENS; do
+            xcrun simctl terminate "$DEV" "$BUNDLE" 2>/dev/null || true
+            xcrun simctl launch "$DEV" "$BUNDLE" STASH_DEMO "STASH_SCREEN=$s" \
+              -AppleLanguages "(en)" -AppleLocale "en_US" >/dev/null 2>&1 || true
+            sleep 4
+            xcrun simctl io "$DEV" screenshot "qa-screens/en/${s}.png" || true
+          done
+          xcrun simctl shutdown "$DEV" 2>/dev/null || true
+          ls -R qa-screens || true
+
+      - name: Upload localization QA screens
+        uses: actions/upload-artifact@v4
+        with:
+          name: localization-qa-en
+          path: qa-screens/en/*.png
+          if-no-files-found: warn

@@ -26,6 +26,10 @@ struct HomeView: View {
     @State private var pendingDelete: VaultItem?
     @State private var filter: ItemFilter = .all
     @State private var searchText = ""
+    #if DEBUG
+    @State private var showRecoveryDemo = false
+    @State private var showSecondPasswordDemo = false
+    #endif
 
     var body: some View {
         NavigationStack {
@@ -50,6 +54,17 @@ struct HomeView: View {
             }
             .task { openDemoScreenIfRequested() }
             .sheet(item: $editing) { item in editor(for: item) }
+            #if DEBUG
+            .sheet(isPresented: $showRecoveryDemo) {
+                // Демонстрационный ключ (вымышленный) — только для скриншота QA.
+                RecoveryKeyView(key: "AAAA-BBBB-CCCC-DDDD-EEEE-FFFF",
+                                onSaved: { showRecoveryDemo = false },
+                                onSkip: { showRecoveryDemo = false })
+            }
+            .sheet(isPresented: $showSecondPasswordDemo) {
+                NavigationStack { SecondPasswordView(model: model) }
+            }
+            #endif
             .sheet(isPresented: Binding(
                 get: { model.pendingRecoveryKey != nil },
                 set: { if !$0 { model.dismissRecoveryKey() } }
@@ -241,10 +256,16 @@ struct HomeView: View {
         guard let arg = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("STASH_SCREEN=") })
         else { return }
         switch String(arg.dropFirst("STASH_SCREEN=".count)) {
-        case "login": editing = model.items.first { hasTOTP($0) }
+        case "login", "2fa": editing = model.items.first { hasTOTP($0) }
         case "generator": showGenerator = true
         case "document": editing = model.items.first { isDocument($0) }
-        case "security": showSettings = true
+        case "document-new":
+            // Пустой новый документ (Passport) — экран, где всплыла утечка меток полей.
+            editing = VaultItem(kind: .document(type: .passport, fields: [:],
+                                                expiresAt: nil, attachmentIDs: []), title: "")
+        case "security", "settings": showSettings = true
+        case "recoverykey": showRecoveryDemo = true
+        case "secondpassword": showSecondPasswordDemo = true
         case "autofill": showAutoFillDemo = true
         default: break // "home" — ничего, снимаем список
         }
@@ -303,7 +324,7 @@ struct BiometricOfferView: View {
         switch model.biometryType {
         case .faceID: return "Face ID"
         case .touchID: return "Touch ID"
-        case .none: return "биометрию"
+        case .none: return String(localized: "биометрию")
         }
     }
 

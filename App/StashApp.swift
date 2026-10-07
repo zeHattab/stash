@@ -55,9 +55,11 @@ struct StashApp: App {
                 .task {
                     #if DEBUG
                     if isDemo {
-                        // Для скриншота онбординга сейф не создаём — показываем онбординг.
-                        let onboarding = ProcessInfo.processInfo.arguments.contains("STASH_SCREEN=onboarding")
-                        if onboarding { await model.start() }
+                        // Экраны без сейфа (онбординг, создание мастер-пароля) — не создаём сейф.
+                        let args = ProcessInfo.processInfo.arguments
+                        let freshStart = args.contains("STASH_SCREEN=onboarding")
+                            || args.contains("STASH_SCREEN=createpassword")
+                        if freshStart { await model.start() }
                         else { await model.startDemo(items: DemoData.items()) }
                         return
                     }

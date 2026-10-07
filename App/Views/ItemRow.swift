@@ -35,11 +35,11 @@ struct ItemRow: View {
         case let .login(username, _, urls, _):
             if !username.isEmpty { return username }
             if let first = urls.first, let d = VaultSearch.domain(from: first) { return d }
-            return "Логин"
+            return String(localized: "Логин")
         case .secureNote:
-            return "Заметка"
+            return String(localized: "Заметка")
         case let .document(type, _, _, _):
-            return DocumentEditorView.typeName(type)
+            return String(localized: DocumentEditorView.typeName(type))
         }
     }
 
